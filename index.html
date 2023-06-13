@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Nabla demo</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>My EHR</h1>
+        <div>
+            <button id="start" onClick="startRecording()">Start consultation</button>
+            <button id="generate" onClick="generate()">Generate note</button>
+        </div>
+
+        <div id="transcript" class="listen-results">
+            <h3>Transcript:</h3>
+            <div></div>
+        </div>
+
+        <div id="note" class="listen-results">
+            <h3>Note:</h3>
+            <div></div>
+        </div>
+    </div>
+</body>
+
+
+</html>

@@ -1,0 +1,25 @@
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    margin: 16px;
+    width: 680px;
+    overflow-y: auto;
+}
+
+.listen-results {
+    border: 1px black dashed;
+    padding: 8px;
+    margin-top: 16px;
+    background-color: lightgray;
+}
+
+.listen-results>h3 {
+    margin: 8px 0px;
+}
+
+li {
+    list-style: none;
+}
