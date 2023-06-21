@@ -6,6 +6,10 @@ let mediaSource;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 
 const initializeWsCnx = () => {
+    // Normally we'd send a 'Authorization': 'Bearer <YOUR_TOKEN>' header.
+    // But since JS WS client does not support sending additional headers,
+    // we rely on an "auth token as 2nd WS protocol prefixed with `jwt-`" authentication mechanism
+    // that is only meant for prototyping purposes.
     websocket = new WebSocket('wss://api.nabla.com/v1/server/copilot/listen', ["copilot-listen-protocol", "jwt-" + API_KEY]);
 
     websocket.onclose = (e) => {
