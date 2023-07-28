@@ -42,14 +42,10 @@ const initializeWsCnx = () => {
                 data.sections.forEach((section) => {
                     const title = document.createElement("h4");
                     title.innerHTML = section.title;
+                    const text = document.createElement("p");
+                    text.innerHTML = section.text;
                     note.appendChild(title);
-                    const ul = document.createElement("ul");
-                    section.content.forEach((content) => {
-                        const li = document.createElement("li");
-                        li.innerHTML = content;
-                        ul.appendChild(li);
-                    })
-                    note.appendChild(ul);
+                    note.appendChild(text);
                 })
             }
         }
