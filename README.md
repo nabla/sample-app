@@ -1,7 +1,7 @@
 This code is a quick example of a web application that integrates our [Copilot API](https://www.nabla.com/). 
 
 To test it on your machine:
-- First you need an API key. To get one, please [contact us](mailto:contact@nabla.com?subject=I%20need%20a%20Nabla%20Copilot%20API%20key)
+- First you need an API key. To get one, go to the [Console to create an organization](https://pro.nabla.com/copilot-api-signup) and create a Server API Key in API Keys.
 - Replace the placeholder in `main.js` line 1 with your key. 
 - Then, you just need to run a http static server.  
 
