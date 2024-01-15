@@ -119,6 +119,8 @@ const startRecordingAsync = async () => {
             streams: [
                 { id: "stream1", speaker_type: "doctor" },
             ],
+            section_style:  document.getElementById("sectionStyle").value,
+            note_template:  document.getElementById("noteTemplate").value  
         };
         websocket.send(JSON.stringify(config));
 

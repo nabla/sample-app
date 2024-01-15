@@ -11,6 +11,25 @@
 <body>
     <div class="container">
         <h1>My EHR</h1>
+        <!-- Dropdowns for parameters -->
+        <div class="filters">
+            <label for="noteTemplate">Note Template:</label>
+            <select id="noteTemplate">
+                <option value="GENERAL_MEDICINE">General Medicine</option>
+                <option value="CARDIOLOGY">Cardiology</option>
+                <option value="PSYCHIATRY">Psychiatry</option>
+                <option value="DIET">Diet</option>
+                <option value="PSYCHOLOGY">Psychology</option>
+                <option value="SOAP">SOAP</option>
+            </select>
+
+            <label for="sectionStyle">Section Style:</label>
+            <select id="sectionStyle">
+                <option value="auto">Auto</option>
+                <option value="paragraphs">Paragraphs</option>
+                <option value="bullet_points">Bullet Points</option>
+            </select>
+        </div>
         <div>
             <button id="start" onClick="startRecording()">Start consultation</button>
             <button id="generate" onClick="generate()">Generate note</button>

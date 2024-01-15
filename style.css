@@ -20,6 +20,10 @@ body {
     margin: 8px 0px;
 }
 
+.filters {
+    margin: 16px 0px;
+}
+
 li {
     list-style: none;
 }
