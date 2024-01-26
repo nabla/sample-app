@@ -166,7 +166,6 @@ const generate = async () => {
 }
 
 const callDigest = async () => {
-    console.log(`items: ${JSON.stringify(finalTranscriptItems)}`)
     const response = await fetch('https://api.nabla.com/v1/copilot-api/server/digest', {
         method: 'POST',
         headers: {
