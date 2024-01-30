@@ -1,16 +1,18 @@
 const API_KEY = "<YOUR_API_KEY>";
 let websocket;
+let finalTranscriptItems = [];
 let audioContext;
 let pcmWorker;
 let mediaSource;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 
 const initializeWsCnx = () => {
-    // Normally we'd send a 'Authorization': 'Bearer <YOUR_TOKEN>' header.
+    // Ideally we'd send the authentication token in an 'Authorization': 'Bearer <YOUR_TOKEN>' header.
     // But since JS WS client does not support sending additional headers,
-    // we rely on an "auth token as 2nd WS protocol prefixed with `jwt-`" authentication mechanism
-    // that is only meant for prototyping purposes.
-    websocket = new WebSocket('wss://api.nabla.com/v1/server/copilot/listen', ["copilot-listen-protocol", "jwt-" + API_KEY]);
+    // we rely on this alternative authentication mechanism.
+    // Keep in mind that, except for prototyping purposes, the Server API is not meant to be called from a browser
+    // because an API_KEY is too sensitive to be embedded in a front-end app.
+    websocket = new WebSocket('wss://api.nabla.com/v1/copilot-api/server/listen-ws', ["copilot-listen-protocol", "jwt-" + API_KEY]);
 
     websocket.onclose = (e) => {
         console.log(`Websocket closed: ${e.code} ${e.reason}`);
@@ -36,21 +38,16 @@ const initializeWsCnx = () => {
                 if (data.is_final) {
                     // Create a new div for future transcript items
                     transcript.appendChild(document.createElement("div"));
+                    finalTranscriptItems.push(data.text)
                 }
-            } else if (data.object === "note") {
-                const note = document.getElementById("note");
-                data.sections.forEach((section) => {
-                    const title = document.createElement("h4");
-                    title.innerHTML = section.title;
-                    const text = document.createElement("p");
-                    text.innerHTML = section.text;
-                    note.appendChild(title);
-                    note.appendChild(text);
-                })
+            } else if (data.object === "error_message") {
+                console.error(data.message);
             }
         }
     };
 }
+
+const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 
 const startRecordingAsync = async () => {
     document.getElementById("start").setAttribute('disabled', 'disabled');
@@ -59,7 +56,6 @@ const startRecordingAsync = async () => {
     initializeWsCnx();
 
     // Await websocket being open
-    const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
     for (let i = 0; i < 10; i++) {
         if (websocket.readyState !== websocket.OPEN) {
             await sleep(100);
@@ -112,15 +108,13 @@ const startRecordingAsync = async () => {
 
         const config = {
             object: "listen_config",
-            output_objects: ["transcript_item", "note"],
+            output_objects: ["transcript_item"],
             encoding: "pcm_s16le",
             sample_rate: 16000,
-            language: "en",
+            language: "en-US",
             streams: [
-                { id: "stream1", speaker_type: "doctor" },
+                { id: "stream1", speaker_type: "unspecified" },
             ],
-            section_style:  document.getElementById("sectionStyle").value,
-            note_template:  document.getElementById("noteTemplate").value  
         };
         websocket.send(JSON.stringify(config));
 
@@ -149,8 +143,18 @@ const endWsCnx = () => {
     );
 }
 
-const generate = () => {
+const generate = async () => {
+    document.getElementById("generate").setAttribute('disabled', 'disabled');
     endWsCnx();
+
+    // Await server closing the WS
+    for (let i = 0; i < 50; i++) {
+        if (websocket.readyState === websocket.OPEN) {
+            await sleep(100);
+        } else {
+            break;
+        }
+    }
 
     audioContext?.close();
     pcmWorker?.port.close();
@@ -158,5 +162,36 @@ const generate = () => {
     mediaSource?.mediaStream.getTracks().forEach((track) => track.stop());
     mediaSource?.disconnect();
 
-    document.getElementById("generate").setAttribute('disabled', 'disabled');
+    await callDigest();
+}
+
+const callDigest = async () => {
+    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/digest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+            output_objects: ['note'],
+            language: "en-US",
+            transcript_items: finalTranscriptItems.map((it) => ({ text: it, speaker: "unspecified" })),
+        })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        console.error('Error during note generation:', response.status, data);
+    }
+
+    const note = document.getElementById("note");
+    data.note.sections.forEach((section) => {
+        const title = document.createElement("h4");
+        title.innerHTML = section.title;
+        const text = document.createElement("p");
+        text.innerHTML = section.text;
+        note.appendChild(title);
+        note.appendChild(text);
+    })
 }
