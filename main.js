@@ -1,4 +1,5 @@
 const API_KEY = "<YOUR_API_KEY>";
+let generatedNote = undefined;
 let websocket;
 let finalTranscriptItems = [];
 let audioContext;
@@ -19,7 +20,7 @@ const initializeWsCnx = () => {
         const transcript = document.getElementById("transcript");
         transcript.lastElementChild.innerHTML = "-----";
         transcript.appendChild(document.createElement("div"));
-        document.getElementById("start").removeAttribute('disabled')
+        document.getElementById("start-btn").removeAttribute('disabled')
     };
 
     const msToTime = (milli) => {
@@ -50,8 +51,8 @@ const initializeWsCnx = () => {
 const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 
 const startRecordingAsync = async () => {
-    document.getElementById("start").setAttribute('disabled', 'disabled');
-    document.getElementById("generate").removeAttribute('disabled')
+    document.getElementById("start-btn").setAttribute('disabled', 'disabled');
+    document.getElementById("generate-btn").removeAttribute('disabled')
 
     initializeWsCnx();
 
@@ -143,8 +144,8 @@ const endWsCnx = () => {
     );
 }
 
-const generate = async () => {
-    document.getElementById("generate").setAttribute('disabled', 'disabled');
+const generateNote = async () => {
+    document.getElementById("generate-btn").setAttribute('disabled', 'disabled');
     endWsCnx();
 
     // Await server closing the WS
@@ -163,6 +164,8 @@ const generate = async () => {
     mediaSource?.disconnect();
 
     await callDigest();
+    await normalizeNote();
+    document.getElementById("patient-instructions-btn").removeAttribute('disabled');
 }
 
 const callDigest = async () => {
@@ -179,11 +182,12 @@ const callDigest = async () => {
         })
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
         console.error('Error during note generation:', response.status, data);
     }
+
+    const data = await response.json();
+    generateNote = data.note;
 
     const note = document.getElementById("note");
     data.note.sections.forEach((section) => {
@@ -195,3 +199,77 @@ const callDigest = async () => {
         note.appendChild(text);
     })
 }
+
+const normalizeNote = async () => {
+    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/normalize', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+            note: generateNote,
+            note_locale: "en-US",
+        })
+    });
+
+    const data = await response.json();
+
+    const note = document.getElementById("note");
+
+    const normalizationTitle = document.createElement("h4");
+    normalizationTitle.innerHTML = "ICD10 Codes";
+    note.appendChild(normalizationTitle);
+
+    const p = document.createElement("p");
+    const list = document.createElement("ul");
+    data.past_medical_history.forEach((code) => {
+        const item = document.createElement("li");
+        item.innerHTML = code;
+        list.appendChild(item);
+    });
+    data.family_history.forEach((code) => {
+        const item = document.createElement("li");
+        item.innerHTML = code;
+        list.appendChild(item);
+    });
+    data.assessment.forEach((code) => {
+        const item = document.createElement("li");
+        item.innerHTML = code;
+        list.appendChild(item);
+    });
+    p.appendChild(list);
+    note.appendChild(p);
+}
+
+const generatePatientInstructions = async () => {
+    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/generate_patient_instructions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+            note: generateNote,
+            note_locale: "en-US",
+            instructions_locale: "en-US",
+            consultation_type: "IN_PERSON"
+        })
+    });
+
+    if (!response.ok) {
+        console.error('Error during note generation:', response.status, data);
+    }
+
+    const data = await response.json();
+
+    const patientInstructions = document.getElementById("patient-instructions");
+    const instructionsTitle = document.createElement("h4");
+    instructionsTitle.innerHTML = "Instructions: ";
+    patientInstructions.appendChild(instructionsTitle);
+
+    const text = document.createElement("p");
+    text.innerHTML = data.instructions;
+    patientInstructions.appendChild(text);
+}
+
