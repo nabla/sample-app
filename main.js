@@ -164,11 +164,11 @@ const generateNote = async () => {
     mediaSource?.disconnect();
 
     await callDigest();
-    await normalizeNote();
     document.getElementById("patient-instructions-btn").removeAttribute('disabled');
 }
 
 const callDigest = async () => {
+    const patientContext = document.getElementById("patientContext").value;
     const response = await fetch('https://api.nabla.com/v1/copilot-api/server/digest', {
         method: 'POST',
         headers: {
@@ -178,16 +178,18 @@ const callDigest = async () => {
         body: JSON.stringify({
             output_objects: ['note'],
             language: "en-US",
+            patient_context: patientContext,
             transcript_items: finalTranscriptItems.map((it) => ({ text: it, speaker: "unspecified" })),
         })
     });
 
     if (!response.ok) {
         console.error('Error during note generation:', response.status, data);
+        return;
     }
 
     const data = await response.json();
-    generateNote = data.note;
+    generatedNote = data.note;
 
     const note = document.getElementById("note");
     data.note.sections.forEach((section) => {
@@ -200,49 +202,9 @@ const callDigest = async () => {
     })
 }
 
-const normalizeNote = async () => {
-    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/normalize', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`
-        },
-        body: JSON.stringify({
-            note: generateNote,
-            note_locale: "en-US",
-        })
-    });
-
-    const data = await response.json();
-
-    const note = document.getElementById("note");
-
-    const normalizationTitle = document.createElement("h4");
-    normalizationTitle.innerHTML = "ICD10 Codes";
-    note.appendChild(normalizationTitle);
-
-    const p = document.createElement("p");
-    const list = document.createElement("ul");
-    data.past_medical_history.forEach((code) => {
-        const item = document.createElement("li");
-        item.innerHTML = code;
-        list.appendChild(item);
-    });
-    data.family_history.forEach((code) => {
-        const item = document.createElement("li");
-        item.innerHTML = code;
-        list.appendChild(item);
-    });
-    data.assessment.forEach((code) => {
-        const item = document.createElement("li");
-        item.innerHTML = code;
-        list.appendChild(item);
-    });
-    p.appendChild(list);
-    note.appendChild(p);
-}
-
 const generatePatientInstructions = async () => {
+    document.getElementById("patient-instructions-btn").setAttribute('disabled', 'disabled');
+
     const response = await fetch('https://api.nabla.com/v1/copilot-api/server/generate_patient_instructions', {
         method: 'POST',
         headers: {
@@ -250,7 +212,7 @@ const generatePatientInstructions = async () => {
             'Authorization': `Bearer ${API_KEY}`
         },
         body: JSON.stringify({
-            note: generateNote,
+            note: generatedNote,
             note_locale: "en-US",
             instructions_locale: "en-US",
             consultation_type: "IN_PERSON"
@@ -271,5 +233,6 @@ const generatePatientInstructions = async () => {
     const text = document.createElement("p");
     text.innerHTML = data.instructions;
     patientInstructions.appendChild(text);
+    document.getElementById("patient-instructions-btn").removeAttribute('disabled');
 }
 
