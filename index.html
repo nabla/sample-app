@@ -30,9 +30,15 @@
                 <option value="bullet_points">Bullet Points</option>
             </select>
         </div>
+        <div class="filters">
+            <label for="patientContext">Patient context</label>
+            <textarea id="patientContext"></textarea>
+        </div>
         <div>
-            <button id="start" onClick="startRecording()">Start consultation</button>
-            <button id="generate" onClick="generate()">Generate note</button>
+            <button id="start-btn" onClick="startRecording()">Start consultation</button>
+            <button id="generate-btn" onClick="generateNote()" disabled>Generate note</button>
+            <button id="patient-instructions-btn" onClick="generatePatientInstructions()" disabled>Generate patient
+                instructions</button>
         </div>
 
         <div id="transcript" class="listen-results">
@@ -42,6 +48,11 @@
 
         <div id="note" class="listen-results">
             <h3>Note:</h3>
+            <div></div>
+        </div>
+
+        <div id="patient-instructions" class="listen-results">
+            <h3>Patient Instructions:</h3>
             <div></div>
         </div>
     </div>

@@ -22,6 +22,9 @@ body {
 
 .filters {
     margin: 16px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
 }
 
 li {

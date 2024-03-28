@@ -1,4 +1,5 @@
 const API_KEY = "<YOUR_API_KEY>";
+let generatedNote = undefined;
 let websocket;
 let finalTranscriptItems = [];
 let audioContext;
@@ -19,7 +20,7 @@ const initializeWsCnx = () => {
         const transcript = document.getElementById("transcript");
         transcript.lastElementChild.innerHTML = "-----";
         transcript.appendChild(document.createElement("div"));
-        document.getElementById("start").removeAttribute('disabled')
+        document.getElementById("start-btn").removeAttribute('disabled')
     };
 
     const msToTime = (milli) => {
@@ -50,8 +51,8 @@ const initializeWsCnx = () => {
 const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 
 const startRecordingAsync = async () => {
-    document.getElementById("start").setAttribute('disabled', 'disabled');
-    document.getElementById("generate").removeAttribute('disabled')
+    document.getElementById("start-btn").setAttribute('disabled', 'disabled');
+    document.getElementById("generate-btn").removeAttribute('disabled')
 
     initializeWsCnx();
 
@@ -143,8 +144,8 @@ const endWsCnx = () => {
     );
 }
 
-const generate = async () => {
-    document.getElementById("generate").setAttribute('disabled', 'disabled');
+const generateNote = async () => {
+    document.getElementById("generate-btn").setAttribute('disabled', 'disabled');
     endWsCnx();
 
     // Await server closing the WS
@@ -163,9 +164,11 @@ const generate = async () => {
     mediaSource?.disconnect();
 
     await callDigest();
+    document.getElementById("patient-instructions-btn").removeAttribute('disabled');
 }
 
 const callDigest = async () => {
+    const patientContext = document.getElementById("patientContext").value;
     const response = await fetch('https://api.nabla.com/v1/copilot-api/server/digest', {
         method: 'POST',
         headers: {
@@ -175,15 +178,18 @@ const callDigest = async () => {
         body: JSON.stringify({
             output_objects: ['note'],
             language: "en-US",
+            patient_context: patientContext,
             transcript_items: finalTranscriptItems.map((it) => ({ text: it, speaker: "unspecified" })),
         })
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
         console.error('Error during note generation:', response.status, data);
+        return;
     }
+
+    const data = await response.json();
+    generatedNote = data.note;
 
     const note = document.getElementById("note");
     data.note.sections.forEach((section) => {
@@ -195,3 +201,38 @@ const callDigest = async () => {
         note.appendChild(text);
     })
 }
+
+const generatePatientInstructions = async () => {
+    document.getElementById("patient-instructions-btn").setAttribute('disabled', 'disabled');
+
+    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/generate_patient_instructions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+            note: generatedNote,
+            note_locale: "en-US",
+            instructions_locale: "en-US",
+            consultation_type: "IN_PERSON"
+        })
+    });
+
+    if (!response.ok) {
+        console.error('Error during note generation:', response.status, data);
+    }
+
+    const data = await response.json();
+
+    const patientInstructions = document.getElementById("patient-instructions");
+    const instructionsTitle = document.createElement("h4");
+    instructionsTitle.innerHTML = "Instructions: ";
+    patientInstructions.appendChild(instructionsTitle);
+
+    const text = document.createElement("p");
+    text.innerHTML = data.instructions;
+    patientInstructions.appendChild(text);
+    document.getElementById("patient-instructions-btn").removeAttribute('disabled');
+}
+
