@@ -30,3 +30,11 @@ body {
 li {
     list-style: none;
 }
+
+.temporary-item {
+    color: #606060;
+}
+
+.error {
+    color: red;
+}
