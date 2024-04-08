@@ -1,10 +1,11 @@
 const API_KEY = "<YOUR_API_KEY>";
 let generatedNote = undefined;
 let websocket;
-let finalTranscriptItems = [];
+let transcriptItems = {};
 let audioContext;
 let pcmWorker;
 let mediaSource;
+let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 
 const initializeWsCnx = () => {
@@ -34,12 +35,21 @@ const initializeWsCnx = () => {
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
             if (data.object === "transcript_item") {
-                const transcript = document.getElementById("transcript");
-                transcript.lastElementChild.innerHTML = `[${msToTime(data.start_offset_ms)} to ${msToTime(data.end_offset_ms)}]: ${data.text}`;
+                transcriptItems[data.id] = data.text;
+                const transcriptContent = `[${msToTime(data.start_offset_ms)} to ${msToTime(data.end_offset_ms)}]: ${data.text}`;
+                const transcriptDiv = document.getElementById("transcript");
+                let transcriptItem = document.getElementById(data.id)
+                if (!transcriptItem) {
+                    transcriptItem = document.createElement("div");
+                    transcriptItem.setAttribute("id", data.id);
+                    transcriptItem.classList.add("temporary-item");
+                    transcriptDiv.appendChild(transcriptItem);
+                }
+                transcriptItem.innerHTML = transcriptContent;
                 if (data.is_final) {
-                    // Create a new div for future transcript items
-                    transcript.appendChild(document.createElement("div"));
-                    finalTranscriptItems.push(data.text)
+                    transcriptItem.classList.remove("temporary-item")
+                } else if (transcriptItem.classList.contains("tempoary-item")) {
+                    transcriptItem.classList.add("temporary-item")
                 }
             } else if (data.object === "error_message") {
                 console.error(data.message);
@@ -163,8 +173,27 @@ const generateNote = async () => {
     mediaSource?.mediaStream.getTracks().forEach((track) => track.stop());
     mediaSource?.disconnect();
 
+    startThinking(document.getElementById("note"));
     await callDigest();
     document.getElementById("patient-instructions-btn").removeAttribute('disabled');
+}
+
+const startThinking = (parent) => {
+    const thinking = document.createElement("div");
+    thinking.setAttribute("id", "thinking");
+    let count = 0;
+    thinkingId = setInterval(() => {
+        const dots = ".".repeat(count % 3 + 1)
+        thinking.innerHTML = `Thinking${dots}`
+        count++;
+    }, 500);
+    parent.appendChild(thinking);
+}
+
+const stopThinking = (parent) => {
+    clearInterval(thinkingId);
+    const thinking = document.getElementById("thinking");
+    parent.removeChild(thinking);
 }
 
 const callDigest = async () => {
@@ -179,19 +208,27 @@ const callDigest = async () => {
             output_objects: ['note'],
             language: "en-US",
             patient_context: patientContext,
-            transcript_items: finalTranscriptItems.map((it) => ({ text: it, speaker: "unspecified" })),
+            transcript_items: Object.values(transcriptItems).map((it) => ({ text: it, speaker: "unspecified" })),
         })
     });
 
+    const note = document.getElementById("note");
+    stopThinking(note);
+
+
     if (!response.ok) {
-        console.error('Error during note generation:', response.status, data);
+        console.error('Error during note generation:', response.status);
+        const errData = await response.json();
+        const errText = document.createElement("p");
+        errText.classList.add("error");
+        errText.innerHTML = errData.message;
+        note.appendChild(errText)
         return;
     }
 
     const data = await response.json();
     generatedNote = data.note;
 
-    const note = document.getElementById("note");
     data.note.sections.forEach((section) => {
         const title = document.createElement("h4");
         title.innerHTML = section.title;
@@ -204,6 +241,8 @@ const callDigest = async () => {
 
 const generatePatientInstructions = async () => {
     document.getElementById("patient-instructions-btn").setAttribute('disabled', 'disabled');
+    const patientInstructions = document.getElementById("patient-instructions");
+    startThinking(patientInstructions);
 
     const response = await fetch('https://api.nabla.com/v1/copilot-api/server/generate_patient_instructions', {
         method: 'POST',
@@ -220,12 +259,12 @@ const generatePatientInstructions = async () => {
     });
 
     if (!response.ok) {
-        console.error('Error during note generation:', response.status, data);
+        console.error('Error during note generation:', response.status);
     }
 
     const data = await response.json();
 
-    const patientInstructions = document.getElementById("patient-instructions");
+    stopThinking(patientInstructions);
     const instructionsTitle = document.createElement("h4");
     instructionsTitle.innerHTML = "Instructions: ";
     patientInstructions.appendChild(instructionsTitle);
@@ -235,4 +274,3 @@ const generatePatientInstructions = async () => {
     patientInstructions.appendChild(text);
     document.getElementById("patient-instructions-btn").removeAttribute('disabled');
 }
-
