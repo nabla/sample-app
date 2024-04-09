@@ -42,13 +42,12 @@ const initializeWsCnx = () => {
                 if (!transcriptItem) {
                     transcriptItem = document.createElement("div");
                     transcriptItem.setAttribute("id", data.id);
-                    transcriptItem.classList.add("temporary-item");
                     transcriptDiv.appendChild(transcriptItem);
                 }
                 transcriptItem.innerHTML = transcriptContent;
                 if (data.is_final) {
                     transcriptItem.classList.remove("temporary-item")
-                } else if (transcriptItem.classList.contains("tempoary-item")) {
+                } else if (!transcriptItem.classList.contains("tempoary-item")) {
                     transcriptItem.classList.add("temporary-item")
                 }
             } else if (data.object === "error_message") {
