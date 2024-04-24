@@ -13,50 +13,83 @@
         <h1>My EHR</h1>
         <!-- Dropdowns for parameters -->
         <div class="filters">
-            <label for="noteTemplate">Note Template:</label>
-            <select id="noteTemplate">
-                <option value="GENERAL_MEDICINE">General Medicine</option>
-                <option value="CARDIOLOGY">Cardiology</option>
-                <option value="PSYCHIATRY">Psychiatry</option>
-                <option value="DIET">Diet</option>
-                <option value="PSYCHOLOGY">Psychology</option>
-                <option value="SOAP">SOAP</option>
-            </select>
+            <label class="switch">
+                <input id="dictation-switch" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <span>Dictated note</span>
+        </div>
+        <div class="encounter">
+            <div class="filters">
+                <label for="noteTemplate">Note Template:</label>
+                <select id="noteTemplate">
+                    <option value="GENERAL_MEDICINE">General Medicine</option>
+                    <option value="CARDIOLOGY">Cardiology</option>
+                    <option value="PSYCHIATRY">Psychiatry</option>
+                    <option value="DIET">Diet</option>
+                    <option value="PSYCHOLOGY">Psychology</option>
+                    <option value="SOAP">SOAP</option>
+                </select>
 
-            <label for="sectionStyle">Section Style:</label>
-            <select id="sectionStyle">
-                <option value="auto">Auto</option>
-                <option value="paragraphs">Paragraphs</option>
-                <option value="bullet_points">Bullet Points</option>
-            </select>
-        </div>
-        <div class="filters">
-            <label for="patientContext">Patient context</label>
-            <textarea id="patientContext"></textarea>
-        </div>
-        <div>
-            <button id="start-btn" onClick="startRecording()">Start consultation</button>
-            <button id="generate-btn" onClick="generateNote()" disabled>Generate note</button>
-            <button id="patient-instructions-btn" onClick="generatePatientInstructions()" disabled>Generate patient
-                instructions</button>
-        </div>
+                <label for="sectionStyle">Section Style:</label>
+                <select id="sectionStyle">
+                    <option value="auto">Auto</option>
+                    <option value="paragraphs">Paragraphs</option>
+                    <option value="bullet_points">Bullet Points</option>
+                </select>
+            </div>
+            <div class="filters">
+                <label for="patientContext">Patient context</label>
+                <textarea id="patientContext"></textarea>
+            </div>
 
-        <div id="transcript" class="listen-results">
-            <h3>Transcript:</h3>
-            <div></div>
-        </div>
 
-        <div id="note" class="listen-results">
-            <h3>Note:</h3>
-            <div></div>
-        </div>
+            <div>
+                <button id="start-btn" onClick="startRecording()">Start consultation</button>
+                <button id="generate-btn" onClick="generateNote()" disabled>Generate note</button>
+                <button id="patient-instructions-btn" onClick="generatePatientInstructions()" disabled>Generate patient
+                    instructions</button>
+                <button id="clear-btn" onclick="clearEncounter()">Clear</button>
+            </div>
+            <div id="transcript" class="results">
+                <h3>Transcript:</h3>
+            </div>
 
-        <div id="patient-instructions" class="listen-results">
-            <h3>Patient Instructions:</h3>
-            <div></div>
+            <div id="note" class="results">
+                <h3>Note:</h3>
+            </div>
+
+            <div id="patient-instructions" class="results">
+                <h3>Patient Instructions:</h3>
+            </div>
+        </div>
+        <div class="dictation hide">
+            <div class="filters">
+                <label for="dictationLocale">Dictation locale:</label>
+                <select id="dictationLocale">
+                    <option value="fr-FR">fr-FR</option>
+                    <option value="en-US">en-US</option>
+                    <option value="en-GB">en-GB</option>
+                    <option value="es-ES">es-ES</option>
+                    <option value="es-MX">es-MX</option>
+                </select>
+            </div>
+            <div class="filters">
+                <span style="margin-right: 8px;">Explicit Punctutation</span>
+                <label class="switch">
+                    <input id="punctuation-switch" type="checkbox" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div>
+                <button id="dictate-btn" onClick="startDictating()">Start</button>
+                <button id="pause-btn" onClick="pauseDictating()" disabled>Pause</button>
+            </div>
+            <div id="dictated-note" class="results">
+                <h3>Dictated note:</h3>
+            </div>
         </div>
     </div>
 </body>
-
 
 </html>
