@@ -64,6 +64,18 @@ select {
     color: red;
 }
 
+.active {
+    font-weight: bold;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    color: blue;
+}
+
 /* The switch - the box around the slider */
 .switch {
     padding: 0px !important;

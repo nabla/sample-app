@@ -584,27 +584,42 @@ const pauseDictating = async () => {
 }
 
 
-// Switch encounter / dictated notes ------------------------------------------
+// Switch ambient encounter / dictated note ------------------------------------------
 
-const toggleDictationMode = (e) => {
-    if (e.target.checked /* dictation mode */) {
-        for (let element of document.getElementsByClassName("encounter")) {
-            element.classList.add("hide");
-        }
-        for (let element of document.getElementsByClassName("dictation")) {
-            element.classList.remove("hide");
-        };
-    } else {
-        for (let element of document.getElementsByClassName("encounter")) {
-            element.classList.remove("hide");
-        }
+const showAmbientEncounter = () => {
+    let ambientEncounterLink = document.getElementById("ambient-encounter");
+    let dictatedNoteLink = document.getElementById("dictated-note");
+    if (ambientEncounterLink.className.match("active")) return;
 
-        for (let element of document.getElementsByClassName("dictation")) {
-            element.classList.add("hide");
-        }
+    ambientEncounterLink.classList.add("active");
+    dictatedNoteLink.classList.remove("active");
+
+    for (let element of document.getElementsByClassName("encounter")) {
+        element.classList.remove("hide");
+    }
+    for (let element of document.getElementsByClassName("dictation")) {
+        element.classList.add("hide");
+    };
+}
+
+const showDictatedNote = () => {
+    let ambientEncounterLink = document.getElementById("ambient-encounter");
+    let dictatedNoteLink = document.getElementById("dictated-note");
+    if (dictatedNoteLink.className.match("active")) return;
+
+    ambientEncounterLink.classList.remove("active");
+    dictatedNoteLink.classList.add("active");
+
+    for (let element of document.getElementsByClassName("encounter")) {
+        element.classList.add("hide");
+    }
+
+    for (let element of document.getElementsByClassName("dictation")) {
+        element.classList.remove("hide");
     }
 }
 
 window.onload = () => {
-    document.getElementById("dictation-switch").addEventListener("change", toggleDictationMode);
+    document.getElementById("ambient-encounter").addEventListener("click", showAmbientEncounter);
+    document.getElementById("dictated-note").addEventListener("click", showDictatedNote);
 }
