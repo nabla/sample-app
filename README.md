@@ -1,4 +1,4 @@
-This code is a simple web application that integrates the [Copilot API](https://www.nabla.com/). 
+This code is a simple web application that integrates the [Nabla API](https://www.nabla.com/). 
 
 To test it on your machine:
 - First you need an API key. To get one, go to the [Console to create an organization](https://pro.nabla.com/copilot-api-signup) and create a Server API Key in API Keys.
