@@ -20,9 +20,27 @@
             <span>Dictated note</span>
         </div>
         <div class="encounter">
+            <div class="filter">
+                <label for="transcript-locale">Transcript locale:</label>
+                <select id="transcript-locale">
+                    <option value="en-US">en-US</option>
+                    <option value="en-GB">en-GB</option>
+                    <option value="fr-FR">fr-FR</option>
+                    <option value="es-ES">es-ES</option>
+                    <option value="es-MX">es-MX</option>
+                </select>
+                <label for="note-locale">Note locale:</label>
+                <select id="note-locale">
+                    <option value="en-US">en-US</option>
+                    <option value="en-GB">en-GB</option>
+                    <option value="fr-FR">fr-FR</option>
+                    <option value="es-ES">es-ES</option>
+                    <option value="es-MX">es-MX</option>
+                </select>
+            </div>
             <div class="filters">
-                <label for="noteTemplate">Note Template:</label>
-                <select id="noteTemplate">
+                <label for="note-template">Note Template:</label>
+                <select id="note-template">
                     <option value="GENERAL_MEDICINE">General Medicine</option>
                     <option value="CARDIOLOGY">Cardiology</option>
                     <option value="PSYCHIATRY">Psychiatry</option>
@@ -30,17 +48,18 @@
                     <option value="PSYCHOLOGY">Psychology</option>
                     <option value="SOAP">SOAP</option>
                 </select>
-
-                <label for="sectionStyle">Section Style:</label>
-                <select id="sectionStyle">
+                <label for="section-style">Section Style:</label>
+                <select id="section-style">
                     <option value="auto">Auto</option>
                     <option value="paragraphs">Paragraphs</option>
                     <option value="bullet_points">Bullet Points</option>
                 </select>
+
+
             </div>
             <div class="filters">
-                <label for="patientContext">Patient context</label>
-                <textarea id="patientContext"></textarea>
+                <label for="patient-context">Patient context</label>
+                <textarea id="patient-context"></textarea>
             </div>
 
 
@@ -67,9 +86,9 @@
             <div class="filters">
                 <label for="dictationLocale">Dictation locale:</label>
                 <select id="dictationLocale">
-                    <option value="fr-FR">fr-FR</option>
                     <option value="en-US">en-US</option>
                     <option value="en-GB">en-GB</option>
+                    <option value="fr-FR">fr-FR</option>
                     <option value="es-ES">es-ES</option>
                     <option value="es-MX">es-MX</option>
                 </select>

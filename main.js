@@ -7,7 +7,6 @@ let pcmWorker;
 let mediaSource;
 let mediaStream
 let thinkingId;
-let processing = false;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 
 
@@ -192,8 +191,7 @@ const initializeTranscriptConnection = () => {
 
 const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 
-const startRecordingAsync = async () => {
-    disableElementById("start-btn");
+const startRecording = async () => {
     enableElementById("generate-btn");
 
     initializeTranscriptConnection();
@@ -224,7 +222,7 @@ const startRecordingAsync = async () => {
             output_objects: ["transcript_item"],
             encoding: "pcm_s16le",
             sample_rate: 16000,
-            language: "en-US",
+            language: getTranscriptLocale(),
             streams: [
                 { id: "stream1", speaker_type: "unspecified" },
             ],
@@ -238,14 +236,9 @@ const startRecordingAsync = async () => {
     }
 }
 
-const startRecording = () => {
-    disableElementById("dictation-switch");
-    startRecordingAsync()
-        .then()
-        .catch((err) => {
-            console.log(err)
-        });
-}
+const getTranscriptLocale = () => (
+    document.getElementById("transcript-locale")?.selectedOptions[0]?.value ?? "en-US"
+)
 
 const generateNote = async () => {
     disableElementById("generate-btn");
@@ -253,14 +246,21 @@ const generateNote = async () => {
     stopAudio();
     await endConnection({ object: "end" });
 
-    startThinking(document.getElementById("note"));
-    await callDigest();
+    resetNoteContent();
+    await digest();
+    await generateNormalizedData();
 
+    enableElementById("generate-btn");
     enableElementById("patient-instructions-btn");
 }
 
-const callDigest = async () => {
-    const patientContext = document.getElementById("patientContext").value;
+const resetNoteContent = () => {
+    const noteContainer = document.getElementById("note")
+    noteContainer.innerHTML = "<h3>Note:</h3>";
+}
+
+const digest = async () => {
+    startThinking(document.getElementById("note"));
     const response = await fetch('https://api.nabla.com/v1/copilot-api/server/digest', {
         method: 'POST',
         headers: {
@@ -269,8 +269,10 @@ const callDigest = async () => {
         },
         body: JSON.stringify({
             output_objects: ['note'],
-            language: "en-US",
-            patient_context: patientContext,
+            section_style: getNoteSectionStyle(),
+            note_template: getNoteTemplate(),
+            language: getNoteLanguage(),
+            patient_context: getPatientContext(),
             transcript_items: Object.values(transcriptItems).map((it) => ({ text: it, speaker: "unspecified" })),
         })
     });
@@ -299,7 +301,98 @@ const callDigest = async () => {
         note.appendChild(title);
         note.appendChild(text);
     })
-    enableElementById("dictation-switch");
+}
+
+const getNoteSectionStyle = () => (
+    document.getElementById("section-style")?.selectedOptions[0]?.value ?? "auto"
+)
+
+const getNoteTemplate = () => (
+    document.getElementById("note-template")?.selectedOptions[0]?.value ?? "GENERAL_MEDICINE"
+)
+
+const getPatientContext = () => (
+    document.getElementById("patient-context")?.value
+)
+
+const getNoteLanguage = () => (
+    document.getElementById("note-locale")?.selectedOptions[0]?.value ?? "en-US"
+)
+
+const generateNormalizedData = async () => {
+    startThinking(document.getElementById("note"));
+
+    const note = document.getElementById("note");
+
+    const note_locale = getNoteLanguage();
+    if (["es-ES", "es-MX"].includes(note_locale)) {
+        const errorMessage = document.createElement("p");
+        errorMessage.classList.add("error");
+        errorMessage.innerText = "Normalized data are only available for note with locale fr-FR, en-US, en-GB"
+        note.appendChild(errorMessage)
+        return;
+    }
+
+    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/generate_normalized_data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY} `
+        },
+        body: JSON.stringify({
+            note: generatedNote,
+            note_locale
+        })
+    });
+
+    stopThinking(note);
+
+    if (!response.ok) {
+        console.error('Error during normalized data generation:', response.status);
+        const errData = await response.json();
+        const errText = document.createElement("p");
+        errText.classList.add("error");
+        errText.innerHTML = errData.message;
+        note.appendChild(errText);
+        return;
+    }
+
+    const data = await response.json();
+
+    const title = document.createElement("h4");
+    title.innerHTML = "Normalized Data";
+    note.appendChild(title);
+
+    const conditionTitle = document.createElement("span");
+    conditionTitle.innerHTML = "<u>Conditions:</u>";
+    note.appendChild(conditionTitle);
+
+    addConditions(data.conditions, note);
+
+    const familyHistoryTitle = document.createElement("span");
+    familyHistoryTitle.innerHTML = "<u>Family history:</u>";
+    note.appendChild(familyHistoryTitle);
+
+    const historyList = document.createElement("ul");
+    data.family_history.forEach((member) => {
+        const memberListItem = document.createElement("li");
+        const relationship = document.createElement("span");
+        relationship.innerText = member.relationship;
+        memberListItem.appendChild(relationship);
+        addConditions(member.conditions, memberListItem);
+        historyList.appendChild(memberListItem);
+    })
+    note.appendChild(historyList);
+}
+
+const addConditions = (conditions, parent) => {
+    const conditionsList = document.createElement("ul");
+    conditions.forEach((condition) => {
+        const element = document.createElement("li");
+        element.innerHTML = `<u>${condition.coding.display.toUpperCase()} (${condition.coding.code})</u><br />Clinical status: ${condition.clinical_status}<br />Categories: [${condition.categories.join()}]`
+        conditionsList.appendChild(element);
+    })
+    parent.appendChild(conditionsList)
 }
 
 const generatePatientInstructions = async () => {
