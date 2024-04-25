@@ -6,4 +6,4 @@ To test it on your machine:
 - Then, you just need to run a http static server.  
   For instance, if Node.js is installed on your machine, you can run `npx http-server .` and open http://127.0.0.1:8080/
 
-You'll find more information about Nabla APIs on our [documentation](https://docs.nabla.com)
+To find more information about the Nabla API, check out our [documentation](https://docs.nabla.com).
