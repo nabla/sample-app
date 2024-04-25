@@ -11,4 +11,4 @@ npx http-server .
 ```
 and browse http://127.0.0.1:8080/
 
-You'll find more information about Nabla APIs on our [documentation](https://docs.nabla.com/reference/copilot-listen)
+You'll find more information about Nabla APIs on our [documentation](https://docs.nabla.com)
