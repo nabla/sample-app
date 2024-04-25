@@ -36,6 +36,7 @@
                     <option value="fr-FR">fr-FR</option>
                 </select>
             </div>
+
             <div class="filters">
                 <label for="note-template">Note template:</label>
                 <select id="note-template">
@@ -53,6 +54,7 @@
                     <option value="bullet_points">Bullet Points</option>
                 </select>
             </div>
+
             <div class="filters">
                 <label for="patient-context">Patient context:</label>
                 <textarea id="patient-context"></textarea>
@@ -66,6 +68,7 @@
                     instructions</button>
                 <button id="clear-btn" onclick="clearEncounter()">Clear</button>
             </div>
+
             <div id="transcript" class="results">
                 <h3>Transcript:</h3>
             </div>
@@ -90,6 +93,7 @@
                     <option value="es-MX">es-MX</option>
                 </select>
             </div>
+
             <div class="filters">
                 <span style="margin-right: 8px;">Explicit punctutation:</span>
                 <label class="switch">
@@ -97,10 +101,12 @@
                     <span class="slider round"></span>
                 </label>
             </div>
+
             <div>
                 <button id="dictate-btn" onClick="startDictating()">Start</button>
                 <button id="pause-btn" onClick="pauseDictating()" disabled>Pause</button>
             </div>
+
             <div id="dictated-note" class="results">
                 <h3>Dictated note:</h3>
             </div>
