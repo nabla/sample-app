@@ -66,6 +66,7 @@
             <div>
                 <button id="start-btn" onClick="startRecording()">Start consultation</button>
                 <button id="generate-btn" onClick="generateNote()" disabled>Generate note</button>
+                <button id="normalize-btn" onClick="generateNormalizedData()" disabled>Generate normalized data</button>
                 <button id="patient-instructions-btn" onClick="generatePatientInstructions()" disabled>Generate patient
                     instructions</button>
                 <button id="clear-btn" onclick="clearEncounter()">Clear</button>
@@ -73,11 +74,12 @@
             <div id="transcript" class="results">
                 <h3>Transcript:</h3>
             </div>
-
             <div id="note" class="results">
                 <h3>Note:</h3>
             </div>
-
+            <div id="normalized-data" class="results">
+                <h3>Normalized data:</h3>
+            </div>
             <div id="patient-instructions" class="results">
                 <h3>Patient Instructions:</h3>
             </div>

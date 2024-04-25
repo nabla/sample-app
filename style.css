@@ -43,7 +43,8 @@ body {
 }
 
 li {
-    list-style: none;
+    list-style: disc;
+    margin-bottom: 8px;
 }
 
 button {

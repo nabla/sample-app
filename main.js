@@ -135,6 +135,38 @@ const insertElementByStartOffset = (element, parentElement) => {
 
 // Transcript -----------------------------------------------------------------
 
+// Utilities
+
+const disableAll = () => {
+    disableElementById("start-btn");
+    disableElementById("generate-btn");
+    disableElementById("normalize-btn");
+    disableElementById("patient-instructions-btn");
+}
+
+const enableAll = () => {
+    enableElementById("start-btn");
+    enableElementById("generate-btn");
+    enableElementById("normalize-btn");
+    enableElementById("patient-instructions-btn");
+}
+
+const clearTranscript = () => {
+    document.getElementById("transcript").innerHTML = "<h3>Transcript:</h3>";
+}
+
+const clearNoteContent = () => {
+    document.getElementById("note").innerHTML = "<h3>Note:</h3>";
+}
+
+const clearPatientInstructions = () => {
+    document.getElementById("patient-instructions").innerHTML = "<h3>Patient instructions:</h3>";
+}
+
+const clearNormalizedData = () => {
+    document.getElementById("normalized-data").innerHTML = "<h3>Normalized data:</h3>";
+}
+
 const msToTime = (milli) => {
     const seconds = Math.floor((milli / 1000) % 60);
     const minutes = Math.floor((milli / (60 * 1000)) % 60);
@@ -241,22 +273,15 @@ const getTranscriptLocale = () => (
 )
 
 const generateNote = async () => {
-    disableElementById("generate-btn");
+    disableAll();
 
     stopAudio();
     await endConnection({ object: "end" });
 
-    resetNoteContent();
+    clearNoteContent();
     await digest();
-    await generateNormalizedData();
 
-    enableElementById("generate-btn");
-    enableElementById("patient-instructions-btn");
-}
-
-const resetNoteContent = () => {
-    const noteContainer = document.getElementById("note")
-    noteContainer.innerHTML = "<h3>Note:</h3>";
+    enableAll();
 }
 
 const digest = async () => {
@@ -320,9 +345,10 @@ const getNoteLanguage = () => (
 )
 
 const generateNormalizedData = async () => {
-    startThinking(document.getElementById("note"));
-
-    const note = document.getElementById("note");
+    disableAll();
+    clearNormalizedData();
+    const normalizationContainer = document.getElementById("normalized-data");
+    startThinking(normalizationContainer);
 
     const note_locale = getNoteLanguage();
     if (["es-ES", "es-MX"].includes(note_locale)) {
@@ -345,7 +371,7 @@ const generateNormalizedData = async () => {
         })
     });
 
-    stopThinking(note);
+    stopThinking(normalizationContainer);
 
     if (!response.ok) {
         console.error('Error during normalized data generation:', response.status);
@@ -353,25 +379,21 @@ const generateNormalizedData = async () => {
         const errText = document.createElement("p");
         errText.classList.add("error");
         errText.innerHTML = errData.message;
-        note.appendChild(errText);
+        normalizationContainer.appendChild(errText);
         return;
     }
 
     const data = await response.json();
 
-    const title = document.createElement("h4");
-    title.innerHTML = "Normalized Data";
-    note.appendChild(title);
+    const conditionTitle = document.createElement("h4");
+    conditionTitle.innerHTML = "Conditions:";
+    normalizationContainer.appendChild(conditionTitle);
 
-    const conditionTitle = document.createElement("span");
-    conditionTitle.innerHTML = "<u>Conditions:</u>";
-    note.appendChild(conditionTitle);
+    addConditions(data.conditions, normalizationContainer);
 
-    addConditions(data.conditions, note);
-
-    const familyHistoryTitle = document.createElement("span");
-    familyHistoryTitle.innerHTML = "<u>Family history:</u>";
-    note.appendChild(familyHistoryTitle);
+    const familyHistoryTitle = document.createElement("h4");
+    familyHistoryTitle.innerHTML = "Family history:";
+    normalizationContainer.appendChild(familyHistoryTitle);
 
     const historyList = document.createElement("ul");
     data.family_history.forEach((member) => {
@@ -382,21 +404,27 @@ const generateNormalizedData = async () => {
         addConditions(member.conditions, memberListItem);
         historyList.appendChild(memberListItem);
     })
-    note.appendChild(historyList);
+    normalizationContainer.appendChild(historyList);
+
+    enableAll();
 }
 
 const addConditions = (conditions, parent) => {
     const conditionsList = document.createElement("ul");
     conditions.forEach((condition) => {
         const element = document.createElement("li");
-        element.innerHTML = `<u>${condition.coding.display.toUpperCase()} (${condition.coding.code})</u><br />Clinical status: ${condition.clinical_status}<br />Categories: [${condition.categories.join()}]`
+        element.innerHTML = `${condition.coding.display.toUpperCase()} (${condition.coding.code})<br /><u>Clinical status:</u> ${condition.clinical_status}<br />`;
+        if (condition.categories.length > 0) {
+            element.innerHTML += "<u>Categories:</u> [${ condition.categories.join() }]";
+        }
         conditionsList.appendChild(element);
     })
-    parent.appendChild(conditionsList)
+    parent.appendChild(conditionsList);
 }
 
 const generatePatientInstructions = async () => {
-    disableElementById("patient-instructions-btn");
+    clearPatientInstructions();
+    disableAll();
     const patientInstructions = document.getElementById("patient-instructions");
     startThinking(patientInstructions);
 
@@ -428,18 +456,20 @@ const generatePatientInstructions = async () => {
     const text = document.createElement("p");
     text.innerHTML = data.instructions;
     patientInstructions.appendChild(text);
-    enableElementById("patient-instructions-btn");
+    enableAll();
 }
 
 const clearEncounter = async () => {
     disableElementById("start-btn");
-    disableElementById("generate-btn");
-    disableElementById("patient-instructions-btn");
+    disableAll();
     stopAudio();
     await endConnection({ object: "end" });
-    document.getElementById("transcript").innerHTML = "<h3>Transcript:</h3>";
+    clearNoteContent();
+    clearNormalizedData();
+    clearPatientInstructions();
+    clearTranscript();
     enableElementById("start-btn");
-    enableElementById("dictation-switch");
+    enableAll();
 }
 
 
