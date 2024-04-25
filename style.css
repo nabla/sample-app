@@ -76,7 +76,7 @@ a:visited {
     color: blue;
 }
 
-/* The switch - the box around the slider */
+/* Switch: box around the slider */
 .switch {
     padding: 0px !important;
     position: relative;
@@ -92,7 +92,7 @@ a:visited {
     height: 0;
 }
 
-/* The slider */
+/* Slider */
 .slider {
     position: absolute;
     cursor: pointer;
@@ -131,7 +131,7 @@ input:checked+.slider:before {
     transform: translateX(18px);
 }
 
-/* Rounded sliders */
+/* Rounded slider */
 .slider.round {
     border-radius: 26px;
 }
