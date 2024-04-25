@@ -26,6 +26,10 @@ body {
     white-space: pre-wrap;
 }
 
+.results>p {
+    white-space: pre-wrap;
+}
+
 .filters {
     margin: 16px 0px;
     display: flex;
@@ -39,7 +43,8 @@ body {
 }
 
 li {
-    list-style: none;
+    list-style: disc;
+    margin-bottom: 8px;
 }
 
 button {
