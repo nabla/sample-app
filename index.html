@@ -34,8 +34,6 @@
                     <option value="en-US">en-US</option>
                     <option value="en-GB">en-GB</option>
                     <option value="fr-FR">fr-FR</option>
-                    <option value="es-ES">es-ES</option>
-                    <option value="es-MX">es-MX</option>
                 </select>
             </div>
             <div class="filters">
@@ -65,9 +63,9 @@
 
             <div>
                 <button id="start-btn" onClick="startRecording()">Start consultation</button>
-                <button id="generate-btn" onClick="generateNote()" disabled>Generate note</button>
-                <button id="normalize-btn" onClick="generateNormalizedData()" disabled>Generate normalized data</button>
-                <button id="patient-instructions-btn" onClick="generatePatientInstructions()" disabled>Generate patient
+                <button id="generate-btn" onClick="generateNote()">Generate note</button>
+                <button id="normalize-btn" onClick="generateNormalizedData()">Generate normalized data</button>
+                <button id="patient-instructions-btn" onClick="generatePatientInstructions()">Generate patient
                     instructions</button>
                 <button id="clear-btn" onclick="clearEncounter()">Clear</button>
             </div>
@@ -81,7 +79,7 @@
                 <h3>Normalized data:</h3>
             </div>
             <div id="patient-instructions" class="results">
-                <h3>Patient Instructions:</h3>
+                <h3>Patient instructions:</h3>
             </div>
         </div>
         <div class="dictation hide">

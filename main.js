@@ -273,6 +273,8 @@ const getTranscriptLocale = () => (
 )
 
 const generateNote = async () => {
+    if (Object.keys(transcriptItems).length === 0) return;
+
     disableAll();
 
     stopAudio();
@@ -345,6 +347,8 @@ const getNoteLanguage = () => (
 )
 
 const generateNormalizedData = async () => {
+    if (!generatedNote) return;
+
     disableAll();
     clearNormalizedData();
     const normalizationContainer = document.getElementById("normalized-data");
@@ -423,6 +427,8 @@ const addConditions = (conditions, parent) => {
 }
 
 const generatePatientInstructions = async () => {
+    if (!generatedNote) return;
+
     clearPatientInstructions();
     disableAll();
     const patientInstructions = document.getElementById("patient-instructions");
@@ -580,8 +586,6 @@ const pauseDictating = async () => {
 // Switch encounter / dictated notes ------------------------------------------
 
 const toggleDictationMode = (e) => {
-    if (processing) return;
-
     if (e.target.checked /* dictation mode */) {
         for (let element of document.getElementsByClassName("encounter")) {
             element.classList.add("hide");
