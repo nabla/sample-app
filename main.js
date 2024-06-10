@@ -587,8 +587,8 @@ const pauseDictating = async () => {
 // Switch ambient encounter / dictated note ------------------------------------------
 
 const showAmbientEncounter = () => {
-    let ambientEncounterLink = document.getElementById("ambient-encounter");
-    let dictatedNoteLink = document.getElementById("dictated-note");
+    let ambientEncounterLink = document.getElementById("ambient-encounter-link");
+    let dictatedNoteLink = document.getElementById("dictated-note-link");
     if (ambientEncounterLink.className.match("active")) return;
 
     ambientEncounterLink.classList.add("active");
@@ -603,8 +603,8 @@ const showAmbientEncounter = () => {
 }
 
 const showDictatedNote = () => {
-    let ambientEncounterLink = document.getElementById("ambient-encounter");
-    let dictatedNoteLink = document.getElementById("dictated-note");
+    let ambientEncounterLink = document.getElementById("ambient-encounter-link");
+    let dictatedNoteLink = document.getElementById("dictated-note-link");
     if (dictatedNoteLink.className.match("active")) return;
 
     ambientEncounterLink.classList.remove("active");
@@ -620,6 +620,6 @@ const showDictatedNote = () => {
 }
 
 window.onload = () => {
-    document.getElementById("ambient-encounter").addEventListener("click", showAmbientEncounter);
-    document.getElementById("dictated-note").addEventListener("click", showDictatedNote);
+    document.getElementById("ambient-encounter-link").addEventListener("click", showAmbientEncounter);
+    document.getElementById("dictated-note-link").addEventListener("click", showDictatedNote);
 }
