@@ -265,9 +265,9 @@ const initializeTranscriptConnection = async () => {
         if (websocket.readyState !== WebSocket.OPEN) return;
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.type === "transcript_item") {
+            if (data.type === "TRANSCRIPT_ITEM") {
                 insertTranscriptItem(data);
-            } else if (data.type === "error_message") {
+            } else if (data.type === "ERROR_MESSAGE") {
                 console.error(data.message);
             }
         }
@@ -296,7 +296,7 @@ const startRecording = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         await initializeMediaStream((audioAsBase64String) => {
             return JSON.stringify({
-                type: "audio_chunk",
+                type: "AUDIO_CHUNK",
                 payload: audioAsBase64String,
                 stream_id: "stream1",
             })
@@ -330,7 +330,7 @@ const generateNote = async () => {
     disableAll();
 
     stopAudio();
-    await endConnection({ type: "end" });
+    await endConnection({ type: "END" });
 
     clearNoteContent();
     await digest();
@@ -520,7 +520,7 @@ const clearEncounter = async () => {
     disableElementById("start-btn");
     disableAll();
     stopAudio();
-    await endConnection({ type: "end" });
+    await endConnection({ type: "END" });
     clearNoteContent();
     clearNormalizedData();
     clearPatientInstructions();
@@ -567,9 +567,9 @@ const initializeDictationConnection = async () => {
         }
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.type === "dictation_item") {
+            if (data.type === "DICTATION_ITEM") {
                 insertedDictatedItem(data);
-            } else if (data.type === "error_message") {
+            } else if (data.type === "ERROR_MESSAGE") {
                 console.error(data.message);
             }
         }
@@ -606,7 +606,7 @@ const startDictating = async () => {
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
-            type: "audio_chunk",
+            type: "AUDIO_CHUNK",
             payload: audioAsBase64String,
         })));
 
@@ -630,7 +630,7 @@ const startDictating = async () => {
 const pauseDictating = async () => {
     disableElementById("pause-btn");
     stopAudio();
-    await endConnection({ type: "end" });
+    await endConnection({ type: "END" });
     enableElementById("dictate-btn");
 }
 
