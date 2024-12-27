@@ -253,8 +253,8 @@ const initializeTranscriptConnection = async () => {
     // we rely on this alternative authentication mechanism.
     const bearerToken = await getOrRefetchServerAccessToken();
     websocket = new WebSocket(
-        `wss://${REGION}.api.nabla.com/v1/copilot-api/server/listen-ws`,
-        ["copilot-listen-protocol", "jwt-" + bearerToken],
+        `wss://${REGION}.api.nabla.com/v1/core/server/transcribe-ws`,
+        ["transcribe-protocol", "jwt-" + bearerToken],
     );
 
     websocket.onclose = (e) => {
@@ -265,9 +265,9 @@ const initializeTranscriptConnection = async () => {
         if (websocket.readyState !== WebSocket.OPEN) return;
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.object === "transcript_item") {
+            if (data.type === "transcript_item") {
                 insertTranscriptItem(data);
-            } else if (data.object === "error_message") {
+            } else if (data.type === "error_message") {
                 console.error(data.message);
             }
         }
@@ -296,18 +296,17 @@ const startRecording = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         await initializeMediaStream((audioAsBase64String) => {
             return JSON.stringify({
-                object: "audio_chunk",
+                type: "audio_chunk",
                 payload: audioAsBase64String,
                 stream_id: "stream1",
             })
         })
 
         const config = {
-            object: "listen_config",
-            output_objects: ["transcript_item"],
-            encoding: "pcm_s16le",
+            type: "CONFIG",
+            encoding: "PCM_S16LE",
             sample_rate: 16000,
-            language: getTranscriptLocale(),
+            speech_locale: getTranscriptLocale(),
             streams: [
                 { id: "stream1", speaker_type: "unspecified" },
             ],
@@ -322,7 +321,7 @@ const startRecording = async () => {
 }
 
 const getTranscriptLocale = () => (
-    document.getElementById("transcript-locale")?.selectedOptions[0]?.value ?? "en-US"
+    document.getElementById("transcript-locale")?.selectedOptions[0]?.value ?? "ENGLISH_US"
 )
 
 const generateNote = async () => {
@@ -331,7 +330,7 @@ const generateNote = async () => {
     disableAll();
 
     stopAudio();
-    await endConnection({ object: "end" });
+    await endConnection({ type: "end" });
 
     clearNoteContent();
     await digest();
@@ -342,19 +341,17 @@ const generateNote = async () => {
 const digest = async () => {
     startThinking(document.getElementById("note"));
     const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/copilot-api/server/digest`, {
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-note`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${bearerToken}`
         },
         body: JSON.stringify({
-            output_objects: ['note'],
-            section_style: getNoteSectionStyle(),
             note_template: getNoteTemplate(),
-            language: getNoteLanguage(),
+            note_locale: getNoteLanguage(),
             patient_context: getPatientContext(),
-            transcript_items: Object.values(transcriptItems).map((it) => ({ text: it, speaker: "unspecified" })),
+            transcript_items: Object.values(transcriptItems).map((it) => ({ text: it, speaker_type: "unspecified" })),
         })
     });
 
@@ -384,12 +381,8 @@ const digest = async () => {
     })
 }
 
-const getNoteSectionStyle = () => (
-    document.getElementById("section-style")?.selectedOptions[0]?.value ?? "auto"
-)
-
 const getNoteTemplate = () => (
-    document.getElementById("note-template")?.selectedOptions[0]?.value ?? "GENERAL_MEDICINE"
+    document.getElementById("note-template")?.selectedOptions[0]?.value ?? "GENERIC_MULTIPLE_SECTIONS"
 )
 
 const getPatientContext = () => (
@@ -397,7 +390,7 @@ const getPatientContext = () => (
 )
 
 const getNoteLanguage = () => (
-    document.getElementById("note-locale")?.selectedOptions[0]?.value ?? "en-US"
+    document.getElementById("note-locale")?.selectedOptions[0]?.value ?? "ENGLISH_US"
 )
 
 const generateNormalizedData = async () => {
@@ -409,16 +402,16 @@ const generateNormalizedData = async () => {
     startThinking(normalizationContainer);
 
     const note_locale = getNoteLanguage();
-    if (["es-ES", "es-MX"].includes(note_locale)) {
+    if (["SPANISH_ES", "SPANISH_MX"].includes(note_locale)) {
         const errorMessage = document.createElement("p");
         errorMessage.classList.add("error");
-        errorMessage.innerText = "Normalized data are only available for note with locale fr-FR, en-US, en-GB"
+        errorMessage.innerText = "Normalized data are only available for note with locale FRENCH, ENGLISH_US, ENGLISH_UK"
         note.appendChild(errorMessage)
         return;
     }
 
     const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/copilot-api/server/generate_normalized_data`, {
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-normalized-data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -426,6 +419,7 @@ const generateNormalizedData = async () => {
         },
         body: JSON.stringify({
             note: generatedNote,
+            note_template: getNoteTemplate(),
             note_locale
         })
     });
@@ -490,7 +484,7 @@ const generatePatientInstructions = async () => {
     startThinking(patientInstructions);
 
     const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/copilot-api/server/generate_patient_instructions`, {
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-patient-instructions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -498,8 +492,9 @@ const generatePatientInstructions = async () => {
         },
         body: JSON.stringify({
             note: generatedNote,
-            note_locale: "en-US",
-            instructions_locale: "en-US",
+            note_locale: "ENGLISH_US",
+            note_template: getNoteTemplate(),
+            instructions_locale: "ENGLISH_US",
             consultation_type: "IN_PERSON"
         })
     });
@@ -525,7 +520,7 @@ const clearEncounter = async () => {
     disableElementById("start-btn");
     disableAll();
     stopAudio();
-    await endConnection({ object: "end" });
+    await endConnection({ type: "end" });
     clearNoteContent();
     clearNormalizedData();
     clearPatientInstructions();
@@ -557,7 +552,7 @@ const insertedDictatedItem = (data) => {
 const initializeDictationConnection = async () => {
     const bearerToken = await getOrRefetchServerAccessToken();
     websocket = new WebSocket(
-        `wss://${REGION}.api.nabla.com/v1/copilot-api/server/dictate-ws`,
+        `wss://${REGION}.api.nabla.com/v1/core/server/dictate-ws`,
         ["copilot-dictate-protocol", "jwt-" + bearerToken]
     );
 
@@ -574,7 +569,7 @@ const initializeDictationConnection = async () => {
             const data = JSON.parse(mes.data);
             if (data.type === "dictation_item") {
                 insertedDictatedItem(data);
-            } else if (data.object === "error_message") {
+            } else if (data.type === "error_message") {
                 console.error(data.message);
             }
         }
@@ -585,7 +580,7 @@ const getDictationLocale = () => {
     const dictationLocaleSelect = document.getElementById("dictationLocale");
     return dictationLocaleSelect.selectedOptions && dictationLocaleSelect.selectedOptions.length > 0
         ? dictationLocaleSelect.selectedOptions[0].value
-        : "en-US";
+        : "ENGLISH_US";
 }
 
 const isPunctuationExplicit = () => {
@@ -617,8 +612,8 @@ const startDictating = async () => {
 
         const locale = getDictationLocale();
         const config = {
-            type: "dictate_config",
-            encoding: "pcm_s16le",
+            type: "CONFIG",
+            encoding: "PCM_S16LE",
             sample_rate: 16000,
             locale,
             dictate_punctuation: isPunctuationExplicit(),
