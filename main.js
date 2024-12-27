@@ -1,4 +1,6 @@
-const API_KEY = "<YOUR_API_KEY>";
+const OAUTH_CLIENT_UUID = "<YOUR_OAUTH_CLIENT_UUID>"
+const OAUTH_CLIENT_PRIVATE_KEY = "<YOUR_OAUTH_CLIENT_PRIVATE_KEY>"
+const REGION = "<YOUR_REGION>" // "us" or "eu"
 let generatedNote = undefined;
 let websocket;
 let transcriptItems = {};
@@ -9,6 +11,57 @@ let mediaStream
 let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 
+// Authentication utilities
+
+const fetchServerAccessToken = async () => {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const assertionHeader = {
+        alg: "RS256",
+        typ: "JWT",
+    };
+    const payload = {
+        sub: OAUTH_CLIENT_UUID,
+        iss: OAUTH_CLIENT_UUID,
+        aud: `https://${REGION}.api.nabla.com/v1/core/server/oauth/token`,
+        exp: nowSeconds + 60,
+        iat: nowSeconds,
+    };
+    const jwtAssertion = KJUR.jws.JWS.sign(assertionHeader.alg, JSON.stringify(assertionHeader), JSON.stringify(payload), OAUTH_CLIENT_PRIVATE_KEY);
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/oauth/token`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            grant_type: "client_credentials",
+            client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            client_assertion: jwtAssertion,
+        })
+    });
+
+    return response.json();
+};
+
+let serverAccessTokenCache = {
+    accessToken: null,
+    expiresAt: 0,
+};
+
+const getOrRefetchServerAccessToken = async () => {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+
+    if (
+        serverAccessTokenCache.accessToken &&
+        nowSeconds < serverAccessTokenCache.expiresAt
+    ) {
+        return serverAccessTokenCache.accessToken;
+    }
+
+    const { access_token, expires_in } = await fetchServerAccessToken();
+    serverAccessTokenCache.accessToken = access_token;
+    serverAccessTokenCache.expiresAt = nowSeconds + expires_in - 5;
+    return access_token;
+};
 
 // Common utilities -----------------------------------------------------------
 
@@ -194,15 +247,14 @@ const insertTranscriptItem = (data) => {
     }
 }
 
-const initializeTranscriptConnection = () => {
+const initializeTranscriptConnection = async () => {
     // Ideally we'd send the authentication token in an 'Authorization': 'Bearer <YOUR_TOKEN>' header.
     // But since JS WS client does not support sending additional headers,
     // we rely on this alternative authentication mechanism.
-    // Keep in mind that, except for prototyping purposes, the Server API is not meant to be called from a browser
-    // because an API_KEY is too sensitive to be embedded in a front-end app.
+    const bearerToken = await getOrRefetchServerAccessToken();
     websocket = new WebSocket(
-        "wss://api.nabla.com/v1/copilot-api/server/listen-ws",
-        ["copilot-listen-protocol", "jwt-" + API_KEY],
+        `wss://${REGION}.api.nabla.com/v1/copilot-api/server/listen-ws`,
+        ["copilot-listen-protocol", "jwt-" + bearerToken],
     );
 
     websocket.onclose = (e) => {
@@ -289,11 +341,12 @@ const generateNote = async () => {
 
 const digest = async () => {
     startThinking(document.getElementById("note"));
-    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/digest', {
+    const bearerToken = await getOrRefetchServerAccessToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/copilot-api/server/digest`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`
+            'Authorization': `Bearer ${bearerToken}`
         },
         body: JSON.stringify({
             output_objects: ['note'],
@@ -364,11 +417,12 @@ const generateNormalizedData = async () => {
         return;
     }
 
-    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/generate_normalized_data', {
+    const bearerToken = await getOrRefetchServerAccessToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/copilot-api/server/generate_normalized_data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY} `
+            'Authorization': `Bearer ${bearerToken} `
         },
         body: JSON.stringify({
             note: generatedNote,
@@ -435,11 +489,12 @@ const generatePatientInstructions = async () => {
     const patientInstructions = document.getElementById("patient-instructions");
     startThinking(patientInstructions);
 
-    const response = await fetch('https://api.nabla.com/v1/copilot-api/server/generate_patient_instructions', {
+    const bearerToken = await getOrRefetchServerAccessToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/copilot-api/server/generate_patient_instructions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY} `
+            'Authorization': `Bearer ${bearerToken} `
         },
         body: JSON.stringify({
             note: generatedNote,
@@ -500,9 +555,10 @@ const insertedDictatedItem = (data) => {
 }
 
 const initializeDictationConnection = async () => {
+    const bearerToken = await getOrRefetchServerAccessToken();
     websocket = new WebSocket(
-        "wss://api.nabla.com/v1/copilot-api/server/dictate-ws",
-        ["copilot-dictate-protocol", "jwt-" + API_KEY]
+        `wss://${REGION}.api.nabla.com/v1/copilot-api/server/dictate-ws`,
+        ["copilot-dictate-protocol", "jwt-" + bearerToken]
     );
 
     websocket.onclose = (e) => {
