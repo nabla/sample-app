@@ -279,7 +279,7 @@ const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 const startRecording = async () => {
     enableElementById("generate-btn");
 
-    initializeTranscriptConnection();
+    await initializeTranscriptConnection();
 
     // Await websocket being open
     for (let i = 0; i < 10; i++) {
