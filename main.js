@@ -405,7 +405,7 @@ const generateNormalizedData = async () => {
     if (["SPANISH_ES", "SPANISH_MX"].includes(note_locale)) {
         const errorMessage = document.createElement("p");
         errorMessage.classList.add("error");
-        errorMessage.innerText = "Normalized data are only available for note with locale FRENCH, ENGLISH_US, ENGLISH_UK"
+        errorMessage.innerText = "Normalized data are only available for note with locale FRENCH_FR, ENGLISH_US, ENGLISH_UK"
         note.appendChild(errorMessage)
         return;
     }
