@@ -52,14 +52,14 @@ const getOrRefetchServerAccessToken = async () => {
 
     if (
         serverAccessTokenCache.accessToken &&
-        nowSeconds < serverAccessTokenCache.expiresAt
+        nowSeconds < (serverAccessTokenCache.expiresAt - 5)
     ) {
         return serverAccessTokenCache.accessToken;
     }
 
     const { access_token, expires_in } = await fetchServerAccessToken();
     serverAccessTokenCache.accessToken = access_token;
-    serverAccessTokenCache.expiresAt = nowSeconds + expires_in - 5;
+    serverAccessTokenCache.expiresAt = nowSeconds + expires_in;
     return access_token;
 };
 
