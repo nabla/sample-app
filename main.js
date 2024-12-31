@@ -10,6 +10,7 @@ let mediaSource;
 let mediaStream
 let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
+let noteSectionsCustomization = {};
 
 // Authentication utilities
 
@@ -340,6 +341,14 @@ const generateNote = async () => {
 
 const digest = async () => {
     startThinking(document.getElementById("note"));
+
+    const noteSectionsCustomizationArray = Object.entries(noteSectionsCustomization).map(
+        ([sectionKey, customizationOptions]) => ({
+            section_key: sectionKey,
+            ...customizationOptions
+        })
+    );
+
     const bearerToken = await getOrRefetchServerAccessToken();
     const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-note`, {
         method: 'POST',
@@ -352,6 +361,7 @@ const digest = async () => {
             note_locale: getNoteLanguage(),
             patient_context: getPatientContext(),
             transcript_items: Object.values(transcriptItems).map((it) => ({ text: it, speaker_type: "unspecified" })),
+            note_sections_customization: noteSectionsCustomizationArray,
         })
     });
 
@@ -673,4 +683,163 @@ const showDictatedNote = () => {
 window.onload = () => {
     document.getElementById("ambient-encounter-link").addEventListener("click", showAmbientEncounter);
     document.getElementById("dictated-note-link").addEventListener("click", showDictatedNote);
+}
+
+// Note customization ----------------------------------------------------------------
+
+const templateSectionsMap = {
+    "GENERIC_MULTIPLE_SECTIONS": [
+        "CHIEF_COMPLAINT",
+        "HISTORY_OF_PRESENT_ILLNESS",
+        "PAST_MEDICAL_HISTORY",
+        "PAST_SURGICAL_HISTORY",
+        "PAST_OBSTETRIC_HISTORY",
+        "FAMILY_HISTORY",
+        "SOCIAL_HISTORY",
+        "ALLERGIES",
+        "CURRENT_MEDICATIONS",
+        "IMMUNIZATIONS",
+        "VITALS",
+        "LAB_RESULTS",
+        "IMAGING_RESULTS",
+        "PHYSICAL_EXAM",
+        "ASSESSMENT",
+        "PLAN",
+        "PRESCRIPTION",
+        "APPOINTMENTS"
+    ],
+    "CARDIOLOGY_MULTIPLE_SECTIONS": [
+        "CHIEF_COMPLAINT",
+        "HISTORY_OF_PRESENT_ILLNESS",
+        "CARDIOVASCULAR_RISK_FACTORS",
+        "FAMILY_HISTORY",
+        "ALLERGIES",
+        "PAST_OBSTETRIC_HISTORY",
+        "PAST_SURGICAL_HISTORY",
+        "PAST_MEDICAL_HISTORY",
+        "SOCIAL_HISTORY",
+        "CURRENT_MEDICATIONS",
+        "VITALS",
+        "IMMUNIZATIONS",
+        "PHYSICAL_EXAM",
+        "LAB_RESULTS",
+        "IMAGING_RESULTS",
+        "ASSESSMENT",
+        "PLAN",
+        "PRESCRIPTION",
+        "APPOINTMENTS"
+    ],
+    "PSYCHIATRY_MULTIPLE_SECTIONS": [
+        "CHIEF_COMPLAINT",
+        "HISTORY_OF_PRESENT_ILLNESS",
+        "FAMILY_HISTORY",
+        "ALLERGIES",
+        "PAST_OBSTETRIC_HISTORY",
+        "PAST_SURGICAL_HISTORY",
+        "PAST_MEDICAL_HISTORY",
+        "SOCIAL_HISTORY",
+        "CURRENT_MEDICATIONS",
+        "VITALS",
+        "IMMUNIZATIONS",
+        "PHYSICAL_EXAM",
+        "LAB_RESULTS",
+        "IMAGING_RESULTS",
+        "MENTAL_HEALTH_EXAM",
+        "ASSESSMENT",
+        "PLAN",
+        "PRESCRIPTION",
+        "APPOINTMENTS"
+    ],
+    "DIET_MULTIPLE_SECTIONS": [
+        "LIFESTYLE",
+        "PAST_MEDICAL_HISTORY",
+        "CHIEF_COMPLAINT",
+        "VITALS",
+        "FOOD_HABITS",
+        "OBJECTIVES_AND_ADVICE",
+        "APPOINTMENTS"
+    ],
+    "PSYCHOLOGY_MULTIPLE_SECTIONS": [
+        "CHIEF_COMPLAINT",
+        "HISTORY_OF_PRESENT_COMPLAINT",
+        "MENTAL_HEALTH_HISTORY",
+        "SOCIAL_HISTORY",
+        "MENTAL_HEALTH_EXAM",
+        "ASSESSMENT",
+        "PLAN",
+        "APPOINTMENTS"
+    ],
+    "GENERIC_SOAP": [
+        "SUBJECTIVE",
+        "OBJECTIVE",
+        "ASSESSMENT",
+        "PLAN"
+    ],
+};
+
+const initPage = () => {
+    updateSectionsList();
+}
+
+const onTemplateChange = () => {
+    noteSectionsCustomization = {};
+    updateSectionsList();
+}
+
+const updateSectionsList = () => {
+    const template = getNoteTemplate();
+    const selectElement = document.getElementById("note-sections");
+    selectElement.innerHTML = "";
+
+    const sections = templateSectionsMap[template] || [];
+    sections.forEach((sectionKey) => {
+        const opt = document.createElement("option");
+        opt.value = sectionKey;
+        opt.innerText = sectionKey;
+        selectElement.appendChild(opt);
+    });
+
+    selectElement.value = sections[0] || "";
+    onSectionChange();
+}
+
+const onSectionChange = () => {
+    const selected = document.getElementById("note-sections").value;
+    if (!selected) {
+        document.getElementById("section-customization-fields").style.display = "none";
+        return;
+    }
+
+    document.getElementById("section-customization-fields").style.display = "inline-block";
+    const existing = noteSectionsCustomization[selected] || {};
+    document.getElementById("style-select").value = existing.style || "";
+    document.getElementById("custom-instruction").value = existing.custom_instruction || "";
+    document.getElementById("level-of-detail").value = existing.level_of_detail || "";
+    document.getElementById("split-by-problem").checked = existing.split_by_problem || false;
+}
+
+const onCustomizationChange = () => {
+    const sectionKey = document.getElementById("note-sections").value;
+    if (!sectionKey) return;
+
+    const styleValue = document.getElementById("style-select").value;
+    const customInstructionValue = document.getElementById("custom-instruction").value.trim();
+    const levelOfDetailValue = document.getElementById("level-of-detail").value;
+    const splitByProblemValue = document.getElementById("split-by-problem").checked;
+
+    const customizationOptions = {};
+    if (styleValue) {
+        customizationOptions.style = styleValue;
+    }
+    if (customInstructionValue) {
+        customizationOptions.custom_instruction = customInstructionValue;
+    }
+    if (levelOfDetailValue) {
+        customizationOptions.level_of_detail = levelOfDetailValue;
+    }
+    if (splitByProblemValue) {
+        customizationOptions.split_by_problem = true;
+    }
+
+    noteSectionsCustomization[sectionKey] = customizationOptions;
 }
