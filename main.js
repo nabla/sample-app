@@ -708,67 +708,6 @@ const templateSectionsMap = {
         "PRESCRIPTION",
         "APPOINTMENTS"
     ],
-    "CARDIOLOGY_MULTIPLE_SECTIONS": [
-        "CHIEF_COMPLAINT",
-        "HISTORY_OF_PRESENT_ILLNESS",
-        "CARDIOVASCULAR_RISK_FACTORS",
-        "FAMILY_HISTORY",
-        "ALLERGIES",
-        "PAST_OBSTETRIC_HISTORY",
-        "PAST_SURGICAL_HISTORY",
-        "PAST_MEDICAL_HISTORY",
-        "SOCIAL_HISTORY",
-        "CURRENT_MEDICATIONS",
-        "VITALS",
-        "IMMUNIZATIONS",
-        "PHYSICAL_EXAM",
-        "LAB_RESULTS",
-        "IMAGING_RESULTS",
-        "ASSESSMENT",
-        "PLAN",
-        "PRESCRIPTION",
-        "APPOINTMENTS"
-    ],
-    "PSYCHIATRY_MULTIPLE_SECTIONS": [
-        "CHIEF_COMPLAINT",
-        "HISTORY_OF_PRESENT_ILLNESS",
-        "FAMILY_HISTORY",
-        "ALLERGIES",
-        "PAST_OBSTETRIC_HISTORY",
-        "PAST_SURGICAL_HISTORY",
-        "PAST_MEDICAL_HISTORY",
-        "SOCIAL_HISTORY",
-        "CURRENT_MEDICATIONS",
-        "VITALS",
-        "IMMUNIZATIONS",
-        "PHYSICAL_EXAM",
-        "LAB_RESULTS",
-        "IMAGING_RESULTS",
-        "MENTAL_HEALTH_EXAM",
-        "ASSESSMENT",
-        "PLAN",
-        "PRESCRIPTION",
-        "APPOINTMENTS"
-    ],
-    "DIET_MULTIPLE_SECTIONS": [
-        "LIFESTYLE",
-        "PAST_MEDICAL_HISTORY",
-        "CHIEF_COMPLAINT",
-        "VITALS",
-        "FOOD_HABITS",
-        "OBJECTIVES_AND_ADVICE",
-        "APPOINTMENTS"
-    ],
-    "PSYCHOLOGY_MULTIPLE_SECTIONS": [
-        "CHIEF_COMPLAINT",
-        "HISTORY_OF_PRESENT_COMPLAINT",
-        "MENTAL_HEALTH_HISTORY",
-        "SOCIAL_HISTORY",
-        "MENTAL_HEALTH_EXAM",
-        "ASSESSMENT",
-        "PLAN",
-        "APPOINTMENTS"
-    ],
     "GENERIC_SOAP": [
         "SUBJECTIVE",
         "OBJECTIVE",
@@ -814,8 +753,6 @@ const onSectionChange = () => {
     const existing = noteSectionsCustomization[selected] || {};
     document.getElementById("style-select").value = existing.style || "";
     document.getElementById("custom-instruction").value = existing.custom_instruction || "";
-    document.getElementById("level-of-detail").value = existing.level_of_detail || "";
-    document.getElementById("split-by-problem").checked = existing.split_by_problem || false;
 }
 
 const onCustomizationChange = () => {
@@ -824,8 +761,6 @@ const onCustomizationChange = () => {
 
     const styleValue = document.getElementById("style-select").value;
     const customInstructionValue = document.getElementById("custom-instruction").value.trim();
-    const levelOfDetailValue = document.getElementById("level-of-detail").value;
-    const splitByProblemValue = document.getElementById("split-by-problem").checked;
 
     const customizationOptions = {};
     if (styleValue) {
@@ -833,12 +768,6 @@ const onCustomizationChange = () => {
     }
     if (customInstructionValue) {
         customizationOptions.custom_instruction = customInstructionValue;
-    }
-    if (levelOfDetailValue) {
-        customizationOptions.level_of_detail = levelOfDetailValue;
-    }
-    if (splitByProblemValue) {
-        customizationOptions.split_by_problem = true;
     }
 
     noteSectionsCustomization[sectionKey] = customizationOptions;
