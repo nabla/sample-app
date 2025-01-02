@@ -40,7 +40,7 @@ const fetchServerAccessToken = async () => {
         })
     });
 
-    const data = response.json();
+    const data = await response.json();
     return {
         token: data.access_token,
         expiresIn: data.expires_in,
@@ -69,7 +69,7 @@ let serverAccessTokenCache = {
 };
 
 const getOrRefetchServerAccessToken = async () => {
-    return getOrRefetchToken(serverAccessTokenCache, fetchServerAccessToken)
+    return await getOrRefetchToken(serverAccessTokenCache, fetchServerAccessToken)
 }
 
 const createUser = async () => {
@@ -140,7 +140,7 @@ let userRefreshTokenCache = {
 }
 
 const getOrRefetchUserRefreshToken = async () => {
-    return getOrRefetchToken(userRefreshTokenCache, fetchUserRefreshToken)
+    return await getOrRefetchToken(userRefreshTokenCache, fetchUserRefreshToken)
 }
 
 const fetchUserAccessToken = async () => {
@@ -175,7 +175,7 @@ let userAccessTokenCache = {
 };
 
 const getOrRefetchUserAccessToken = async () => {
-    return getOrRefetchToken(userAccessTokenCache, fetchUserAccessToken)
+    return await getOrRefetchToken(userAccessTokenCache, fetchUserAccessToken)
 }
 
 // Common utilities -----------------------------------------------------------
