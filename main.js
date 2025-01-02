@@ -10,6 +10,7 @@ let mediaSource;
 let mediaStream
 let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
+let userId = undefined;
 
 // Authentication utilities
 
@@ -39,29 +40,143 @@ const fetchServerAccessToken = async () => {
         })
     });
 
-    return response.json();
+    const data = response.json();
+    return {
+        token: data.access_token,
+        expiresIn: data.expires_in,
+    };
+};
+
+const getOrRefetchToken = async (tokenCache, fetchTokenAsyncFunction) => {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+
+    if (
+        tokenCache.token &&
+        nowSeconds < (tokenCache.expiresAt - 5)
+    ) {
+        return tokenCache.token;
+    }
+
+    const { token, expiresIn } = await fetchTokenAsyncFunction();
+    tokenCache.token = token;
+    tokenCache.expiresAt = nowSeconds + expiresIn;
+    return token;
 };
 
 let serverAccessTokenCache = {
-    accessToken: null,
+    token: null,
     expiresAt: 0,
 };
 
 const getOrRefetchServerAccessToken = async () => {
-    const nowSeconds = Math.floor(Date.now() / 1000);
+    return getOrRefetchToken(serverAccessTokenCache, fetchServerAccessToken)
+}
 
-    if (
-        serverAccessTokenCache.accessToken &&
-        nowSeconds < (serverAccessTokenCache.expiresAt - 5)
-    ) {
-        return serverAccessTokenCache.accessToken;
+const createUser = async () => {
+    const bearerToken = await getOrRefetchServerAccessToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/users`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearerToken} `
+        },
+        body: JSON.stringify({})
+    });
+
+    if (!response.ok) {
+        console.error('Unexpected error during Core API user creation', response.status);
+        return null;
     }
 
-    const { access_token, expires_in } = await fetchServerAccessToken();
-    serverAccessTokenCache.accessToken = access_token;
-    serverAccessTokenCache.expiresAt = nowSeconds + expires_in;
-    return access_token;
+    const data = await response.json();
+    return data.id;
+}
+
+const getOrCreateUser = async () => {
+    if (!userId) {
+        userId = createUser();
+    }
+    return userId;
+}
+
+const decodeJWT = (token) => {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+        throw new Error("Invalid JWT token");
+    }
+    const payload = parts[1];
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+}
+
+const fetchUserRefreshToken = async () => {
+    const bearerToken = await getOrRefetchServerAccessToken();
+    const userId = await getOrCreateUser();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/jwt/authenticate/${userId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearerToken} `
+        },
+        body: JSON.stringify({})
+    });
+
+    if (!response.ok) {
+        console.error('Unexpected error during user refresh token fetching', response.status);
+        return null;
+    }
+
+    // NB: The endpoint actually also returns a first user access token, but we ignore it for simplification purpose
+    const data = await response.json()
+    const token = data.refresh_token
+    return {
+        token,
+        expiresIn: decodeJWT(token).exp - Math.floor(Date.now() / 1000)
+    };
+}
+
+let userRefreshTokenCache = {
+    token: null,
+    expiresAt: 0,
+}
+
+const getOrRefetchUserRefreshToken = async () => {
+    return getOrRefetchToken(userRefreshTokenCache, fetchUserRefreshToken)
+}
+
+const fetchUserAccessToken = async () => {
+    const refreshToken = await getOrRefetchUserRefreshToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/user/jwt/refresh`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            refresh_token: refreshToken,
+        })
+    });
+
+    if (!response.ok) {
+        console.error('Unexpected error during user access token fetching', response.status);
+        return null;
+    }
+
+    // NB: The endpoint actually also returns a new refresh token, but we ignore it for simplification purpose
+    const data = await response.json()
+    const token = data.access_token
+    return {
+        token,
+        expiresIn: decodeJWT(token).exp - Math.floor(Date.now() / 1000)
+    };
+}
+
+let userAccessTokenCache = {
+    token: null,
+    expiresAt: 0,
 };
+
+const getOrRefetchUserAccessToken = async () => {
+    return getOrRefetchToken(userAccessTokenCache, fetchUserAccessToken)
+}
 
 // Common utilities -----------------------------------------------------------
 
@@ -251,9 +366,9 @@ const initializeTranscriptConnection = async () => {
     // Ideally we'd send the authentication token in an 'Authorization': 'Bearer <YOUR_TOKEN>' header.
     // But since JS WS client does not support sending additional headers,
     // we rely on this alternative authentication mechanism.
-    const bearerToken = await getOrRefetchServerAccessToken();
+    const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
-        `wss://${REGION}.api.nabla.com/v1/core/server/transcribe-ws`,
+        `wss://${REGION}.api.nabla.com/v1/core/user/transcribe-ws`,
         ["transcribe-protocol", "jwt-" + bearerToken],
     );
 
@@ -340,8 +455,8 @@ const generateNote = async () => {
 
 const digest = async () => {
     startThinking(document.getElementById("note"));
-    const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-note`, {
+    const bearerToken = await getOrRefetchUserAccessToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/user/generate-note`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -410,8 +525,8 @@ const generateNormalizedData = async () => {
         return;
     }
 
-    const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-normalized-data`, {
+    const bearerToken = await getOrRefetchUserAccessToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/user/generate-normalized-data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -483,8 +598,8 @@ const generatePatientInstructions = async () => {
     const patientInstructions = document.getElementById("patient-instructions");
     startThinking(patientInstructions);
 
-    const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-patient-instructions`, {
+    const bearerToken = await getOrRefetchUserAccessToken();
+    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/user/generate-patient-instructions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -550,9 +665,9 @@ const insertedDictatedItem = (data) => {
 }
 
 const initializeDictationConnection = async () => {
-    const bearerToken = await getOrRefetchServerAccessToken();
+    const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
-        `wss://${REGION}.api.nabla.com/v1/core/server/dictate-ws`,
+        `wss://${REGION}.api.nabla.com/v1/core/user/dictate-ws`,
         ["copilot-dictate-protocol", "jwt-" + bearerToken]
     );
 
