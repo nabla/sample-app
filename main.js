@@ -84,8 +84,7 @@ const createUser = async () => {
     });
 
     if (!response.ok) {
-        console.error('Unexpected error during Core API user creation', response.status);
-        return null;
+        throw new Error(`Unexpected error during Core API user creation (status: ${response.status})`);
     }
 
     const data = await response.json();
@@ -121,8 +120,7 @@ const fetchUserRefreshToken = async () => {
     });
 
     if (!response.ok) {
-        console.error('Unexpected error during user refresh token fetching', response.status);
-        return null;
+        throw new Error(`Unexpected error during user refresh token fetching (status: ${response.status})`);
     }
 
     // NB: The endpoint actually also returns a first user access token, but we ignore it for simplification purpose
@@ -156,8 +154,7 @@ const fetchUserAccessToken = async () => {
     });
 
     if (!response.ok) {
-        console.error('Unexpected error during user access token fetching', response.status);
-        return null;
+        throw new Error(`Unexpected error during user access token fetching (status: ${response.status})`);
     }
 
     // NB: The endpoint actually also returns a new refresh token, but we ignore it for simplification purpose
