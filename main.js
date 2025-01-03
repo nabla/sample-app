@@ -10,6 +10,8 @@ let mediaSource;
 let mediaStream
 let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
+let lastAckId = -1;
+let seqId = 0;
 
 // Authentication utilities
 
@@ -567,6 +569,16 @@ const initializeDictationConnection = async () => {
         }
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
+
+            if (data.type === "AUDIO_CHUNK_ACK") {
+                if (data.ack_id <= lastAckId) {
+                    console.error(`Out-of-order ack: ${data.ack_id} (last was ${lastAckId})`);
+                } else {
+                    lastAckId = data.ack_id;
+                }
+                return;
+            }
+
             if (data.type === "DICTATION_ITEM") {
                 insertedDictatedItem(data);
             } else if (data.type === "ERROR_MESSAGE") {
@@ -590,6 +602,9 @@ const isPunctuationExplicit = () => {
 const startDictating = async () => {
     disableElementById("dictate-btn");
     enableElementById("pause-btn");
+
+    seqId = 0;
+    lastAckId = -1;
     initializeDictationConnection();
 
     // Await websocket being open
@@ -608,6 +623,7 @@ const startDictating = async () => {
         await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
             type: "AUDIO_CHUNK",
             payload: audioAsBase64String,
+            seq_id: seqId++,
         })));
 
         const locale = getDictationLocale();
@@ -617,6 +633,7 @@ const startDictating = async () => {
             sample_rate: 16000,
             locale,
             dictate_punctuation: isPunctuationExplicit(),
+            enable_audio_chunk_ack: true,
         };
         websocket.send(JSON.stringify(config));
 
