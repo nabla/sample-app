@@ -739,10 +739,10 @@ const updateSectionsList = () => {
     });
 
     selectElement.value = sections[0] || "";
-    onSectionChange();
+    onSectionToCustomizeChange();
 }
 
-const onSectionChange = () => {
+const onSectionToCustomizeChange = () => {
     const selected = document.getElementById("note-sections").value;
     if (!selected) {
         document.getElementById("section-customization-fields").style.display = "none";
@@ -751,24 +751,28 @@ const onSectionChange = () => {
 
     document.getElementById("section-customization-fields").style.display = "inline-block";
     const existing = noteSectionsCustomization[selected] || {};
-    document.getElementById("style-select").value = existing.style || "";
+    document.getElementById("style-select").value = existing.style || "AUTO";
     document.getElementById("custom-instruction").value = existing.custom_instruction || "";
 }
 
-const onCustomizationChange = () => {
+const onSectionStyleChange = () => {
     const sectionKey = document.getElementById("note-sections").value;
     if (!sectionKey) return;
 
     const styleValue = document.getElementById("style-select").value;
-    const customInstructionValue = document.getElementById("custom-instruction").value.trim();
 
-    const customizationOptions = {};
-    if (styleValue) {
-        customizationOptions.style = styleValue;
-    }
-    if (customInstructionValue) {
-        customizationOptions.custom_instruction = customInstructionValue;
-    }
+    const customizationOptions = noteSectionsCustomization[sectionKey] ?? {};
+    customizationOptions.style = styleValue;
+    noteSectionsCustomization[sectionKey] = customizationOptions;
+}
 
+const onSectionCustomInstructionChange = () => {
+    const sectionKey = document.getElementById("note-sections").value;
+    if (!sectionKey) return;
+
+    const customInstructionValue = document.getElementById("custom-instruction").value;
+
+    const customizationOptions = noteSectionsCustomization[sectionKey] ?? {};
+    customizationOptions.custom_instruction = customInstructionValue;
     noteSectionsCustomization[sectionKey] = customizationOptions;
 }

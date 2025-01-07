@@ -88,14 +88,14 @@
 
             <div class="filters">
                 <label for="note-sections">Section to customize below:</label>
-                <select id="note-sections" onChange="onSectionChange()"></select>
+                <select id="note-sections" onChange="onSectionToCustomizeChange()"></select>
             </div>
 
             <div id="section-customization-fields">
                 <div class="filters">
                     <label for="style-select">Style:</label>
-                    <select id="style-select" onChange="onCustomizationChange()">
-                        <option value="">(No preference)</option>
+                    <select id="style-select" onChange="onSectionStyleChange()" >
+                        <option value="AUTO">Auto</option>
                         <option value="PARAGRAPH">Paragraph</option>
                         <option value="BULLET_POINTS">Bullet points</option>
                     </select>
@@ -103,7 +103,7 @@
 
                 <div class="filters">
                     <label for="custom-instruction">Custom instruction:</label>
-                    <textarea id="custom-instruction" onInput="onCustomizationChange()" placeholder="Your custom instruction"></textarea>
+                    <textarea id="custom-instruction" onInput="onSectionCustomInstructionChange()" placeholder="Your custom instruction"></textarea>
                 </div>
             </div>
 
