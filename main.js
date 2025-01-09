@@ -680,7 +680,8 @@ const showDictatedNote = () => {
     }
 }
 
-window.onload = () => {
+const initPage = () => {
+    updateSectionsList();
     document.getElementById("ambient-encounter-link").addEventListener("click", showAmbientEncounter);
     document.getElementById("dictated-note-link").addEventListener("click", showDictatedNote);
 }
@@ -715,10 +716,6 @@ const templateSectionsMap = {
         "PLAN"
     ],
 };
-
-const initPage = () => {
-    updateSectionsList();
-}
 
 const onTemplateChange = () => {
     noteSectionsCustomization = {};
