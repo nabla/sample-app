@@ -20,15 +20,17 @@ const CORE_API_HOST = `${REGION}.api.nabla.com`;
 let userAccessToken = INITIAL_USER_ACCESS_TOKEN;
 let userRefreshToken = INITIAL_USER_REFRESH_TOKEN;
 
-const showExpiredTokenError = () => {
+const showTokenError = (message) => {
     const errorDiv = document.getElementById("token-error");
     if (!errorDiv) return;
+    errorDiv.innerHTML = message;
     errorDiv.classList.remove("hide");
 }
 
 const decodeJWT = (token) => {
     const parts = token.split('.');
     if (parts.length !== 3) {
+        showTokenError("The user tokens seem invalid. You maybe forgot to provide initial tokens in the source code.");
         throw new Error("Invalid JWT token");
     }
     const payload = parts[1];
@@ -51,7 +53,7 @@ const getOrRefetchUserAccessToken = async () => {
     }
 
     if (isTokenExpiredOrExpiringSoon(userRefreshToken)) {
-        showExpiredTokenError();
+        showTokenError("Your user refresh token has expired. Please provide new initial tokens in the source code.");
         throw new Error("Refresh token expired");
     }
 
@@ -61,7 +63,7 @@ const getOrRefetchUserAccessToken = async () => {
         body: JSON.stringify({ refresh_token: userRefreshToken }),
     });
     if (!refreshResponse.ok) {
-        showExpiredTokenError();
+        showTokenError("The user access token refresh failed. Please try to provide new initial tokens in the source code.");
         throw new Error(`Refresh call failed (status: ${refreshResponse.status})`);
     }
 

@@ -168,6 +168,7 @@ input:checked+.slider:before {
     padding: 10px 20px;
     margin: 10px;
     border-radius: 4px;
+    font-weight: bold;
 }
 
 .hide {
