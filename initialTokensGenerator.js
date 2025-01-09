@@ -18,7 +18,7 @@ const path = require('path');
 const jsrsasignCode = fs.readFileSync(path.join(__dirname, 'lib/jsrsasign.js'), 'utf8');
 eval(jsrsasignCode);
 
-const APP_HOST = `${REGION}.api.nabla.com`;
+const CORE_API_HOST = `${REGION}.api.nabla.com`;
 
 async function main() {
     try {
@@ -44,7 +44,7 @@ const fetchServerAccessToken = async () => {
     const payload = {
         sub: OAUTH_CLIENT_UUID,
         iss: OAUTH_CLIENT_UUID,
-        aud: `https://${APP_HOST}/v1/core/server/oauth/token`,
+        aud: `https://${CORE_API_HOST}/v1/core/server/oauth/token`,
         exp: nowSeconds + 60,
         iat: nowSeconds,
     };
@@ -56,7 +56,7 @@ const fetchServerAccessToken = async () => {
         OAUTH_CLIENT_PRIVATE_KEY,
     );
 
-    const response = await fetch(`https://${APP_HOST}/v1/core/server/oauth/token`, {
+    const response = await fetch(`https://${CORE_API_HOST}/v1/core/server/oauth/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -75,7 +75,7 @@ const fetchServerAccessToken = async () => {
 };
 
 const createUser = async (serverAccessToken) => {
-    const response = await fetch(`https://${APP_HOST}/v1/core/server/users`, {
+    const response = await fetch(`https://${CORE_API_HOST}/v1/core/server/users`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const createUser = async (serverAccessToken) => {
 
 const authenticateUser = async (serverAccessToken, userId) => {
     const response = await fetch(
-        `https://${APP_HOST}/v1/core/server/jwt/authenticate/${userId}`,
+        `https://${CORE_API_HOST}/v1/core/server/jwt/authenticate/${userId}`,
         {
             method: 'POST',
             headers: {
