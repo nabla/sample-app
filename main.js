@@ -267,7 +267,10 @@ const initializeTranscriptConnection = async () => {
         if (websocket.readyState !== WebSocket.OPEN) return;
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.type === "TRANSCRIPT_ITEM") {
+
+            if (data.type === "AUDIO_CHUNK_ACK") {
+                // This is where you'd remove audio chunks from your buffer
+            } else if (data.type === "TRANSCRIPT_ITEM") {
                 insertTranscriptItem(data);
             } else if (data.type === "ERROR_MESSAGE") {
                 console.error(data.message);
@@ -281,6 +284,8 @@ const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 const startRecording = async () => {
     enableElementById("generate-btn");
 
+    seqId = 0;
+    lastAckId = -1;
     await initializeTranscriptConnection();
 
     // Await websocket being open
@@ -301,6 +306,7 @@ const startRecording = async () => {
                 type: "AUDIO_CHUNK",
                 payload: audioAsBase64String,
                 stream_id: "stream1",
+                seq_id: seqId++,
             })
         })
 
@@ -312,6 +318,7 @@ const startRecording = async () => {
             streams: [
                 { id: "stream1", speaker_type: "unspecified" },
             ],
+            enable_audio_chunk_ack: true,
         };
         websocket.send(JSON.stringify(config));
 
@@ -571,15 +578,8 @@ const initializeDictationConnection = async () => {
             const data = JSON.parse(mes.data);
 
             if (data.type === "AUDIO_CHUNK_ACK") {
-                if (data.ack_id <= lastAckId) {
-                    console.error(`Out-of-order ack: ${data.ack_id} (last was ${lastAckId})`);
-                } else {
-                    lastAckId = data.ack_id;
-                }
-                return;
-            }
-
-            if (data.type === "DICTATION_ITEM") {
+                // This is where you'd remove audio chunks from your buffer
+            } else if (data.type === "DICTATION_ITEM") {
                 insertedDictatedItem(data);
             } else if (data.type === "ERROR_MESSAGE") {
                 console.error(data.message);
