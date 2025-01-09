@@ -4,7 +4,7 @@ To test it on your machine:
 - First you need to configure on OAuth client. To do so:
   - Go to the [Core API admin console](https://pro.nabla.com/copilot-api-signup)
   - Create an OAuth Client in OAuth Clients section.
-- Then, you need to use this OAuth client to generate initial user access and refresh tokens for the app. In a realistic architecture, this work would be done by a dedicated authentication backend server on your side. For simplicity's sake, however, we provide a `scripts/initialTokensGenerator.js` node script that imitates the work of backend server. To use it: 
+- Then, you need to use this OAuth client to generate initial user access and refresh tokens for the app. In a realistic architecture, this work would be done by a dedicated authentication backend server on your side. For simplicity's sake, however, we provide a `scripts/initialTokensGenerator.js` node script that imitates a backend server that would create and authenticate a CORE API user. To use it: 
   - at the beginning of the script, fill in the following variables:
     - `OAUTH_CLIENT_UUID`: The UUID of your OAuth client. You can obtain it via the "copy OAuth client ID" option in the admin console.
     - `OAUTH_CLIENT_PRIVATE_KEY`: The private key associated to the public key you provided for your OAuth client.
@@ -12,7 +12,7 @@ To test it on your machine:
   - Then run in your terminal: `node scripts/initialTokensGenerator.js`
     - _(With Node >= 18)_
   - If all goes well, the script will write generated initial user access and refresh tokens in a `userTokens.json` file
-- Then, you need to fill in the tokens and region configs in `app/main.js` file:
+- Then, you need to fill in the initial tokens and region configs in `app/main.js` file:
   - `INITIAL_USER_ACCESS_TOKEN`: The initial user access token, obtained via the script or an external source
   - `INITIAL_USER_REFRESH_TOKEN`: The initial user refresh token, obtained similarly
   - `REGION`: Your Nabla region, "us" or "eu".
