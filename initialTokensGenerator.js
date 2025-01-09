@@ -13,9 +13,10 @@ const OAUTH_CLIENT_PRIVATE_KEY = "<YOUR_OAUTH_CLIENT_PRIVATE_KEY>";
 const REGION = "<YOUR_REGION>"; // "us" or "eu"
 
 const fs = require('fs');
-// Jsrassign is provided in the repository source code for convenience
-const jsrasignCode = fs.readFileSync(path.join(__dirname, 'lib/jsrasign-all-min.js'), 'utf8');
-eval(jsrasignCode);
+const path = require('path');
+// Jsrsasign is provided in the repository source code for convenience
+const jsrsasignCode = fs.readFileSync(path.join(__dirname, 'lib/jsrsasign.js'), 'utf8');
+eval(jsrsasignCode);
 
 const APP_HOST = `${REGION}.api.nabla.com`;
 
@@ -26,10 +27,8 @@ async function main() {
         const { userRefreshToken, userAccessToken } = await authenticateUser(serverAccessToken, userId);
 
         const tokenData = {
-            userId: userId,
             accessToken: userAccessToken,
             refreshToken: userRefreshToken,
-            generatedAt: new Date().toISOString(),
         };
         fs.writeFileSync('userTokens.json', JSON.stringify(tokenData, null, 2), 'utf8');
 
