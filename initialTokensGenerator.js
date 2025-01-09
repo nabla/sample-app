@@ -34,7 +34,8 @@ async function main() {
 
         console.log("Successfully generated user tokens. See 'userTokens.json' file.");
     } catch (err) {
-        console.error("Error during server authentication flow:", err);
+        console.error("Error during server authentication flow. You maybe forgot to provide server OAuth UUID " +
+            "and private key in the source code.", err);
     }
 }
 
