@@ -600,7 +600,8 @@ const isPunctuationExplicit = () => {
 const startDictating = async () => {
     disableElementById("dictate-btn");
     enableElementById("pause-btn");
-    initializeDictationConnection();
+
+    await initializeDictationConnection();
 
     // Await websocket being open
     for (let i = 0; i < 10; i++) {
