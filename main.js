@@ -577,9 +577,9 @@ const initializeDictationConnection = async () => {
         }
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.type === "DICTATION_ITEM") {
+            if (data.type === "dictation_item") {
                 insertedDictatedItem(data);
-            } else if (data.type === "ERROR_MESSAGE") {
+            } else if (data.type === "error_message") {
                 console.error(data.message);
             }
         }
