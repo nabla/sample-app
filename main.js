@@ -616,13 +616,13 @@ const startDictating = async () => {
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
-            type: "AUDIO_CHUNK",
+            type: "audio_chunk",
             payload: audioAsBase64String,
         })));
 
         const locale = getDictationLocale();
         const config = {
-            type: "CONFIG",
+            type: "dictate_config",
             encoding: "PCM_S16LE",
             sample_rate: 16000,
             locale,
@@ -640,7 +640,7 @@ const startDictating = async () => {
 const pauseDictating = async () => {
     disableElementById("pause-btn");
     stopAudio();
-    await endConnection({ type: "END" });
+    await endConnection({ type: "end" });
     enableElementById("dictate-btn");
 }
 
