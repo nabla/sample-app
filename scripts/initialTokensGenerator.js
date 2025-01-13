@@ -1,7 +1,7 @@
 /**
  *
- * This script simulates the backend server of a Nabla CORE API customer which would:
- * - Authenticate to the CORE API (by constructing a JWT client assertion with its OAuth UUID and private key)
+ * This script simulates the backend server of a Nabla Core API customer which would:
+ * - Authenticate to the Core API (by constructing a JWT client assertion with its OAuth UUID and private key)
  * - Create a new API user
  * - Authenticate the API user, to provide him its initial access and refresh tokens
  * For convenience, the user tokens generated are stored in a JSON file.
