@@ -11,7 +11,6 @@ let mediaStream
 let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 let noteSectionsCustomization = {};
-let lastAckId = -1;
 let seqId = 0;
 
 // Authentication utilities
@@ -286,7 +285,6 @@ const startRecording = async () => {
     enableElementById("generate-btn");
 
     seqId = 0;
-    lastAckId = -1;
     await initializeTranscriptConnection();
 
     // Await websocket being open
@@ -614,7 +612,6 @@ const startDictating = async () => {
     enableElementById("pause-btn");
 
     seqId = 0;
-    lastAckId = -1;
     await initializeDictationConnection();
 
     // Await websocket being open
