@@ -577,9 +577,9 @@ const initializeDictationConnection = async () => {
         }
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.type === "DICTATION_ITEM") {
+            if (data.type === "dictation_item") {
                 insertedDictatedItem(data);
-            } else if (data.type === "ERROR_MESSAGE") {
+            } else if (data.type === "error_message") {
                 console.error(data.message);
             }
         }
@@ -600,7 +600,8 @@ const isPunctuationExplicit = () => {
 const startDictating = async () => {
     disableElementById("dictate-btn");
     enableElementById("pause-btn");
-    initializeDictationConnection();
+
+    await initializeDictationConnection();
 
     // Await websocket being open
     for (let i = 0; i < 10; i++) {
@@ -616,13 +617,13 @@ const startDictating = async () => {
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
-            type: "AUDIO_CHUNK",
+            type: "audio_chunk",
             payload: audioAsBase64String,
         })));
 
         const locale = getDictationLocale();
         const config = {
-            type: "CONFIG",
+            type: "dictate_config",
             encoding: "PCM_S16LE",
             sample_rate: 16000,
             locale,
@@ -640,7 +641,7 @@ const startDictating = async () => {
 const pauseDictating = async () => {
     disableElementById("pause-btn");
     stopAudio();
-    await endConnection({ type: "END" });
+    await endConnection({ type: "end" });
     enableElementById("dictate-btn");
 }
 
