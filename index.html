@@ -9,7 +9,7 @@
     <script type="text/javascript" src="main.js"></script>
 </head>
 
-<body>
+<body onload="initPage()">
     <div class="container">
         <h1>Nabla Core API sample app</h1>
 
@@ -75,12 +75,8 @@
 
             <div class="filters">
                 <label for="note-template">Note template:</label>
-                <select id="note-template">
+                <select id="note-template" onChange="onTemplateChange()">
                     <option value="GENERIC_MULTIPLE_SECTIONS">General Medicine</option>
-                    <option value="CARDIOLOGY_MULTIPLE_SECTIONS">Cardiology</option>
-                    <option value="PSYCHIATRY_MULTIPLE_SECTIONS">Psychiatry</option>
-                    <option value="DIET_MULTIPLE_SECTIONS">Diet</option>
-                    <option value="PSYCHOLOGY_MULTIPLE_SECTIONS">Psychology</option>
                     <option value="GENERIC_SOAP">SOAP</option>
                 </select>
             </div>
@@ -88,6 +84,27 @@
             <div class="filters">
                 <label for="patient-context">Patient context:</label>
                 <textarea id="patient-context"></textarea>
+            </div>
+
+            <div class="filters">
+                <label for="note-sections">Section to customize below:</label>
+                <select id="note-sections" onChange="onSectionToCustomizeChange()"></select>
+            </div>
+
+            <div id="section-customization-fields">
+                <div class="filters">
+                    <label for="style-select">Style:</label>
+                    <select id="style-select" onChange="onSectionStyleChange()" >
+                        <option value="AUTO">Auto</option>
+                        <option value="PARAGRAPH">Paragraph</option>
+                        <option value="BULLET_POINTS">Bullet points</option>
+                    </select>
+                </div>
+
+                <div class="filters">
+                    <label for="custom-instruction">Custom instruction:</label>
+                    <textarea id="custom-instruction" onInput="onSectionCustomInstructionChange()" placeholder="Your custom instruction"></textarea>
+                </div>
             </div>
 
             <hr>
@@ -118,11 +135,11 @@
             <div class="filters">
                 <label for="dictationLocale">Dictation locale:</label>
                 <select id="dictationLocale">
-                    <option value="ENGLISH_US">ENGLISH_US</option>
-                    <option value="ENGLISH_UK">ENGLISH_UK</option>
-                    <option value="FRENCH_FR">FRENCH_FR</option>
-                    <option value="SPANISH_ES">SPANISH_ES</option>
-                    <option value="SPANISH_MX">SPANISH_MX</option>
+                    <option value="en-US">ENGLISH_US</option>
+                    <option value="en-GB">ENGLISH_UK</option>
+                    <option value="fr-FR">FRENCH_FR</option>
+                    <option value="es-ES">SPANISH_ES</option>
+                    <option value="es-MX">SPANISH_MX</option>
                 </select>
             </div>
 
