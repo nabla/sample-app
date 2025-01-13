@@ -12,6 +12,8 @@ let mediaStream
 let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 let noteSectionsCustomization = {};
+let transcriptSeqId = 0;
+let dictateSeqId = 0;
 
 const CORE_API_HOST = `${REGION}.api.nabla.com`;
 
@@ -273,7 +275,10 @@ const initializeTranscriptConnection = async () => {
         if (websocket.readyState !== WebSocket.OPEN) return;
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.type === "TRANSCRIPT_ITEM") {
+
+            if (data.type === "AUDIO_CHUNK_ACK") {
+                // This is where you'd remove audio chunks from your buffer
+            } else if (data.type === "TRANSCRIPT_ITEM") {
                 insertTranscriptItem(data);
             } else if (data.type === "ERROR_MESSAGE") {
                 console.error(data.message);
@@ -287,6 +292,7 @@ const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 const startRecording = async () => {
     enableElementById("generate-btn");
 
+    transcriptSeqId = 0;
     await initializeTranscriptConnection();
 
     // Await websocket being open
@@ -307,6 +313,7 @@ const startRecording = async () => {
                 type: "AUDIO_CHUNK",
                 payload: audioAsBase64String,
                 stream_id: "stream1",
+                seq_id: transcriptSeqId++,
             })
         })
 
@@ -318,6 +325,7 @@ const startRecording = async () => {
             streams: [
                 { id: "stream1", speaker_type: "unspecified" },
             ],
+            enable_audio_chunk_ack: true,
         };
         websocket.send(JSON.stringify(config));
 
@@ -584,7 +592,10 @@ const initializeDictationConnection = async () => {
         }
         if (typeof mes.data === "string") {
             const data = JSON.parse(mes.data);
-            if (data.type === "dictation_item") {
+
+            if (data.type === "AUDIO_CHUNK_ACK") {
+                // This is where you'd remove audio chunks from your buffer
+            } else if (data.type === "dictation_item") {
                 insertedDictatedItem(data);
             } else if (data.type === "error_message") {
                 console.error(data.message);
@@ -608,6 +619,7 @@ const startDictating = async () => {
     disableElementById("dictate-btn");
     enableElementById("pause-btn");
 
+    dictateSeqId = 0;
     await initializeDictationConnection();
 
     // Await websocket being open
@@ -626,6 +638,7 @@ const startDictating = async () => {
         await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
             type: "audio_chunk",
             payload: audioAsBase64String,
+            seq_id: dictateSeqId++,
         })));
 
         const locale = getDictationLocale();
@@ -635,6 +648,7 @@ const startDictating = async () => {
             sample_rate: 16000,
             locale,
             dictate_punctuation: isPunctuationExplicit(),
+            enable_audio_chunk_ack: true,
         };
         websocket.send(JSON.stringify(config));
 
