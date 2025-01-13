@@ -11,7 +11,8 @@ let mediaStream
 let thinkingId;
 const rawPCM16WorkerName = "raw-pcm-16-worker";
 let noteSectionsCustomization = {};
-let seqId = 0;
+let transcriptSeqId = 0;
+let dictateSeqId = 0;
 
 // Authentication utilities
 
@@ -284,7 +285,7 @@ const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 const startRecording = async () => {
     enableElementById("generate-btn");
 
-    seqId = 0;
+    transcriptSeqId = 0;
     await initializeTranscriptConnection();
 
     // Await websocket being open
@@ -305,7 +306,7 @@ const startRecording = async () => {
                 type: "AUDIO_CHUNK",
                 payload: audioAsBase64String,
                 stream_id: "stream1",
-                seq_id: seqId++,
+                seq_id: transcriptSeqId++,
             })
         })
 
@@ -611,7 +612,7 @@ const startDictating = async () => {
     disableElementById("dictate-btn");
     enableElementById("pause-btn");
 
-    seqId = 0;
+    dictateSeqId = 0;
     await initializeDictationConnection();
 
     // Await websocket being open
@@ -630,7 +631,7 @@ const startDictating = async () => {
         await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
             type: "audio_chunk",
             payload: audioAsBase64String,
-            seq_id: seqId++,
+            seq_id: dictateSeqId++,
         })));
 
         const locale = getDictationLocale();
