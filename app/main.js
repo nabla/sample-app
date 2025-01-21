@@ -15,7 +15,7 @@ let noteSectionsCustomization = {};
 let transcriptSeqId = 0;
 let dictateSeqId = 0;
 
-const CORE_API_HOST = `${REGION}.api.nabla.com`;
+const CORE_API_BASE_URL = `${REGION}.api.nabla.com/v1/core`;
 
 // Authentication utilities
 
@@ -59,7 +59,7 @@ const getOrRefetchUserAccessToken = async () => {
         throw new Error("Refresh token expired");
     }
 
-    const refreshResponse = await fetch(`https://${CORE_API_HOST}/v1/core/user/jwt/refresh`, {
+    const refreshResponse = await fetch(`https://${CORE_API_BASE_URL}/user/jwt/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh_token: userRefreshToken }),
@@ -263,7 +263,7 @@ const initializeTranscriptConnection = async () => {
     // we rely on this alternative authentication mechanism.
     const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
-        `wss://${CORE_API_HOST}/v1/core/user/transcribe-ws`,
+        `wss://${CORE_API_BASE_URL}/user/transcribe-ws`,
         ["transcribe-protocol", "jwt-" + bearerToken],
     );
 
@@ -365,7 +365,7 @@ const digest = async () => {
     );
 
     const bearerToken = await getOrRefetchUserAccessToken();
-    const response = await fetch(`https://${CORE_API_HOST}/v1/core/server/generate-note`, {
+    const response = await fetch(`https://${CORE_API_BASE_URL}/user/generate-note`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -436,7 +436,7 @@ const generateNormalizedData = async () => {
     }
 
     const bearerToken = await getOrRefetchUserAccessToken();
-    const response = await fetch(`https://${CORE_API_HOST}/v1/core/user/generate-normalized-data`, {
+    const response = await fetch(`https://${CORE_API_BASE_URL}/user/generate-normalized-data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -509,7 +509,7 @@ const generatePatientInstructions = async () => {
     startThinking(patientInstructions);
 
     const bearerToken = await getOrRefetchUserAccessToken();
-    const response = await fetch(`https://${CORE_API_HOST}/v1/core/user/generate-patient-instructions`, {
+    const response = await fetch(`https://${CORE_API_BASE_URL}/user/generate-patient-instructions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -577,7 +577,7 @@ const insertedDictatedItem = (data) => {
 const initializeDictationConnection = async () => {
     const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
-        `wss://${CORE_API_HOST}/v1/core/user/dictate-ws`,
+        `wss://${CORE_API_BASE_URL}/user/dictate-ws`,
         ["copilot-dictate-protocol", "jwt-" + bearerToken]
     );
 
