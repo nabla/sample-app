@@ -160,3 +160,17 @@ input:checked+.slider:before {
     width: 200px;
     height: 60px;
 }
+
+#token-error {
+    background-color: #f8d7da; /* Light red background */
+    color: #721c24; /* Dark red text */
+    border: 1px solid #f5c6cb; /* Border matching the background */
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.hide {
+    display: none;
+}

@@ -1,6 +1,7 @@
-const OAUTH_CLIENT_UUID = "<YOUR_OAUTH_CLIENT_UUID>"
-const OAUTH_CLIENT_PRIVATE_KEY = "<YOUR_OAUTH_CLIENT_PRIVATE_KEY>"
+const INITIAL_USER_ACCESS_TOKEN = "<YOUR_INITIAL_USER_ACCESS_TOKEN>"
+const INITIAL_USER_REFRESH_TOKEN = "<YOUR_INITIAL_USER_REFRESH_TOKEN>"
 const REGION = "<YOUR_REGION>" // "us" or "eu"
+
 let generatedNote = undefined;
 let websocket;
 let transcriptItems = {};
@@ -14,57 +15,63 @@ let noteSectionsCustomization = {};
 let transcriptSeqId = 0;
 let dictateSeqId = 0;
 
+const CORE_API_BASE_URL = `${REGION}.api.nabla.com/v1/core`;
+
 // Authentication utilities
 
-const fetchServerAccessToken = async () => {
+let userAccessToken = INITIAL_USER_ACCESS_TOKEN;
+let userRefreshToken = INITIAL_USER_REFRESH_TOKEN;
+
+const showTokenError = (message) => {
+    const errorDiv = document.getElementById("token-error");
+    if (!errorDiv) return;
+    errorDiv.innerHTML = message;
+    errorDiv.classList.remove("hide");
+}
+
+const decodeJWT = (token) => {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+        showTokenError("The user tokens seem invalid. You maybe forgot to provide initial tokens in the source code.");
+        throw new Error("Invalid JWT token");
+    }
+    const payload = parts[1];
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/'))); // replace URL-safe characters
+}
+
+const isTokenExpiredOrExpiringSoon = (token) => {
     const nowSeconds = Math.floor(Date.now() / 1000);
-    const assertionHeader = {
-        alg: "RS256",
-        typ: "JWT",
-    };
-    const payload = {
-        sub: OAUTH_CLIENT_UUID,
-        iss: OAUTH_CLIENT_UUID,
-        aud: `https://${REGION}.api.nabla.com/v1/core/server/oauth/token`,
-        exp: nowSeconds + 60,
-        iat: nowSeconds,
-    };
-    const jwtAssertion = KJUR.jws.JWS.sign(assertionHeader.alg, JSON.stringify(assertionHeader), JSON.stringify(payload), OAUTH_CLIENT_PRIVATE_KEY);
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/oauth/token`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            grant_type: "client_credentials",
-            client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            client_assertion: jwtAssertion,
-        })
-    });
+    return (decodeJWT(token).exp - nowSeconds) < 5;
+}
 
-    return response.json();
-};
+const setUserTokens = (newAccessToken, newRefreshToken) => {
+    userAccessToken = newAccessToken;
+    userRefreshToken = newRefreshToken;
+}
 
-let serverAccessTokenCache = {
-    accessToken: null,
-    expiresAt: 0,
-};
-
-const getOrRefetchServerAccessToken = async () => {
-    const nowSeconds = Math.floor(Date.now() / 1000);
-
-    if (
-        serverAccessTokenCache.accessToken &&
-        nowSeconds < (serverAccessTokenCache.expiresAt - 5)
-    ) {
-        return serverAccessTokenCache.accessToken;
+const getOrRefetchUserAccessToken = async () => {
+    if (!isTokenExpiredOrExpiringSoon(userAccessToken)) {
+        return userAccessToken;
     }
 
-    const { access_token, expires_in } = await fetchServerAccessToken();
-    serverAccessTokenCache.accessToken = access_token;
-    serverAccessTokenCache.expiresAt = nowSeconds + expires_in;
-    return access_token;
-};
+    if (isTokenExpiredOrExpiringSoon(userRefreshToken)) {
+        showTokenError("Your user refresh token has expired. Please provide new initial tokens in the source code.");
+        throw new Error("Refresh token expired");
+    }
+
+    const refreshResponse = await fetch(`https://${CORE_API_BASE_URL}/user/jwt/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: userRefreshToken }),
+    });
+    if (!refreshResponse.ok) {
+        showTokenError("The user access token refresh failed. Please try to provide new initial tokens in the source code.");
+        throw new Error(`Refresh call failed (status: ${refreshResponse.status})`);
+    }
+
+    const data = await refreshResponse.json();
+    setUserTokens(data.access_token, data.refresh_token);
+}
 
 // Common utilities -----------------------------------------------------------
 
@@ -254,9 +261,9 @@ const initializeTranscriptConnection = async () => {
     // Ideally we'd send the authentication token in an 'Authorization': 'Bearer <YOUR_TOKEN>' header.
     // But since JS WS client does not support sending additional headers,
     // we rely on this alternative authentication mechanism.
-    const bearerToken = await getOrRefetchServerAccessToken();
+    const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
-        `wss://${REGION}.api.nabla.com/v1/core/server/transcribe-ws`,
+        `wss://${CORE_API_BASE_URL}/user/transcribe-ws`,
         ["transcribe-protocol", "jwt-" + bearerToken],
     );
 
@@ -357,8 +364,8 @@ const digest = async () => {
         })
     );
 
-    const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-note`, {
+    const bearerToken = await getOrRefetchUserAccessToken();
+    const response = await fetch(`https://${CORE_API_BASE_URL}/user/generate-note`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -428,8 +435,8 @@ const generateNormalizedData = async () => {
         return;
     }
 
-    const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-normalized-data`, {
+    const bearerToken = await getOrRefetchUserAccessToken();
+    const response = await fetch(`https://${CORE_API_BASE_URL}/user/generate-normalized-data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -501,8 +508,8 @@ const generatePatientInstructions = async () => {
     const patientInstructions = document.getElementById("patient-instructions");
     startThinking(patientInstructions);
 
-    const bearerToken = await getOrRefetchServerAccessToken();
-    const response = await fetch(`https://${REGION}.api.nabla.com/v1/core/server/generate-patient-instructions`, {
+    const bearerToken = await getOrRefetchUserAccessToken();
+    const response = await fetch(`https://${CORE_API_BASE_URL}/user/generate-patient-instructions`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -568,9 +575,9 @@ const insertedDictatedItem = (data) => {
 }
 
 const initializeDictationConnection = async () => {
-    const bearerToken = await getOrRefetchServerAccessToken();
+    const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
-        `wss://${REGION}.api.nabla.com/v1/core/server/dictate-ws`,
+        `wss://${CORE_API_BASE_URL}/user/dictate-ws`,
         ["copilot-dictate-protocol", "jwt-" + bearerToken]
     );
 
@@ -697,6 +704,8 @@ const showDictatedNote = () => {
 
 const initPage = () => {
     updateSectionsList();
+    // Initial call to display an error message directly if the refresh token is expired:
+    getOrRefetchUserAccessToken();
     document.getElementById("ambient-encounter-link").addEventListener("click", showAmbientEncounter);
     document.getElementById("dictated-note-link").addEventListener("click", showDictatedNote);
 }
