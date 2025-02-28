@@ -290,6 +290,15 @@ const initializeTranscriptConnection = async () => {
 const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 
 const startRecording = async () => {
+    if (getFirstTranscriptLocale() === getSecondTranscriptLocale()) {
+        const errorMessage = document.createElement("p");
+        errorMessage.classList.add("error");
+        errorMessage.innerText = "First and second transcript locales must be different."
+        document.getElementById("transcript").appendChild(errorMessage)
+        return;
+    }
+    clearTranscript();
+
     enableElementById("generate-btn");
 
     transcriptSeqId = 0;
@@ -321,7 +330,7 @@ const startRecording = async () => {
             type: "CONFIG",
             encoding: "PCM_S16LE",
             sample_rate: 16000,
-            speech_locale: getTranscriptLocale(),
+            speech_locales: [getFirstTranscriptLocale(), getSecondTranscriptLocale()],
             streams: [
                 { id: "stream1", speaker_type: "unspecified" },
             ],
@@ -336,8 +345,12 @@ const startRecording = async () => {
     }
 }
 
-const getTranscriptLocale = () => (
-    document.getElementById("transcript-locale")?.selectedOptions[0]?.value ?? "ENGLISH_US"
+const getFirstTranscriptLocale = () => (
+    document.getElementById("first-transcript-locale")?.selectedOptions[0]?.value ?? "ENGLISH_US"
+)
+
+const getSecondTranscriptLocale = () => (
+    document.getElementById("second-transcript-locale")?.selectedOptions[0]?.value ?? "SPANISH_ES"
 )
 
 const generateNote = async () => {
@@ -578,7 +591,7 @@ const initializeDictationConnection = async () => {
     const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
         `wss://${CORE_API_BASE_URL}/user/dictate-ws`,
-        ["copilot-dictate-protocol", "jwt-" + bearerToken]
+        ["dictate-protocol", "jwt-" + bearerToken]
     );
 
     websocket.onclose = (e) => {
@@ -595,9 +608,9 @@ const initializeDictationConnection = async () => {
 
             if (data.type === "AUDIO_CHUNK_ACK") {
                 // This is where you'd remove audio chunks from your buffer
-            } else if (data.type === "dictation_item") {
+            } else if (data.type === "DICTATION_ITEM") {
                 insertedDictatedItem(data);
-            } else if (data.type === "error_message") {
+            } else if (data.type === "ERROR_MESSAGE") {
                 console.error(data.message);
             }
         }
@@ -636,17 +649,17 @@ const startDictating = async () => {
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
-            type: "audio_chunk",
+            type: "AUDIO_CHUNK",
             payload: audioAsBase64String,
             seq_id: dictateSeqId++,
         })));
 
         const locale = getDictationLocale();
         const config = {
-            type: "dictate_config",
+            type: "CONFIG",
             encoding: "PCM_S16LE",
             sample_rate: 16000,
-            locale,
+            speech_locale: locale,
             dictate_punctuation: isPunctuationExplicit(),
             enable_audio_chunk_ack: true,
         };
@@ -662,7 +675,7 @@ const startDictating = async () => {
 const pauseDictating = async () => {
     disableElementById("pause-btn");
     stopAudio();
-    await endConnection({ type: "end" });
+    await endConnection({ type: "END" });
     enableElementById("dictate-btn");
 }
 
