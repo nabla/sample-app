@@ -9,7 +9,7 @@
  */
 
 const OAUTH_CLIENT_UUID = "<YOUR_OAUTH_CLIENT_UUID>";
-const OAUTH_CLIENT_PRIVATE_KEY = "<YOUR_OAUTH_CLIENT_PRIVATE_KEY>";
+const OAUTH_CLIENT_PRIVATE_KEY = `<YOUR_OAUTH_CLIENT_PRIVATE_KEY>`;
 const REGION = "<YOUR_REGION>"; // "us" or "eu"
 
 const fs = require('fs');
