@@ -2,7 +2,7 @@ The code of the `app` directory is a simple web application that integrates the 
 
 To test it on your machine:
 - First you need to configure an OAuth client. To do so:
-  - Go to the Core API admin console to [sign-up](https://pro.nabla.com/copilot-api-signup) or [log in](https://pro.nabla.com/login).
+  - Go to the Core API admin console to [sign-up](https://pro.nabla.com/core-api-signup) or [log in](https://pro.nabla.com/login).
   - Create an OAuth Client in OAuth Clients section.
 - Then, you need to use this OAuth client to generate initial user access and refresh tokens for the app. In a realistic architecture, this work would be done by a dedicated authentication backend server on your side. For simplicity's sake, however, we provide a `scripts/initialTokensGenerator.js` node script that imitates a backend server that would create and authenticate a Core API user. To use it: 
   - at the beginning of the script, fill in the following variables:
