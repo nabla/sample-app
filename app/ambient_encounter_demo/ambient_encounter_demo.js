@@ -1,16 +1,17 @@
 // Ambient encounter demo implementation
 import { getOrRefetchUserAccessToken, CORE_API_BASE_URL } from '../shared/authentication.js';
-import { 
-    disableElementById, 
-    enableElementById, 
-    startThinking, 
-    stopThinking, 
-    endConnection, 
-    initializeMediaStream, 
-    stopAudio, 
+import {
+    disableElementById,
+    enableElementById,
+    startThinking,
+    stopThinking,
+    endConnection,
+    initializeMediaStream,
+    stopAudio,
     insertElementByStartOffset,
     msToTime,
-    sleep
+    sleep,
+    API_VERSION
 } from '../shared/commonUtils.js';
 
 let generatedNote = undefined;
@@ -108,7 +109,7 @@ const initializeTranscriptConnection = async () => {
     
     // Initialize websocket connection
     websocket = new WebSocket(
-        `wss://${CORE_API_BASE_URL}/user/transcribe-ws`,
+        `wss://${CORE_API_BASE_URL}/user/transcribe-ws?nabla-api-version=${API_VERSION}`,
         ["transcribe-protocol", "jwt-" + bearerToken],
     );
 
@@ -240,7 +241,8 @@ const digest = async () => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${bearerToken}`
+            'Authorization': `Bearer ${bearerToken}`,
+            'X-Nabla-Api-Version': API_VERSION
         },
         body: JSON.stringify({
             note_template: getNoteTemplate(),
@@ -300,7 +302,8 @@ const generateNormalizedData = async () => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${bearerToken}`
+            'Authorization': `Bearer ${bearerToken}`,
+            'X-Nabla-Api-Version': API_VERSION
         },
         body: JSON.stringify({
             note: generatedNote,
@@ -374,7 +377,8 @@ const generatePatientInstructions = async () => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${bearerToken}`
+            'Authorization': `Bearer ${bearerToken}`,
+            'X-Nabla-Api-Version': API_VERSION
         },
         body: JSON.stringify({
             note: generatedNote,

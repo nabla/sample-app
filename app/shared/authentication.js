@@ -1,3 +1,5 @@
+import { API_VERSION } from "./commonUtils";
+
 const INITIAL_USER_ACCESS_TOKEN = "<YOUR_INITIAL_USER_ACCESS_TOKEN>"
 const INITIAL_USER_REFRESH_TOKEN = "<YOUR_INITIAL_USER_REFRESH_TOKEN>"
 const REGION = "<YOUR_REGION>" // "us" or "eu"
@@ -46,7 +48,10 @@ const getOrRefetchUserAccessToken = async () => {
 
     const refreshResponse = await fetch(`https://${CORE_API_BASE_URL}/user/jwt/refresh`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Nabla-Api-Version': API_VERSION
+        },
         body: JSON.stringify({ refresh_token: userRefreshToken }),
     });
     

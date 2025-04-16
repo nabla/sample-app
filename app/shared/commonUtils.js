@@ -1,5 +1,7 @@
 // Common utilities for Nabla API demos
 
+const API_VERSION = "2025-04-03"
+
 let thinkingId;
 let audioContext;
 let pcmWorker;
@@ -146,6 +148,7 @@ const msToTime = (milli) => {
 const sleep = (duration) => new Promise((r) => setTimeout(r, duration));
 
 export {
+    API_VERSION,
     disableElementById,
     enableElementById,
     startThinking,

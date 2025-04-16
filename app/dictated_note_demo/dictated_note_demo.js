@@ -1,13 +1,14 @@
 // Dictated note demo implementation
 import { getOrRefetchUserAccessToken, CORE_API_BASE_URL } from '../shared/authentication.js';
-import { 
-    disableElementById, 
-    enableElementById, 
-    endConnection, 
-    initializeMediaStream, 
-    stopAudio, 
+import {
+    disableElementById,
+    enableElementById,
+    endConnection,
+    initializeMediaStream,
+    stopAudio,
     insertElementByStartOffset,
-    sleep
+    sleep,
+    API_VERSION
 } from '../shared/commonUtils.js';
 
 let websocket;
@@ -35,7 +36,7 @@ const insertDictatedItem = (data) => {
 const initializeDictationConnection = async () => {
     const bearerToken = await getOrRefetchUserAccessToken();
     websocket = new WebSocket(
-        `wss://${CORE_API_BASE_URL}/user/dictate-ws`,
+        `wss://${CORE_API_BASE_URL}/user/dictate-ws?nabla-api-version=${API_VERSION}`,
         ["dictate-protocol", "jwt-" + bearerToken]
     );
 
