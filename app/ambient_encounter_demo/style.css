@@ -1,0 +1,28 @@
+/* Ambient encounter specific styles */
+
+/* Section customization */
+#section-customization-fields {
+    display: none;
+    border: 2px solid #ccc;
+    padding: 8px;
+}
+
+#section-customization-fields .filters {
+    margin: 8px 0;
+}
+
+#custom-instruction {
+    width: 200px;
+    height: 60px;
+}
+
+#patient-context {
+    width: 400px;
+    height: 80px;
+}
+
+.back-link {
+    display: block;
+    margin: 10px 0;
+    font-size: 14px;
+} 
