@@ -1,4 +1,6 @@
-The code of the `app` directory is a simple demo web application that integrates the [Nabla Core API](https://docs.nabla.com).
+The code of the `app` directory is a simple web application that demonstrates the capabilities of the [Nabla Core API](https://docs.nabla.com) (version `2025-04-03`).
+
+![Sample app screenshot](static/sample_app_screenshot.png)
 
 To test it on your machine:
 - First you need to configure an OAuth client. To do so:
