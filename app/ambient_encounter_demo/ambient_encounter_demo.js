@@ -13,7 +13,6 @@ import {
     sleep
 } from '../shared/commonUtils.js';
 
-// Module variables
 let generatedNote = undefined;
 let websocket;
 let transcriptItems = {};
@@ -205,7 +204,6 @@ const startRecording = async () => {
         };
         websocket.send(JSON.stringify(config));
 
-        // pcm start
         pcmWorker.port.start();
     } else {
         console.error("Microphone audio stream is not accessible on this browser");

@@ -123,7 +123,7 @@ const insertElementByStartOffset = (element, parentElement) => {
             childElement.nodeName === element.nodeName && childElement.hasAttribute("data-start-offset")
                 ? childElement.getAttribute("data-start-offset")
                 : 0;
-        if (childStartOffset > elementStartOffset) {
+        if (Number(childStartOffset) > Number(elementStartOffset)) {
             elementBefore = childElement;
             break;
         }

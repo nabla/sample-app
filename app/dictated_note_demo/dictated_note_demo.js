@@ -10,7 +10,6 @@ import {
     sleep
 } from '../shared/commonUtils.js';
 
-// Module variables
 let websocket;
 let dictateSeqId = 0;
 
