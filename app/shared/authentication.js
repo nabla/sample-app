@@ -1,4 +1,4 @@
-import { API_VERSION } from "./commonUtils";
+import { API_VERSION } from "./commonUtils.js";
 
 const INITIAL_USER_ACCESS_TOKEN = "<YOUR_INITIAL_USER_ACCESS_TOKEN>"
 const INITIAL_USER_REFRESH_TOKEN = "<YOUR_INITIAL_USER_REFRESH_TOKEN>"
