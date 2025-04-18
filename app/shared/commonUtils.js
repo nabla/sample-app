@@ -1,5 +1,7 @@
 // Common utilities for Nabla API demos
 
+// This is the target API version for all API calls.
+// Check this page before upgrading: https://docs.nabla.com/guides/api-versioning/changelog-and-upgrades
 const API_VERSION = "2025-04-03"
 
 let thinkingId;
