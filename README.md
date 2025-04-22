@@ -1,4 +1,6 @@
-The code of the `app` directory is a simple web application that integrates the [Nabla Core API](https://docs.nabla.com).
+The code of the `app` directory is a simple web application that demonstrates the capabilities of the [Nabla Core API](https://docs.nabla.com).
+
+![Sample app screenshot](static/sample_app_screenshot.png)
 
 To test it on your machine:
 - First you need to configure an OAuth client. To do so:
@@ -12,7 +14,7 @@ To test it on your machine:
   - Then run in your terminal: `node scripts/initialTokensGenerator.js`
     - _(With Node >= 18)_
   - If all goes well, the script will write generated initial user access and refresh tokens in a `userTokens.json` file
-- Then, you need to fill in the initial tokens and region configs in `app/main.js` file:
+- Then, you need to fill in the initial tokens and region configs in `app/shared/authentication.js` file:
   - `INITIAL_USER_ACCESS_TOKEN`: The initial user access token, obtained via the script or an external source.
   - `INITIAL_USER_REFRESH_TOKEN`: The initial user refresh token, obtained similarly.
   - `REGION`: The geographical region of your Nabla Core API organization, as selected during sign-up, will be either `us` or `eu`.
@@ -20,3 +22,5 @@ To test it on your machine:
   For instance, if Node.js is installed on your machine, you can run `npx http-server app/` and open http://127.0.0.1:8080/
 
 To find more information, check out our [documentation](https://docs.nabla.com), especially the [section about authentication](https://docs.nabla.com/guides/authentication).
+
+Please note that this sample app is only compatible with a specific version of the API, specified at the beginning of [commonUtils.js](app/shared/commonUtils.js) file.

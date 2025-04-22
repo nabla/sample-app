@@ -1,0 +1,11 @@
+/* Dictated note specific styles */
+
+#dictated-note {
+    min-height: 200px;
+}
+
+.back-link {
+    display: block;
+    margin: 10px 0;
+    font-size: 14px;
+} 
