@@ -6,7 +6,6 @@ import {
     endConnection,
     initializeMediaStream,
     stopAudio,
-    insertElementByStartOffset,
     sleep,
     API_VERSION
 } from '../shared/commonUtils.js';
@@ -16,20 +15,9 @@ let dictateSeqId = 0;
 
 // Dictation handling
 const insertDictatedItem = (data) => {
-    const dictationContainer = document.getElementById("dictated-note");
-    let dicatedItem = document.getElementById(data.id);
-    if (!dicatedItem) {
-        dicatedItem = document.createElement("span");
-        dicatedItem.setAttribute("id", data.id);
-        dicatedItem.setAttribute("data-start-offset", data.start_offset_ms);
-        insertElementByStartOffset(dicatedItem, dictationContainer);
-    }
-    dicatedItem.innerHTML = data.text + "&nbsp;";
-    if (data.is_final) {
-        dicatedItem.classList.remove("temporary-item");
-    } else if (!dicatedItem.classList.contains("temporary-item")) {
-        dicatedItem.classList.add("temporary-item");
-    }
+    let dictatedItem = document.createElement("span");
+    dictatedItem.innerHTML = data.text;
+    document.getElementById("dictated-note").appendChild(dictatedItem);
 };
 
 // WebSocket connection for dictation
@@ -54,7 +42,7 @@ const initializeDictationConnection = async () => {
 
             if (data.type === "AUDIO_CHUNK_ACK") {
                 // This is where you'd remove audio chunks from your buffer
-            } else if (data.type === "DICTATION_ITEM") {
+            } else if (data.type === "DICTATED_TEXT") {
                 insertDictatedItem(data);
             } else if (data.type === "ERROR_MESSAGE") {
                 console.error(data.message);
@@ -69,10 +57,6 @@ const getDictationLocale = () => {
     return dictationLocaleSelect.selectedOptions && dictationLocaleSelect.selectedOptions.length > 0
         ? dictationLocaleSelect.selectedOptions[0].value
         : "ENGLISH_US";
-};
-
-const isPunctuationExplicit = () => {
-    return document.getElementById("punctuation-switch").checked;
 };
 
 // Dictation controls
@@ -96,7 +80,7 @@ const startDictating = async () => {
     }
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
+        const pcmWorker = await initializeMediaStream((audioAsBase64String) => (JSON.stringify({
             type: "AUDIO_CHUNK",
             payload: audioAsBase64String,
             seq_id: dictateSeqId++,
@@ -107,13 +91,11 @@ const startDictating = async () => {
             type: "CONFIG",
             encoding: "PCM_S16LE",
             sample_rate: 16000,
-            speech_locale: locale,
-            dictate_punctuation: isPunctuationExplicit(),
-            enable_audio_chunk_ack: true,
+            dictation_locale: locale,
+            punctuation_mode: "EXPLICIT",
         };
         websocket.send(JSON.stringify(config));
 
-        // pcm start
         pcmWorker.port.start();
     } else {
         console.error("Microphone audio stream is not accessible on this browser");
