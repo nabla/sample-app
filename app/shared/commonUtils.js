@@ -2,13 +2,11 @@
 
 // This is the target API version for all API calls.
 // Check this page before upgrading: https://docs.nabla.com/guides/api-versioning/changelog-and-upgrades
-const API_VERSION = "2025-04-03"
+const API_VERSION = "2025-05-07"
 
 let thinkingId;
 let audioContext;
-let pcmWorker;
 let mediaSource;
-let mediaStream;
 
 // Element manipulation utilities
 const disableElementById = (elementId) => {
@@ -64,7 +62,7 @@ const endConnection = async (websocket, endObject) => {
 // Audio utilities
 const initializeMediaStream = async (buildAudioChunk, websocket) => {
     // Ask authorization to access the microphone
-    mediaStream = await navigator.mediaDevices.getUserMedia({
+    const mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
             deviceId: "default",
             sampleRate: 16000,
@@ -75,7 +73,7 @@ const initializeMediaStream = async (buildAudioChunk, websocket) => {
     });
     audioContext = new AudioContext({ sampleRate: 16000 });
     await audioContext.audioWorklet.addModule("../shared/rawPcm16Processor.js");
-    pcmWorker = new AudioWorkletNode(audioContext, "raw-pcm-16-worker", {
+    const pcmWorker = new AudioWorkletNode(audioContext, "raw-pcm-16-worker", {
         outputChannelCount: [1],
     });
     mediaSource = audioContext.createMediaStreamSource(mediaStream);
@@ -94,6 +92,8 @@ const initializeMediaStream = async (buildAudioChunk, websocket) => {
 
         websocket.send(buildAudioChunk(audioAsBase64String));
     };
+
+    return pcmWorker;
 };
 
 const stopAudio = () => {

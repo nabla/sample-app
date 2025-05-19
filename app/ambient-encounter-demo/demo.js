@@ -184,7 +184,7 @@ const startRecording = async () => {
     }
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        await initializeMediaStream((audioAsBase64String) => {
+        const pcmWorker = await initializeMediaStream((audioAsBase64String) => {
             return JSON.stringify({
                 type: "AUDIO_CHUNK",
                 payload: audioAsBase64String,
@@ -228,6 +228,25 @@ const generateNote = async () => {
 
 const digest = async () => {
     startThinking(document.getElementById("note"));
+    const bearerToken = await getOrRefetchUserAccessToken();
+
+    const noteTemplate = getNoteTemplate()
+    const noteSettingsResponse = await fetch(`https://${CORE_API_BASE_URL}/user/note-settings`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearerToken}`,
+            'X-Nabla-Api-Version': API_VERSION
+        },
+        body: JSON.stringify({
+            note_template: noteTemplate,
+            note_locale: getNoteLanguage(),
+        })
+    });
+    if (!noteSettingsResponse.ok) {
+        await displayNoteGenerationQueryError(noteSettingsResponse);
+        return;
+    }
 
     const noteSectionsCustomizationArray = Object.entries(noteSectionsCustomization).map(
         ([sectionKey, customizationOptions]) => ({
@@ -235,9 +254,23 @@ const digest = async () => {
             ...customizationOptions
         })
     );
+    const noteSectionCustomizationResponse = await fetch(`https://${CORE_API_BASE_URL}/user/note-settings/note-sections-customization/${noteTemplate}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearerToken}`,
+            'X-Nabla-Api-Version': API_VERSION
+        },
+        body: JSON.stringify({
+            note_sections_customization: noteSectionsCustomizationArray
+        })
+    });
+    if (!noteSectionCustomizationResponse.ok) {
+        await displayNoteGenerationQueryError(noteSectionCustomizationResponse);
+        return;
+    }
 
-    const bearerToken = await getOrRefetchUserAccessToken();
-    const response = await fetch(`https://${CORE_API_BASE_URL}/user/generate-note`, {
+    const noteGenerationResponse = await fetch(`https://${CORE_API_BASE_URL}/user/generate-note`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -245,28 +278,18 @@ const digest = async () => {
             'X-Nabla-Api-Version': API_VERSION
         },
         body: JSON.stringify({
-            note_template: getNoteTemplate(),
-            note_locale: getNoteLanguage(),
             patient_context: getPatientContext(),
             transcript_items: Object.values(transcriptItems).map((it) => ({ text: it, speaker_type: "unspecified" })),
-            note_sections_customization: noteSectionsCustomizationArray,
         })
     });
-
-    const note = document.getElementById("note");
-    stopThinking(note);
-
-    if (!response.ok) {
-        console.error('Error during note generation:', response.status);
-        const errData = await response.json();
-        const errText = document.createElement("p");
-        errText.classList.add("error");
-        errText.innerHTML = errData.message;
-        note.appendChild(errText);
+    if (!noteGenerationResponse.ok) {
+        await displayNoteGenerationQueryError(noteGenerationResponse);
         return;
     }
 
-    const data = await response.json();
+    const note = document.getElementById("note");
+    stopThinking(note);
+    const data = await noteGenerationResponse.json();
     generatedNote = data.note;
 
     data.note.sections.forEach((section) => {
@@ -278,6 +301,18 @@ const digest = async () => {
         note.appendChild(text);
     });
 };
+
+async function displayNoteGenerationQueryError(queryResponse) {
+    const note = document.getElementById("note");
+    stopThinking(note);
+
+    console.error('Error during one of the note generation queries:', queryResponse.status);
+    const errData = await queryResponse.json();
+    const errText = document.createElement("p");
+    errText.classList.add("error");
+    errText.innerHTML = errData.message;
+    note.appendChild(errText);
+}
 
 // Generate normalized data
 const generateNormalizedData = async () => {
