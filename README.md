@@ -31,7 +31,7 @@ node scripts/initialTokensGenerator.js
 *Result:* the script writes a `userTokens.json` file containing your new tokens.
 
 > ℹ️ **Need a server token instead?**  
-> Append `--type=server` to the command above to generate a long-lived **server access token** rather than user access/refresh tokens. Use this when calling the Core API directly from your own tools.
+> Append `--type=server` to the command above to generate a long-lived **server access token** rather than user access/refresh tokens. Use this when calling the Server API directly from your own tools.
 
 ### 3. Configure the frontend ⚙️
 Open `app/shared/authentication.js` and paste the credentials generated in **Step&nbsp;2** (or any other source you use):
