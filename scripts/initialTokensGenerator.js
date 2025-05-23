@@ -4,7 +4,14 @@
  * - Authenticate to the Core API (by constructing a JWT client assertion with its OAuth UUID and private key)
  * - Create a new API user
  * - Authenticate the API user, to provide him its initial access and refresh tokens
- * For convenience, the user tokens generated are stored in a JSON file.
+ * For convenience, the tokens generated are stored in a JSON file.
+ * 
+ * Usage:
+ * node initialTokensGenerator.js [--type=server|user]
+ * 
+ * Options:
+ *   --type=server  Generate server access token
+ *   --type=user    Generate user access/refresh tokens (default)
  *
  */
 
@@ -20,21 +27,61 @@ eval(jsrsasignCode);
 
 const CORE_API_HOST = `${REGION}.api.nabla.com`;
 
+// Parse command line arguments
+const parseArgs = () => {
+    const args = process.argv.slice(2);
+    const options = {
+        type: 'user' // Default to user tokens
+    };
+
+    for (const arg of args) {
+        if (arg.startsWith('--type=')) {
+            const value = arg.split('=')[1];
+            if (value === 'server' || value === 'user') {
+                options.type = value;
+            } else {
+                console.warn(`Invalid value for --type: ${value}. Using default 'user'.`);
+            }
+        }
+    }
+
+    return options;
+};
+
 async function main() {
     try {
-        const serverAccessToken = await fetchServerAccessToken();
-        const userId = await createUser(serverAccessToken);
-        const { userRefreshToken, userAccessToken } = await authenticateUser(serverAccessToken, userId);
+        const options = parseArgs();
 
-        const tokenData = {
-            accessToken: userAccessToken,
-            refreshToken: userRefreshToken,
-        };
-        fs.writeFileSync('userTokens.json', JSON.stringify(tokenData, null, 2), 'utf8');
+        if (options.type === 'server') {
+            // Generate server token only
+            const serverTokens = await fetchServerAccessToken();
 
-        console.log("Successfully generated user tokens. See 'userTokens.json' file.");
+            const tokenData = {
+                accessToken: serverTokens.accessToken
+            };
+
+            const filename = 'serverTokens.json';
+            fs.writeFileSync(filename, JSON.stringify(tokenData, null, 2), 'utf8');
+
+            console.log(`Successfully generated server token. See '${filename}' file.`);
+        } else {
+            // Generate user tokens (default)
+            const serverTokens = await fetchServerAccessToken();
+            const userId = await createUser(serverTokens.accessToken);
+            const { userRefreshToken, userAccessToken } = await authenticateUser(serverTokens.accessToken, userId);
+
+            const tokenData = {
+                accessToken: userAccessToken,
+                refreshToken: userRefreshToken,
+            };
+
+            const filename = 'userTokens.json';
+            fs.writeFileSync(filename, JSON.stringify(tokenData, null, 2), 'utf8');
+
+            console.log(`Successfully generated user tokens. See '${filename}' file.`);
+        }
     } catch (err) {
-        console.error("Error during server authentication flow. You maybe forgot to provide server OAuth UUID " +
+        console.error("Error during authentication flow. You maybe forgot to provide OAuth UUID " +
             "and private key in the source code.", err);
     }
 }
@@ -72,7 +119,9 @@ const fetchServerAccessToken = async () => {
     }
 
     const data = await response.json();
-    return data.access_token;
+    return {
+        accessToken: data.access_token
+    };
 };
 
 const createUser = async (serverAccessToken) => {
