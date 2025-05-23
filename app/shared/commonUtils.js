@@ -2,7 +2,7 @@
 
 // This is the target API version for all API calls.
 // Check this page before upgrading: https://docs.nabla.com/guides/api-versioning/changelog-and-upgrades
-const API_VERSION = "2025-05-07"
+const API_VERSION = "2025-05-21"
 
 let thinkingId;
 let audioContext;
