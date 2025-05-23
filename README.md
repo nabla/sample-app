@@ -1,26 +1,62 @@
-The code of the `app` directory is a simple web application that demonstrates the capabilities of the [Nabla Core API](https://docs.nabla.com).
+# Nabla Core API Sample App
 
 ![Sample app screenshot](static/sample_app_screenshot.png)
 
-To test it on your machine:
-- First you need to configure an OAuth client. To do so:
-  - Go to the Core API admin console to [sign-up](https://pro.nabla.com/core-api-signup) or [log in](https://pro.nabla.com/login).
-  - Create an OAuth Client in OAuth Clients section.
-- Then, you need to use this OAuth client to generate initial user access and refresh tokens for the app. In a realistic architecture, this work would be done by a dedicated authentication backend server on your side. For simplicity's sake, however, we provide a `scripts/initialTokensGenerator.js` node script that imitates a backend server that would create and authenticate a Core API user. To use it: 
-  - at the beginning of the script, fill in the following variables:
-    - `OAUTH_CLIENT_UUID`: The UUID of your OAuth client. You can obtain it via the "copy OAuth client ID" option in the admin console.
-    - `OAUTH_CLIENT_PRIVATE_KEY`: The private key associated to the public key you provided for your OAuth client.
-    - `REGION`: The geographical region of your Nabla Core API organization, as selected during sign-up, will be either `us` or `eu`.
-  - Then run in your terminal: `node scripts/initialTokensGenerator.js`
-    - _(With Node >= 18)_
-  - If all goes well, the script will write generated initial user access and refresh tokens in a `userTokens.json` file
-- Then, you need to fill in the initial tokens and region configs in `app/shared/authentication.js` file:
-  - `INITIAL_USER_ACCESS_TOKEN`: The initial user access token, obtained via the script or an external source.
-  - `INITIAL_USER_REFRESH_TOKEN`: The initial user refresh token, obtained similarly.
-  - `REGION`: The geographical region of your Nabla Core API organization, as selected during sign-up, will be either `us` or `eu`.
-- Finally, you just need to run an HTTP static server to access the app.
-  For instance, if Node.js is installed on your machine, you can run `npx http-server app/` and open http://127.0.0.1:8080/
+A minimal web app (in `app/`) that shows how to interact with the [Nabla Core API](https://docs.nabla.com).
 
-To find more information, check out our [documentation](https://docs.nabla.com), especially the [section about authentication](https://docs.nabla.com/guides/authentication).
+---
 
-Please note that this sample app is only compatible with a specific version of the API, specified at the beginning of [commonUtils.js](app/shared/commonUtils.js) file.
+## ✨ Quick Start
+
+### 1. Create an OAuth client 🔑
+- Sign in to the Core API admin console: [Sign up](https://pro.nabla.com/core-api-signup) or [Log in](https://pro.nabla.com/login).
+- Create an OAuth Client in OAuth Clients section.
+
+### 2. Generate initial tokens 🌱
+You need to use this OAuth client to generate initial user access and refresh tokens for the app. In a realistic architecture, this work would be done by a dedicated authentication backend server on your side. For simplicity's sake, however, we provide an helper node script that imitates a backend server that would create and authenticate a Core API user.
+
+Fill in these variables inside `scripts/initialTokensGenerator.js`:
+
+- `OAUTH_CLIENT_UUID` – UUID of your OAuth client (copy it from the admin console).
+- `OAUTH_CLIENT_PRIVATE_KEY` – private key matching the public key you registered.
+- `REGION` – `us` or `eu`, matching your organization’s region.
+
+Then execute the script with the command:
+
+```bash
+# Run with Node ⩾ 18
+node scripts/initialTokensGenerator.js
+```
+
+*Result:* the script writes a `userTokens.json` file containing your new tokens.
+
+> ℹ️ **Need a server token instead?**  
+> Append `--type=server` to the command above to generate a long-lived **server access token** rather than user access/refresh tokens. Use this when calling the Core API directly from your own tools.
+
+### 3. Configure the frontend ⚙️
+Open `app/shared/authentication.js` and paste the credentials generated in **Step&nbsp;2** (or any other source you use):
+
+```js
+const INITIAL_USER_ACCESS_TOKEN  = '...';
+const INITIAL_USER_REFRESH_TOKEN = '...';
+const REGION                     = 'us'; // or 'eu'
+```
+
+### 4. Launch the app 🚀
+Any static HTTP server works; with Node.js you can simply run:
+
+```bash
+npx http-server app/
+# Then visit http://127.0.0.1:8080/
+```
+
+> ℹ️ **API version notice:**  
+> Please note that this sample app is only compatible with a specific version of the API, specified at the beginning of [commonUtils.js](app/shared/commonUtils.js) file.
+
+---
+
+## 📚 Further reading
+
+- **Authentication guide:** <https://docs.nabla.com/guides/authentication>
+- **Full API docs:** <https://docs.nabla.com>
+
