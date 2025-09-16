@@ -43,20 +43,21 @@ node scripts/initialTokensGenerator.js
 > Append `--type=server` to the command above to generate a long-lived **server access token** rather than user access/refresh tokens. Use this when calling the Server API directly from your own tools.
 
 ### 4. Configure the frontend ⚙️
-Open `app/shared/authentication.js` and paste the credentials generated in **Step&nbsp;2** (or any other source you use):
+Create `.env.local` file at the root of the project and add the credentials generated in **Step&nbsp;3** (or any other source you use):
 
-```js
-const INITIAL_USER_ACCESS_TOKEN  = '...';
-const INITIAL_USER_REFRESH_TOKEN = '...';
-const REGION                     = 'us'; // or 'eu'
+```env
+VITE_NABLA_ACCESS_TOKEN=<The user token>
+VITE_NABLA_REFRESH_TOKEN=<The >
+VITE_NABLA_REGION=<`us` or `eu`>
+
 ```
 
 ### 5. Launch the app 🚀
 Any static HTTP server works; with Node.js you can simply run:
 
 ```bash
-npx http-server app/
-# Then visit http://127.0.0.1:8080/
+npm run dev
+# Then visit http://localhost:5173/
 ```
 
 > ℹ️ **API version notice:**  
