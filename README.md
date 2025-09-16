@@ -46,10 +46,9 @@ node scripts/initialTokensGenerator.js
 Create `.env.local` file at the root of the project and add the credentials generated in **Step&nbsp;3** (or any other source you use):
 
 ```env
-VITE_NABLA_ACCESS_TOKEN=<The user token>
-VITE_NABLA_REFRESH_TOKEN=<The >
-VITE_NABLA_REGION=<`us` or `eu`>
-
+NABLA_ACCESS_TOKEN=<the generated access token>
+NABLA_REFRESH_TOKEN=<the generated refresh token>
+NABLA_API_HOSTNAME=<the Nabla API host name, eg: "eu.api.nabla.com">
 ```
 
 ### 5. Launch the app 🚀
