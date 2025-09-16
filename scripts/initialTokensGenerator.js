@@ -19,11 +19,8 @@ const OAUTH_CLIENT_UUID = "<YOUR_OAUTH_CLIENT_UUID>";
 const OAUTH_CLIENT_PRIVATE_KEY = `<YOUR_OAUTH_CLIENT_PRIVATE_KEY>`;
 const REGION = "<YOUR_REGION>"; // "us" or "eu"
 
-const fs = require('fs');
-const path = require('path');
-// Jsrsasign is provided in the repository source code for convenience
-const jsrsasignCode = fs.readFileSync(path.join(__dirname, 'lib/jsrsasign.js'), 'utf8');
-eval(jsrsasignCode);
+const fs = require('node:fs');
+const { KJUR } = require('jsrsasign');
 
 const CORE_API_HOST = `${REGION}.api.nabla.com`;
 

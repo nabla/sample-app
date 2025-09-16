@@ -17,3 +17,7 @@ dist/
 *.sln
 *.sw?
 *.local
+
+# Misc. files
+userTokens.json
+*.pem
