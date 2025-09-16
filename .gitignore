@@ -19,5 +19,4 @@ dist/
 *.local
 
 # Misc. files
-userTokens.json
 *.pem
