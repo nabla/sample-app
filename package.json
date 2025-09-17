@@ -1,0 +1,22 @@
+{
+  "name": "sample-app",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "description": "A minimal web app that shows how to interact with the Nabla Core API",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nabla/sample-app.git"
+  },
+  "devDependencies": {
+    "jsrsasign": "^11.1.0",
+    "vite": "^7.1.5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

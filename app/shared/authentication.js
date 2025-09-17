@@ -1,13 +1,13 @@
 import { API_VERSION } from "./commonUtils.js";
 
-const INITIAL_USER_ACCESS_TOKEN = "<YOUR_INITIAL_USER_ACCESS_TOKEN>"
-const INITIAL_USER_REFRESH_TOKEN = "<YOUR_INITIAL_USER_REFRESH_TOKEN>"
-const REGION = "<YOUR_REGION>" // "us" or "eu"
+const INITIAL_USER_ACCESS_TOKEN = import.meta.env.VITE_NABLA_ACCESS_TOKEN;
+const INITIAL_USER_REFRESH_TOKEN = import.meta.env.VITE_NABLA_REFRESH_TOKEN;
+const CORE_API_HOSTNAME = import.meta.env.VITE_NABLA_API_HOSTNAME;
 
 let userAccessToken = INITIAL_USER_ACCESS_TOKEN;
 let userRefreshToken = INITIAL_USER_REFRESH_TOKEN;
 
-const CORE_API_BASE_URL = `${REGION}.api.nabla.com/v1/core`;
+const CORE_API_BASE_URL = `${CORE_API_HOSTNAME}/v1/core`;
 
 const showTokenError = (message) => {
     const errorDiv = document.getElementById("token-error");
