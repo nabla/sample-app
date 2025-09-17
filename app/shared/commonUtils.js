@@ -5,6 +5,7 @@
 const API_VERSION = "2025-05-21"
 
 let thinkingId;
+let pcmWorker;
 let audioContext;
 let mediaSource;
 
@@ -71,9 +72,11 @@ const initializeMediaStream = async (handleAudioChunk) => {
         },
         video: false,
     });
+ 
     audioContext = new AudioContext({ sampleRate: 16000 });
     await audioContext.audioWorklet.addModule("../shared/rawPcm16Processor.js");
-    const pcmWorker = new AudioWorkletNode(audioContext, "raw-pcm-16-worker", {
+
+    pcmWorker = new AudioWorkletNode(audioContext, "raw-pcm-16-worker", {
         outputChannelCount: [1],
     });
     mediaSource = audioContext.createMediaStreamSource(mediaStream);
