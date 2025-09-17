@@ -60,7 +60,7 @@ const endConnection = async (websocket, endObject) => {
 };
 
 // Audio utilities
-const initializeMediaStream = async (buildAudioChunk, websocket) => {
+const initializeMediaStream = async (handleAudioChunk) => {
     // Ask authorization to access the microphone
     const mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -80,17 +80,12 @@ const initializeMediaStream = async (buildAudioChunk, websocket) => {
     mediaSource.connect(pcmWorker);
 
     // pcm post on message
-    pcmWorker.port.onmessage = (msg) => {
-        const pcm16iSamples = msg.data;
+    pcmWorker.port.onmessage = ({ data }) => {
         const audioAsBase64String = btoa(
-            String.fromCodePoint(...new Uint8Array(pcm16iSamples.buffer)),
+            String.fromCodePoint(...new Uint8Array(data.buffer)),
         );
-        if (websocket.readyState !== websocket.OPEN) {
-            console.error("Websocket is no longer open");
-            return;
-        }
 
-        websocket.send(buildAudioChunk(audioAsBase64String));
+        handleAudioChunk(audioAsBase64String);
     };
 
     return pcmWorker;

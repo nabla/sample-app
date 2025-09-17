@@ -1,10 +1,10 @@
+// Nodes of the Web Audio API process the audio stream in frames of the length
 // of 128 samples. Cf https://www.w3.org/TR/webaudio/#rendering-loop
 // (and they call it a quantum, plural quanta)
 const quantumSize = 128;
 
 // Number of quanta per packet we will send to the speech to text.
-// Typical recommendation is to send a packet every 100ms
-const quantaPerPacket = 24; // (1/32 kHz) * 128 * 24 = 96 ms
+const quantaPerPacket = 24; // (1/16 kHz) * 128 * 24 = 192 ms
 
 export class RawPCM16Processor extends AudioWorkletProcessor {
     constructor() {
