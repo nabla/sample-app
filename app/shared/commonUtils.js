@@ -5,6 +5,7 @@
 const API_VERSION = "2025-05-21"
 
 let thinkingId;
+let pcmWorker;
 let audioContext;
 let mediaSource;
 
@@ -60,7 +61,7 @@ const endConnection = async (websocket, endObject) => {
 };
 
 // Audio utilities
-const initializeMediaStream = async (buildAudioChunk, websocket) => {
+const initializeMediaStream = async (handleAudioChunk) => {
     // Ask authorization to access the microphone
     const mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -71,26 +72,23 @@ const initializeMediaStream = async (buildAudioChunk, websocket) => {
         },
         video: false,
     });
+ 
     audioContext = new AudioContext({ sampleRate: 16000 });
     await audioContext.audioWorklet.addModule("../shared/rawPcm16Processor.js");
-    const pcmWorker = new AudioWorkletNode(audioContext, "raw-pcm-16-worker", {
+
+    pcmWorker = new AudioWorkletNode(audioContext, "raw-pcm-16-worker", {
         outputChannelCount: [1],
     });
     mediaSource = audioContext.createMediaStreamSource(mediaStream);
     mediaSource.connect(pcmWorker);
 
     // pcm post on message
-    pcmWorker.port.onmessage = (msg) => {
-        const pcm16iSamples = msg.data;
+    pcmWorker.port.onmessage = ({ data }) => {
         const audioAsBase64String = btoa(
-            String.fromCodePoint(...new Uint8Array(pcm16iSamples.buffer)),
+            String.fromCodePoint(...new Uint8Array(data.buffer)),
         );
-        if (websocket.readyState !== websocket.OPEN) {
-            console.error("Websocket is no longer open");
-            return;
-        }
 
-        websocket.send(buildAudioChunk(audioAsBase64String));
+        handleAudioChunk(audioAsBase64String);
     };
 
     return pcmWorker;

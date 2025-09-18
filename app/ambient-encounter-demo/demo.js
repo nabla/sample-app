@@ -1,4 +1,5 @@
 // Ambient encounter demo implementation
+import { BufferedAudioStream } from '../shared/bufferAudioStream.js';
 import { getOrRefetchUserAccessToken, CORE_API_BASE_URL } from '../shared/authentication.js';
 import {
     disableElementById,
@@ -16,6 +17,7 @@ import {
 
 let generatedNote = undefined;
 let websocket;
+let bufferAudioStream;
 let transcriptItems = {};
 let transcriptSeqId = 0;
 let noteSectionsCustomization = {};
@@ -123,7 +125,7 @@ const initializeTranscriptConnection = async () => {
             const data = JSON.parse(mes.data);
 
             if (data.type === "AUDIO_CHUNK_ACK") {
-                // This is where you'd remove audio chunks from your buffer
+                bufferAudioStream.handlePacketAck(data);
             } else if (data.type === "TRANSCRIPT_ITEM") {
                 insertTranscriptItem(data);
             } else if (data.type === "ERROR_MESSAGE") {
@@ -183,32 +185,39 @@ const startRecording = async () => {
         throw new Error("Websocket did not open");
     }
 
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const pcmWorker = await initializeMediaStream((audioAsBase64String) => {
-            return JSON.stringify({
-                type: "AUDIO_CHUNK",
-                payload: audioAsBase64String,
-                stream_id: "stream1",
-                seq_id: transcriptSeqId++,
-            });
-        }, websocket);
-
-        const config = {
-            type: "CONFIG",
-            encoding: "PCM_S16LE",
-            sample_rate: 16000,
-            speech_locales: [getFirstTranscriptLocale(), getSecondTranscriptLocale()],
-            streams: [
-                { id: "stream1", speaker_type: "unspecified" },
-            ],
-            enable_audio_chunk_ack: true,
-        };
-        websocket.send(JSON.stringify(config));
-
-        pcmWorker.port.start();
-    } else {
+    if (!navigator.mediaDevices?.getUserMedia) {
         console.error("Microphone audio stream is not accessible on this browser");
+        return;
     }
+
+    bufferAudioStream = new BufferedAudioStream({
+        serializeAudioPacket: (data) => JSON.stringify(data),
+        websocket,
+    });
+
+    const pcmWorker = await initializeMediaStream((audioAsBase64String) => {
+        const audioPacket = {
+            type: "AUDIO_CHUNK",
+            payload: audioAsBase64String,
+            stream_id: "stream1",
+            seq_id: transcriptSeqId++,
+        };
+        bufferAudioStream.sendAndBuffer(audioPacket);
+    });
+
+    const configPacket = {
+        type: "CONFIG",
+        encoding: "PCM_S16LE",
+        sample_rate: 16000,
+        speech_locales: [getFirstTranscriptLocale(), getSecondTranscriptLocale()],
+        streams: [
+            { id: "stream1", speaker_type: "unspecified" },
+        ],
+        enable_audio_chunk_ack: true,
+    };
+    websocket.send(JSON.stringify(configPacket));
+
+    pcmWorker.port.start();
 };
 
 // Note generation
