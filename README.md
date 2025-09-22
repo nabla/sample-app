@@ -11,7 +11,7 @@ A minimal web app (in `app/`) that shows how to interact with the [Nabla Core AP
 ### 0. Prerequisites 📋
 
 - Node.js v22+
-- A Nabla Core API account ([sign up here](https://pro.nabla.com/core-api-signup))
+- A Nabla Core API account ([contact us](mailto:api@nabla.com) to create one)
 
 ### 1. Download and setup the project 📦
 
@@ -44,7 +44,7 @@ node scripts/generate-tokens.js \
   --hostname=eu.api.nabla.com
 ```
 
-> ℹ️ **Need a server token instead?**  
+> ℹ️ **Need a server token instead?**
 > Pass the `--type=server` argument to the command above to generate a long-lived **server access token** rather than user access/refresh tokens. Use this when calling the Server API directly from your own tools.
 
 ### 4. Configure the frontend ⚙️
@@ -70,7 +70,7 @@ Run the following command and navigate to http://localhost:5173/
 npm run dev
 ```
 
-> ℹ️ **API version notice:**  
+> ℹ️ **API version notice:**
 > Please note that this sample app is only compatible with a specific version of the API, specified at the beginning of [commonUtils.js](app/shared/commonUtils.js) file.
 
 ---
@@ -79,4 +79,3 @@ npm run dev
 
 - **Authentication guide:** <https://docs.nabla.com/guides/authentication>
 - **Full API docs:** <https://docs.nabla.com>
-
