@@ -6,14 +6,14 @@ A minimal web app (in `app/`) that shows how to interact with the [Nabla Core AP
 
 ---
 
-## ✨ Quick Start
+## Quick Start
 
-### 0. Prerequisites 📋
+### 0. Prerequisites
 
 - Node.js v22+
 - A Nabla Core API account ([contact us](mailto:api@nabla.com) to create one)
 
-### 1. Download and setup the project 📦
+### 1. Download and setup the project
 
 ```bash
 git clone git@github.com:nabla/sample-app.git
@@ -21,12 +21,12 @@ cd sample-app/
 npm install
 ```
 
-### 2. Create an OAuth client 🔑
+### 2. Create an OAuth client
 
 - Sign in to the Core API admin console: [Log in](https://pro.nabla.com/login).
 - Follow the [documentation](https://docs.nabla.com/guides/authentication#1-creating-an-oauth-client) to create a new OAuth Client with the "Public Key (static)" method.
 
-### 3. Generate user tokens 🌱
+### 3. Generate user tokens
 
 You need to use this OAuth client to generate initial user access and refresh tokens for the app. In a realistic architecture, this work would be done by a dedicated authentication backend server on your side. For simplicity's sake, however, we provide an helper node script that imitates a backend server that would create and authenticate a Core API user.
 
@@ -47,7 +47,7 @@ node scripts/generate-tokens.js \
 > ℹ️ **Need a server token instead?**
 > Pass the `--type=server` argument to the command above to generate a long-lived **server access token** rather than user access/refresh tokens. Use this when calling the Server API directly from your own tools.
 
-### 4. Configure the frontend ⚙️
+### 4. Configure the frontend
 
 To launch the app the following environment variables needs to be set:
 - `VITE_NABLA_ACCESS_TOKEN`: a user access token
@@ -62,7 +62,7 @@ VITE_NABLA_REFRESH_TOKEN=my_user_refresh_token
 VITE_NABLA_API_HOSTNAME=us.api.nabla.com
 ```
 
-### 5. Launch the app 🚀
+### 5. Launch the app
 
 Run the following command and navigate to http://localhost:5173/
 
@@ -75,7 +75,7 @@ npm run dev
 
 ---
 
-## 📚 Further reading
+## Further reading
 
 - **Authentication guide:** <https://docs.nabla.com/guides/authentication>
 - **Full API docs:** <https://docs.nabla.com>
