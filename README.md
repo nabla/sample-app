@@ -32,7 +32,7 @@ You need to use this OAuth client to generate initial user access and refresh to
 
 This script is located under `scripts/generate-tokens.js` and expects the following CLI required arguments:
 * `--uuid` (type:`string`): the OAuth client UUID for authentication
-* `--private-key` (type:`string`): the path to the private key file
+* `--private-key` (type:`string`): the path to the private key file (generally `private_key.pem` if you followed the documentation closely at the previous step)
 * `--hostname` (type:`string`): Nabla's API hostname: `us.api.nabla.com` for US region or `eu.api.nabla.com` for EU region.
 
 Run the following command to generate a pair of user access/refresh tokens:
