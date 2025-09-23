@@ -31,7 +31,7 @@ npm install
 You need to use this OAuth client to generate initial user access and refresh tokens for the app. In a realistic architecture, this work would be done by a dedicated authentication backend server on your side. For simplicity's sake, however, we provide an helper node script that imitates a backend server that would create and authenticate a Core API user.
 
 This script is located under `scripts/generate-tokens.js` and expects the following CLI required arguments:
-* `--uuid` (type:`string`): the OAuth UUID for authentication
+* `--uuid` (type:`string`): the OAuth client UUID for authentication
 * `--private-key` (type:`string`): the path to the private key file
 * `--hostname` (type:`string`): Nabla's API hostname: `us.api.nabla.com` for US region or `eu.api.nabla.com` for EU region.
 
