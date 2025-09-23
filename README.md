@@ -54,7 +54,7 @@ To launch the app, the following environment variables need to be set:
 - `VITE_NABLA_REFRESH_TOKEN`: a user refresh token
 - `VITE_NABLA_API_HOSTNAME`: Nabla's API hostname: `us.api.nabla.com` for US region or `eu.api.nabla.com` for EU region.
 
-Create a `.env.local` file at the root of the project and add the credentials generated in **Step&nbsp;3** (or any other source you use):
+Create a `.env.local` file at the root of the project, and add the credentials generated in **Step&nbsp;3** (or any other source you use):
 
 ```env
 VITE_NABLA_ACCESS_TOKEN=my_user_access_token
