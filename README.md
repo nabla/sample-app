@@ -24,7 +24,7 @@ npm install
 ### 2. Create an OAuth client 🔑
 
 - Sign in to the Core API admin console: [Log in](https://pro.nabla.com/login).
-- Follow the [documentation](https://docs.nabla.com/guides/authentication#1-creating-an-oauth-client) to create a new OAuth Client.
+- Follow the [documentation](https://docs.nabla.com/guides/authentication#1-creating-an-oauth-client) to create a new OAuth Client with the "Public Key (static)" method.
 
 ### 3. Generate user tokens 🌱
 
