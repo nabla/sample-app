@@ -31,7 +31,6 @@ body {
     border-radius: 8px;
     padding: 25px 20px;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     transition: all 0.3s ease;
     background-color: #fff;
     display: flex;
@@ -42,7 +41,6 @@ body {
 
 .demo-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
     border-color: #2196F3;
 }
 
@@ -70,12 +68,10 @@ body {
     border-radius: 4px;
     font-weight: bold;
     transition: background-color 0.2s;
-    box-shadow: 0 2px 5px rgba(33, 150, 243, 0.3);
 }
 
 .demo-btn:hover {
     background-color: #0b7dda;
-    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.5);
 }
 
 .note-section {
