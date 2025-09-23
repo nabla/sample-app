@@ -59,7 +59,7 @@ Create `.env.local` file at the root of the project and add the credentials gene
 ```env
 VITE_NABLA_ACCESS_TOKEN=my_user_access_token
 VITE_NABLA_REFRESH_TOKEN=my_user_refresh_token
-VITE_NABLA_API_HOSTNAME=eu.api.nabla.com
+VITE_NABLA_API_HOSTNAME=us.api.nabla.com
 ```
 
 ### 5. Launch the app 🚀
