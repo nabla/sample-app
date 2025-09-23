@@ -4,15 +4,15 @@
  * - Authenticate to the Core API (by constructing a JWT client assertion with its OAuth UUID and private key)
  * - Create a new API user
  * - Authenticate the API user, to provide him its initial access and refresh tokens
- * 
+ *
  * Usage:
  * node generate-tokens.js --uuid=<oauth-uuid> --private-key=<private-key-file> --hostname=<api-hostname> [--type=server|user]
- * 
+ *
  * Required Arguments:
  *   --uuid=<oauth-uuid>        OAuth UUID for authentication
  *   --private-key=<file>       Path to the private key file
  *   --hostname=<hostname>      API hostname (e.g., eu.api.nabla.com)
- * 
+ *
  * Optional Arguments:
  *   --type=server              Generate server access token only
  *   --type=user                Generate user access/refresh tokens (default)

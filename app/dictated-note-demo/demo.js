@@ -124,7 +124,7 @@ const pauseDictating = async () => {
 const initApp = () => {
     // Initial call to display an error message directly if the refresh token is expired
     getOrRefetchUserAccessToken();
-    
+
     // Set up event listeners
     document.getElementById("dictate-btn").addEventListener("click", startDictating);
     document.getElementById("pause-btn").addEventListener("click", pauseDictating);

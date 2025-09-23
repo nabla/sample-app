@@ -1,16 +1,16 @@
 /**
  * The max number of packets sent to the server but not ACKed yet.
- * 
+ *
  * Note: The number of in-flight packets is limited to 10 seconds of audio. Since
- * is configured to send 192 ms of audio per packet, the max number of in-flight 
+ * is configured to send 192 ms of audio per packet, the max number of in-flight
  * packets is 50.
  */
 const MAX_IN_FLIGHT_PACKETS = 50;
 
 /**
  * A class to buffer audio packets and send them to the server.
- * 
- * It is used to make data transfer more resilient to network issues: 
+ *
+ * It is used to make data transfer more resilient to network issues:
  * https://docs.nabla.com/guides/best-practices/transcription-network-resilience
  */
 export class BufferedAudioStream {
@@ -47,7 +47,7 @@ export class BufferedAudioStream {
     }
 
     /**
-     * Handle the acknowledgement of a packet by the server and send the buffered packets if 
+     * Handle the acknowledgement of a packet by the server and send the buffered packets if
      * needed.
      */
     handlePacketAck(data) {
@@ -62,8 +62,8 @@ export class BufferedAudioStream {
         if (this.#websocket.readyState !== WebSocket.OPEN) {
             return;
         }
-        
-        // Send the buffered packets as long as there are less than the max number of 
+
+        // Send the buffered packets as long as there are less than the max number of
         // in-flight packets.
         while (
             this.#bufferedPackets.length > 0 &&

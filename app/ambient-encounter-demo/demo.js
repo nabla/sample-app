@@ -108,7 +108,7 @@ const insertTranscriptItem = (data) => {
 const initializeTranscriptConnection = async () => {
     // Get valid token for connection
     const bearerToken = await getOrRefetchUserAccessToken();
-    
+
     // Initialize websocket connection
     websocket = new WebSocket(
         `wss://${CORE_API_BASE_URL}/user/transcribe-ws?nabla-api-version=${API_VERSION}`,
@@ -165,7 +165,7 @@ const startRecording = async () => {
         document.getElementById("transcript").appendChild(errorMessage);
         return;
     }
-    
+
     clearTranscript();
     enableElementById("generate-btn");
 
@@ -180,7 +180,7 @@ const startRecording = async () => {
             break;
         }
     }
-    
+
     if (websocket.readyState !== WebSocket.OPEN) {
         throw new Error("Websocket did not open");
     }
@@ -526,19 +526,19 @@ const onSectionCustomInstructionChange = () => {
 const initApp = () => {
     // Initial call to display an error message directly if the refresh token is expired
     getOrRefetchUserAccessToken();
-    
+
     // Set up event listeners
     document.getElementById("start-btn").addEventListener("click", startRecording);
     document.getElementById("generate-btn").addEventListener("click", generateNote);
     document.getElementById("normalize-btn").addEventListener("click", generateNormalizedData);
     document.getElementById("patient-instructions-btn").addEventListener("click", generatePatientInstructions);
     document.getElementById("clear-btn").addEventListener("click", clearEncounter);
-    
+
     document.getElementById("note-template").addEventListener("change", onTemplateChange);
     document.getElementById("note-sections").addEventListener("change", onSectionToCustomizeChange);
     document.getElementById("style-select").addEventListener("change", onSectionStyleChange);
     document.getElementById("custom-instruction").addEventListener("input", onSectionCustomInstructionChange);
-    
+
     // Initialize section customization
     updateSectionsList();
 };
