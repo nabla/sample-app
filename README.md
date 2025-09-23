@@ -41,7 +41,7 @@ Run the following command to generate a pair of user access/refresh tokens:
 node scripts/generate-tokens.js \
   --uuid=<oauth-uuid> \
   --private-key=<private-key-file> \
-  --hostname=eu.api.nabla.com
+  --hostname=us.api.nabla.com
 ```
 
 > ℹ️ **Need a server token instead?**
