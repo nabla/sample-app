@@ -71,7 +71,7 @@ npm run dev
 ```
 
 > ℹ️ **API version notice:**
-> Please note that this sample app is only compatible with a specific version of the API, specified at the beginning of [commonUtils.js](app/shared/commonUtils.js) file.
+> Please note that this sample app is only compatible with a specific version of the API, specified at the beginning of the [commonUtils.js](app/shared/commonUtils.js) file.
 
 ---
 
