@@ -49,7 +49,7 @@ node scripts/generate-tokens.js \
 
 ### 4. Configure the frontend
 
-To launch the app the following environment variables needs to be set:
+To launch the app the following environment variables need to be set:
 - `VITE_NABLA_ACCESS_TOKEN`: a user access token
 - `VITE_NABLA_REFRESH_TOKEN`: a user refresh token
 - `VITE_NABLA_API_HOSTNAME`: Nabla's API hostname: `us.api.nabla.com` for US region or `eu.api.nabla.com` for EU region.
