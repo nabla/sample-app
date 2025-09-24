@@ -72,7 +72,7 @@ const initializeMediaStream = async (handleAudioChunk) => {
         },
         video: false,
     });
- 
+
     audioContext = new AudioContext({ sampleRate: 16000 });
     await audioContext.audioWorklet.addModule("../shared/rawPcm16Processor.js");
 
@@ -159,4 +159,4 @@ export {
     insertElementByStartOffset,
     msToTime,
     sleep
-}; 
+};

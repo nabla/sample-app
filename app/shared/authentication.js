@@ -54,7 +54,7 @@ const getOrRefetchUserAccessToken = async () => {
         },
         body: JSON.stringify({ refresh_token: userRefreshToken }),
     });
-    
+
     if (!refreshResponse.ok) {
         showTokenError("The user access token refresh failed. Please try to provide new initial tokens in the source code.");
         throw new Error(`Refresh call failed (status: ${refreshResponse.status})`);
@@ -68,4 +68,4 @@ const getOrRefetchUserAccessToken = async () => {
 export {
     CORE_API_BASE_URL,
     getOrRefetchUserAccessToken
-}; 
+};
