@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* Nabla design-system color tokens (the subset this app uses). */
+@theme {
+  /* Primary — brand accent (violet) */
+  --color-primary-50: #f7f7fd;
+  --color-primary-100: #efeefb;
+  --color-primary-200: #dfdcf7;
+  --color-primary-300: #c0b9ee;
+  --color-primary-400: #a097e6;
+  --color-primary-500: #8174dd;
+  --color-primary-600: #6151d5;
+  --color-primary-700: #4e41aa;
+  --color-primary-800: #3a3180;
+
+  /* Grey — neutrals (surfaces, borders, text) */
+  --color-grey-50: #f9fafc;
+  --color-grey-100: #f5f7fa;
+  --color-grey-200: #dce0e9;
+  --color-grey-250: #a5abbb;
+  --color-grey-300: #6d758d;
+  --color-grey-400: #212a2f;
+  --color-grey-500: #000000;
+
+  /* Semantic */
+  --color-success-100: #e7f7f0;
+  --color-success-200: #88dbb4;
+  --color-success-300: #12b76a;
+  --color-warning-100: #fef3e6;
+  --color-warning-200: #fee5c9;
+  --color-warning-300: #f79009;
+  --color-error-100: #f2b0ab;
+  --color-error-200: #f04438;
+  --color-error-300: #de3023;
+}

@@ -5,7 +5,9 @@ npm-debug.log*
 
 # Folders
 node_modules/
-dist/
+.cache/
+.claude/
+frontend/node_modules/
 
 # Editor directories and files
 .vscode/

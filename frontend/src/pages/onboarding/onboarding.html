@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup — Nabla Core API</title>
+  <link rel="stylesheet" href="/src/index.css">
+  <script type="module" src="/src/pages/onboarding/onboarding.ts"></script>
+</head>
+<body class="bg-grey-50 min-h-screen">
+<main class="max-w-2xl mx-auto px-6 py-12">
+
+  <div class="mb-8">
+    <a href="./index.html" class="text-sm text-grey-250 hover:text-grey-300 transition-colors">← Back</a>
+    <h1 class="text-2xl font-bold text-grey-400 mt-4 mb-1">Setup</h1>
+    <p class="text-sm text-grey-300">Configure your Nabla Core API credentials to enable live API calls.</p>
+  </div>
+
+  <!-- Step indicators -->
+  <div class="flex items-center gap-0 mb-10" id="step-indicators">
+    <div class="step-indicator flex items-center gap-2" data-step="1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold step-circle bg-primary-600 text-white">1</div>
+      <span class="text-sm font-medium step-label text-primary-600">OAuth Client</span>
+    </div>
+    <div class="flex-1 h-px bg-grey-200 mx-3"></div>
+    <div class="step-indicator flex items-center gap-2" data-step="2">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold step-circle bg-grey-200 text-grey-250">2</div>
+      <span class="text-sm font-medium step-label text-grey-250">Server Token</span>
+    </div>
+    <div class="flex-1 h-px bg-grey-200 mx-3"></div>
+    <div class="step-indicator flex items-center gap-2" data-step="3">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold step-circle bg-grey-200 text-grey-250">3</div>
+      <span class="text-sm font-medium step-label text-grey-250">Provision User</span>
+    </div>
+  </div>
+
+  <!-- Step 1: OAuth Client -->
+  <div id="step-1" class="step-panel">
+    <div class="bg-white rounded-xl border border-grey-200 p-6 mb-4">
+      <h2 class="font-semibold text-grey-400 mb-1">Create an OAuth Client</h2>
+      <p class="text-sm text-grey-300 mb-5">
+        Generate an RSA key pair, then upload the public key to the <a href="https://pro.nabla.com/developers/oauth-clients" target="_blank" class="text-primary-600 hover:underline">API Admin Console</a> when creating your OAuth Client (choose <strong class="text-grey-400">JWT Public Key</strong>).
+      </p>
+
+      <!-- Key generation -->
+      <div class="mb-5">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-medium text-grey-300">RSA Key Pair</label>
+          <button id="regen-btn" onclick="generateKeypair()" class="hidden text-xs text-grey-250 hover:text-error-200 transition-colors">Regenerate ↺</button>
+        </div>
+        <div id="keypair-idle" class="flex items-center gap-3">
+          <button onclick="generateKeypair()" id="gen-keypair-btn" class="bg-grey-400 hover:bg-grey-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+            Generate key pair
+          </button>
+          <span class="text-xs text-grey-250">Private key stays on the server — never leaves your machine.</span>
+        </div>
+        <div id="keypair-ready" class="hidden">
+          <div class="bg-grey-400 rounded-lg p-3 font-mono text-xs text-success-300 max-h-32 overflow-y-auto whitespace-pre" id="public-key-display"></div>
+          <button onclick="copyPublicKey()" id="copy-btn" class="mt-2 text-xs text-grey-300 hover:text-grey-400 transition-colors border border-grey-200 hover:border-grey-250 px-3 py-1.5 rounded-lg">
+            Copy public key
+          </button>
+          <p class="mt-2 text-xs text-warning-300">Paste this public key in the Admin Console. Regenerating will break any existing OAuth client using the old key.</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-grey-300 mb-1.5">OAuth Client UUID <span class="text-grey-250 font-normal">(from the Admin Console, after uploading the public key)</span></label>
+          <input id="client-uuid" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" class="w-full px-3 py-2 text-sm border border-grey-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-grey-300 mb-1.5">API Host</label>
+          <input id="host" type="text" value="https://us.api.nabla.com" class="w-full px-3 py-2 text-sm font-mono border border-grey-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white" />
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end">
+      <button onclick="submitConfig()" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+        Save & Continue →
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2: Server Token -->
+  <div id="step-2" class="step-panel hidden">
+    <div class="bg-white rounded-xl border border-grey-200 p-6 mb-4">
+      <h2 class="font-semibold text-grey-400 mb-1">Generate a Server Access Token</h2>
+      <p class="text-sm text-grey-300 mb-5">
+        The backend constructs a JWT client assertion signed with your private key and exchanges it for a server access token.
+      </p>
+
+      <div class="bg-grey-50 border border-grey-200 rounded-lg p-4 text-xs font-mono text-grey-300 mb-5">
+        <div class="text-grey-250 mb-1">POST /oauth/token</div>
+        <div class="text-grey-400">{</div>
+        <div class="pl-4">"grant_type": "client_credentials",</div>
+        <div class="pl-4">"client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",</div>
+        <div class="pl-4">"client_assertion": <span class="text-warning-300">"&lt;signed JWT&gt;"</span></div>
+        <div class="text-grey-400">}</div>
+      </div>
+
+      <button onclick="generateServerToken()" id="gen-server-token-btn" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        Generate Server Token
+      </button>
+
+      <div id="server-token-response" class="hidden mt-4 bg-success-100 border border-success-200 rounded-lg p-4">
+        <div class="flex items-center gap-2">
+          <span class="text-success-300">✓</span>
+          <span class="text-sm font-medium text-success-300">Server token generated — stored by the server only</span>
+        </div>
+        <p class="text-xs text-success-300 mt-1.5">The server access token never reaches the browser. The backend keeps it and uses it to provision users.</p>
+      </div>
+    </div>
+    <div class="flex items-center justify-between">
+      <button onclick="goToStep(1)" class="text-sm text-grey-300 hover:text-grey-400 transition-colors">← Back</button>
+      <button onclick="goToStep(3)" id="step2-next" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+        Next: Provision User →
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 3: Provision User -->
+  <div id="step-3" class="step-panel hidden">
+    <div class="bg-white rounded-xl border border-grey-200 p-6 mb-4">
+      <h2 class="font-semibold text-grey-400 mb-1">Create &amp; Authenticate a User</h2>
+      <p class="text-sm text-grey-300 mb-5">
+        Creates a Nabla user, then exchanges the server token for a user access token. The user is only created once — re-running this step re-authenticates the same user.
+      </p>
+
+      <div class="bg-grey-50 border border-grey-200 rounded-lg p-4 text-xs font-mono text-grey-300 mb-5 space-y-3">
+        <div>
+          <div class="text-grey-250 mb-1">1. POST /v1/core/server/users</div>
+          <div class="text-grey-250">Authorization: Bearer &lt;SERVER_ACCESS_TOKEN&gt;</div>
+          <div class="pl-2 mt-1 text-grey-300">→ returns <span class="text-grey-400">{ id, external_id, … }</span></div>
+        </div>
+        <div>
+          <div class="text-grey-250 mb-1">2. POST /v1/core/server/jwt/authenticate/{id}</div>
+          <div class="text-grey-250">Authorization: Bearer &lt;SERVER_ACCESS_TOKEN&gt;</div>
+          <div class="pl-2 mt-1 text-grey-300">→ returns <span class="text-grey-400">{ access_token, refresh_token }</span></div>
+        </div>
+      </div>
+
+      <button onclick="provisionUser()" id="provision-btn" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        Create &amp; Authenticate User
+      </button>
+
+      <div id="user-token-response" class="hidden mt-4 bg-success-100 border border-success-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-success-300">✓</span>
+          <span class="text-sm font-medium text-success-300">User session established</span>
+        </div>
+        <div class="space-y-2 text-xs font-mono">
+          <div>
+            <div class="text-success-300 mb-1">nabla_user_id</div>
+            <div id="nabla-user-id-display" class="text-success-300 bg-success-100 rounded p-2 overflow-hidden text-ellipsis whitespace-nowrap"></div>
+          </div>
+        </div>
+        <p class="text-xs text-success-300 mt-2">The access token (5 min) and refresh token (30 days) are stored in localStorage and will be used to authenticate. The access token is automatically renewed by this application when required.</p>
+      </div>
+    </div>
+    <div class="flex items-center justify-between">
+      <button onclick="goToStep(2)" class="text-sm text-grey-300 hover:text-grey-400 transition-colors">← Back</button>
+      <a href="./demo.html" id="step3-finish" class="hidden bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+        Done — Launch Demo →
+      </a>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
