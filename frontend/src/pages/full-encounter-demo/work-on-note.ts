@@ -1,3 +1,8 @@
+import {
+	listNoteTemplates,
+	type NoteLocale,
+	updateNoteSettings,
+} from "../../api/note-settings.js";
 import { generateNormalizedData as apiGenerateNormalizedData } from "../../api/normalize.js";
 import { generateNote as apiGenerateNote } from "../../api/note.js";
 import { generatePatientInstructions as apiGeneratePatientInstructions } from "../../api/patient-instructions.js";
@@ -7,15 +12,21 @@ import {
 	markup,
 	readInstructionsLocale,
 	readNoteDraft,
+	readNoteTemplateKey,
 	readRecipientType,
 	renderConditions,
 	renderInstructions,
 	renderNote,
+	renderTemplateOptions,
 	resetInstructionsButton,
 	resetNormalizeButton,
 	setInstructionsLoading,
+	setNoteGenerating,
 	setNormalizeLoading,
 } from "./work-on-note.render.js";
+
+// The note locale is set alongside the template; kept fixed here for simplicity.
+const NOTE_LOCALE: NoteLocale = "ENGLISH_US";
 
 interface WorkOnNoteOptions {
 	transcript: TranscriptItem[];
@@ -28,17 +39,30 @@ export function startStep(
 ): StepTeardown {
 	return mountStep(rootSelector, markup(), ({ root, signal }) => {
 
-		// Generate the note on entry; it replaces the loader and enables the derivations.
-		void generateNote();
+		// Load the template library, then generate an initial note with the first one.
+		void init();
 
-		async function generateNote(): Promise<void> {
+		async function init(): Promise<void> {
 			try {
+				renderTemplateOptions(await listNoteTemplates());
+			} catch (error) {
+				showError(error);
+				return;
+			}
+			await generateNote();
+		}
+
+		// Set the chosen template as the user's note settings, then generate the note.
+		// Clears the derived outputs, which belonged to the previous note.
+		async function generateNote(): Promise<void> {
+			setNoteGenerating();
+			try {
+				await updateNoteSettings({
+					noteTemplateKey: readNoteTemplateKey(),
+					noteLocale: NOTE_LOCALE,
+				});
 				renderNote(
-					// Generate the note using the generated transcript and patient context
-					await apiGenerateNote({
-						transcriptItems: transcript,
-						patientContext,
-					}),
+					await apiGenerateNote({ transcriptItems: transcript, patientContext }),
 				);
 			} catch (error) {
 				showError(error);
@@ -75,6 +99,9 @@ export function startStep(
 			}
 		}
 
+		root
+			.querySelector("#note-generate-btn")
+			?.addEventListener("click", () => void generateNote(), { signal });
 		root
 			.querySelector("#generate-normalized-btn")
 			?.addEventListener("click", () => void generateNormalizedData(), { signal });

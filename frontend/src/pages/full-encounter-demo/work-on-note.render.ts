@@ -1,3 +1,4 @@
+import type { NoteTemplate } from "../../api/note-settings.js";
 import type { NormalizedData } from "../../api/normalize.js";
 import type { ClinicalNote } from "../../api/note.js";
 import type { RecipientType } from "../../api/patient-instructions.js";
@@ -37,6 +38,17 @@ export function markup(): string {
           <a href="${DOCUMENTATION_LINKS.generateNote}" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-note ↗</a>
         </div>
         <p class="text-xs text-grey-300 mb-2">Edit the note here — the generators on the right use the note below. In a real integration, you might want to allow users per-section edits.</p>
+        <div class="flex items-end gap-2 mb-3">
+          <div class="flex-1">
+            <label class="block text-xs font-medium text-grey-300 mb-1.5">Template <span class="text-grey-250 font-normal">(from the template library)</span></label>
+            <select id="note-template" class="w-full px-3 py-1.5 text-sm border border-grey-200 rounded-lg bg-white">
+              <option>Loading templates…</option>
+            </select>
+          </div>
+          <button id="note-generate-btn" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            Generate note
+          </button>
+        </div>
         <div id="note-loading" class="flex items-center gap-3 bg-grey-50 border border-grey-200 rounded-lg p-4 min-h-[200px]">
           <span class="w-5 h-5 rounded-full border-2 border-grey-200 border-t-primary-600 spin"></span>
           <span class="text-sm text-grey-300">Generating note from transcript and patient context…</span>
@@ -111,8 +123,54 @@ export function renderNote(note: ClinicalNote): void {
 	}
 	hide("note-loading");
 	show("note-json");
+	setButton("note-generate-btn", "Generate note", false);
 	setDisabled("generate-normalized-btn", false);
 	setDisabled("generate-instructions-btn", false);
+}
+
+export function renderTemplateOptions(templates: NoteTemplate[]): void {
+	const select = document.getElementById(
+		"note-template",
+	) as HTMLSelectElement | null;
+	if (!select) {
+		return;
+	}
+	select.innerHTML = templates
+		.map((template) => `<option value="${template.key}">${template.title}</option>`)
+		.join("");
+	// Prefer the "Multiple Sections" template when it's available, else the first.
+	const preferred = templates.find(
+		(template) => template.key === "GENERIC_MULTIPLE_SECTIONS",
+	);
+	if (preferred) {
+		select.value = preferred.key;
+	}
+}
+
+export function readNoteTemplateKey(): string {
+	return (document.getElementById("note-template") as HTMLSelectElement).value;
+}
+
+// Generating (or regenerating) a note: show the loader, lock the buttons, and clear
+// the derived outputs — the normalized codes and instructions belong to the old note.
+export function setNoteGenerating(): void {
+	show("note-loading");
+	hide("note-json");
+	setButton("note-generate-btn", "Generating…", true);
+	setDisabled("generate-normalized-btn", true);
+	setDisabled("generate-instructions-btn", true);
+	hide("normalized-output");
+	hide("instructions-output");
+	const conditions = document.getElementById("normalized-conditions");
+	if (conditions) {
+		conditions.innerHTML = "";
+	}
+	const instructions = document.getElementById("instructions-output");
+	if (instructions) {
+		instructions.textContent = "";
+	}
+	resetNormalizeButton();
+	resetInstructionsButton();
 }
 
 // The note JSON is editable, so the textarea is the source of truth for the

@@ -4,14 +4,15 @@ logs
 npm-debug.log*
 
 # Folders
-node_modules/
 .cache/
-.claude/
+node_modules/
 frontend/node_modules/
+frontend/dist/
 
 # Editor directories and files
 .vscode/
 .idea/
+.claude/
 .DS_Store
 *.suo
 *.ntvs*
