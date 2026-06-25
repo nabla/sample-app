@@ -1,6 +1,6 @@
 import type { TranscriptItem } from "../../../api/transcribe.js";
 
-export { renderCodeSnippets } from "../../../shared/codeSnippets.js";
+export { renderCodeSnippets } from "../../../shared/codeSnippets.render.js";
 // The WebSocket log and code-snippet rendering are generic and shared with the
 // dictate page; re-exported here so this stays the transcribe page's single
 // render entry point.
@@ -9,7 +9,7 @@ export {
 	resetLog,
 	switchWsTab,
 	updateWsStatus,
-} from "../../../shared/wsLog.js";
+} from "../../../shared/wsLog.render.js";
 
 function setBar(barId: string, percent: number, label: string): void {
 	const barElement = document.getElementById(`bar-${barId}`);
@@ -81,11 +81,11 @@ export function resetTranscriptArea(): void {
 	renderTranscript([]);
 }
 
-export function showBufViz(): void {
+export function showBufferVisualization(): void {
 	document.getElementById("buffer-viz")?.classList.remove("hidden");
 }
 
-export function updateBufViz(stats: {
+export function updateBufferVisualization(stats: {
 	queued: number;
 	inflight: number;
 	totalAcked: number;
@@ -101,27 +101,27 @@ export function updateBufViz(stats: {
 	);
 }
 
-let bufVizInterval: ReturnType<typeof setInterval> | null = null;
+let bufferVisualizationInterval: ReturnType<typeof setInterval> | null = null;
 
-export function startBufViz(
+export function startBufferVisualization(
 	getStats: () => { queued: number; inflight: number; totalAcked: number } | undefined,
 ): void {
-	showBufViz();
-	if (bufVizInterval) {
-		clearInterval(bufVizInterval);
+	showBufferVisualization();
+	if (bufferVisualizationInterval) {
+		clearInterval(bufferVisualizationInterval);
 	}
-	bufVizInterval = setInterval(() => {
+	bufferVisualizationInterval = setInterval(() => {
 		const stats = getStats();
 		if (stats) {
-			updateBufViz(stats);
+			updateBufferVisualization(stats);
 		}
 	}, 200);
 }
 
-export function stopBufViz(): void {
-	if (bufVizInterval) {
-		clearInterval(bufVizInterval);
-		bufVizInterval = null;
+export function stopBufferVisualization(): void {
+	if (bufferVisualizationInterval) {
+		clearInterval(bufferVisualizationInterval);
+		bufferVisualizationInterval = null;
 	}
 }
 

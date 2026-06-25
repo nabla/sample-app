@@ -1,7 +1,7 @@
 import { nablaFetch } from "../transport/client.js";
 import type { TranscriptItem } from "./transcribe.js";
 
-// A generated clinical note. Full schema: https://docs.nabla.com/user/generate-note
+// A generated clinical note.
 export interface NoteSection {
 	key: string;
 	title: string;

@@ -27,12 +27,6 @@ export function startStep(
 	{ transcript, patientContext }: WorkOnNoteOptions,
 ): StepTeardown {
 	return mountStep(rootSelector, markup(), ({ root, signal }) => {
-		root
-			.querySelector("#generate-normalized-btn")
-			?.addEventListener("click", () => void generateNormalizedData(), { signal });
-		root
-			.querySelector("#generate-instructions-btn")
-			?.addEventListener("click", () => void generatePatientInstructions(), { signal });
 
 		// Generate the note on entry; it replaces the loader and enables the derivations.
 		void generateNote();
@@ -80,5 +74,12 @@ export function startStep(
 				resetInstructionsButton();
 			}
 		}
+
+		root
+			.querySelector("#generate-normalized-btn")
+			?.addEventListener("click", () => void generateNormalizedData(), { signal });
+		root
+			.querySelector("#generate-instructions-btn")
+			?.addEventListener("click", () => void generatePatientInstructions(), { signal });
 	});
 }

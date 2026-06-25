@@ -1,6 +1,6 @@
 import { DICTATE_LOCALES, type DictationLocale } from "../../../api/dictate.js";
 
-export { renderCodeSnippets } from "../../../shared/codeSnippets.js";
+export { renderCodeSnippets } from "../../../shared/codeSnippets.render.js";
 // The WebSocket log and code-snippet rendering are generic and shared with the
 // transcribe page.
 export {
@@ -8,7 +8,7 @@ export {
 	resetLog,
 	switchWsTab,
 	updateWsStatus,
-} from "../../../shared/wsLog.js";
+} from "../../../shared/wsLog.render.js";
 
 export function renderLocaleOptions(): void {
 	const select = document.getElementById(

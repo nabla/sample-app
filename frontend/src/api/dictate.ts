@@ -1,7 +1,6 @@
-import { encodePcm16ToBase64 } from "../audio/wav-stream.js";
+import { encodePcm16ToBase64 } from "./encoding.js";
 import { nablaWebSocket } from "../transport/client.js";
 
-// Full schema: https://docs.nabla.com/api/dictate-ws
 export type DictationLocale =
 	| "ENGLISH_US"
 	| "ENGLISH_UK"
@@ -38,8 +37,7 @@ export const DICTATE_LOCALES: { value: DictationLocale; label: string }[] = [
 ];
 
 // #region dictate-messages
-// The messages a client sends over dictate-ws. Defined once here so the page and
-// the rendered "Code" tab send/show the exact same wire format.
+// The messages a client sends over dictate-ws.
 
 export function buildDictateConfig(locale: DictationLocale, noteText: string) {
 	return {

@@ -51,7 +51,7 @@ const openWavFileStream: AudioStreamFactory = async (onChunk) => {
 	};
 };
 
-// Adding a source = one entry here + its factory. No consumer changes, no `if`.
+// Adding a source = one entry here + its factory. All audio sources are handled uniformly.
 const AUDIO_SOURCES: Record<AudioSource, AudioStreamFactory> = {
 	microphone: openMicrophoneStream,
 	"wav-file": openWavFileStream,

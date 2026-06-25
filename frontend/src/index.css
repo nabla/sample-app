@@ -33,3 +33,19 @@
   --color-error-200: #f04438;
   --color-error-300: #de3023;
 }
+
+/* Small animation utilities shared across pages (recording dot, loaders). */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spin {
+  animation: spin 0.8s linear infinite;
+}

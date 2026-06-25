@@ -1,8 +1,7 @@
 import { nablaFetch } from "../transport/client.js";
 import type { ClinicalNote } from "./note.js";
 
-// The full response is a FHIR Condition list (plus family history and observations) —
-// see https://docs.nabla.com/user/generate-normalized-data
+// The full response is a FHIR Condition list (plus family history and observations).
 // The sample displays only the primary coding and status of each condition.
 export interface Condition {
 	coding: {

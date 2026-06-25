@@ -1,7 +1,6 @@
-import { encodePcm16ToBase64 } from "../audio/wav-stream.js";
+import { encodePcm16ToBase64 } from "./encoding.js";
 import { nablaWebSocket } from "../transport/client.js";
 
-// Full schema: https://docs.nabla.com/user/transcribe-ws
 export type Speaker = "DOCTOR" | "PATIENT" | "UNSPECIFIED";
 
 export interface TranscriptItem {
@@ -24,9 +23,7 @@ export const TRANSCRIBE_STREAM_ID = "stream1";
 export const TRANSCRIBE_SPEECH_LOCALES = ["ENGLISH_US", "FRENCH_FR"] as const;
 
 // #region transcribe-messages
-// The messages a client sends over transcribe-ws. Defined once here so the
-// reusable flow (audio/transcription.ts) and the in-depth page send the exact
-// same wire format.
+// The messages a client sends over transcribe-ws.
 
 export function buildTranscribeConfig() {
 	return {

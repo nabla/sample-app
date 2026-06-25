@@ -4,8 +4,14 @@ interface SequencedMessage {
 }
 
 // #region buffered-audio-stream
+// We limit the number of in-flight audio chunks to 50 to avoid overwhelming the server.
+// Because the server doesn't accept more than 10 seconds of audio in-flight.
+// Here, we limit it to 50 chunks so it's 5 seconds of audio.
 const MAX_UNACKED = 50;
 
+// The BufferedAudioStream is used to buffer audio chunks and replay them if the socket drops.
+// So even in cases of network issues (disconnects or high latency), we keep the audio and 
+// we transcribe once the network is back.
 export class BufferedAudioStream {
 	private ws: WebSocket;
 	// Every chunk past the latest cumulative ACK, in send order. The first

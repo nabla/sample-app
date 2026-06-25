@@ -1,4 +1,5 @@
 import type { TranscriptItem } from "../../api/transcribe.js";
+import { DOCUMENTATION_LINKS } from "../../shared/documentationLinks.js";
 
 function setHidden(id: string, hidden: boolean): void {
 	document.getElementById(id)?.classList.toggle("hidden", hidden);
@@ -30,7 +31,7 @@ export function markup(): string {
     <div id="encounter-card" class="bg-white rounded-xl border border-grey-200 p-6">
       <div class="flex items-center gap-2 mb-4">
         <h2 class="font-semibold text-grey-400">Encounter</h2>
-        <a href="https://docs.nabla.com/user/transcribe-ws" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">transcribe-ws ↗</a>
+        <a href="${DOCUMENTATION_LINKS.transcribeWs}" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">transcribe-ws ↗</a>
       </div>
 
       <label class="block text-xs font-medium text-grey-300 mb-1.5">Patient context <span class="text-grey-250 font-normal">(optional)</span></label>

@@ -1,7 +1,6 @@
 import { nablaFetch } from "../transport/client.js";
 import type { ClinicalNote } from "./note.js";
 
-// Full schema: https://docs.nabla.com/user/generate-patient-instructions
 export type RecipientType = "PATIENT" | "PARENT";
 
 interface PatientInstructionsResponse {

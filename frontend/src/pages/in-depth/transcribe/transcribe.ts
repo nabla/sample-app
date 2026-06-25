@@ -39,8 +39,8 @@ import {
 	setReconnectedState,
 	setRecordingState,
 	setStartState,
-	startBufViz,
-	stopBufViz,
+	startBufferVisualization,
+	stopBufferVisualization,
 	switchWsTab,
 	updateTranscriptStats,
 	updateWsStatus,
@@ -137,7 +137,7 @@ export async function startTranscribing(): Promise<void> {
 		const audioSource = getAudioSource();
 		prepareNewSession();
 		await openTranscribeSession(audioSource === "wav-file");
-		startBufViz(() => activeSession?.bufferedAudioStream.getStats());
+		startBufferVisualization(() => activeSession?.bufferedAudioStream.getStats());
 		const session = activeSession!;
 		const audio = await openAudioStream(audioSource, (chunk) =>
 			sendAudioChunk(session, chunk),
@@ -326,7 +326,7 @@ async function finalize(session: TranscriptionSession): Promise<void> {
 		addWsMessage("send", JSON.stringify(TRANSCRIBE_END_MESSAGE));
 	}
 	await serverClosed;
-	stopBufViz();
+	stopBufferVisualization();
 	setStartState();
 	const transcriptItems = collectFinalTranscriptItems(session);
 	if (transcriptItems.length > 0) {

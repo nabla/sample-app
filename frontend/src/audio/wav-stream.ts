@@ -1,5 +1,5 @@
-// This file contains the functions to decode a WAV file and encode PCM-16 data to base64
-// It's used to stream a mock WAV file to the server for transcription
+// Decodes a WAV file and streams it as PCM-16 chunks — used to feed the mock audio
+// source to the streaming APIs.
 
 export function decodeWavHeader(buffer: ArrayBuffer): {
 	sampleRate: number;
@@ -27,19 +27,6 @@ export function decodeWavHeader(buffer: ArrayBuffer): {
 		offset += 8 + chunkSize;
 	}
 	throw new Error("No data chunk found in WAV file");
-}
-
-export function encodePcm16ToBase64(pcmData: Int16Array): string {
-	const bytes = new Uint8Array(
-		pcmData.buffer,
-		pcmData.byteOffset,
-		pcmData.byteLength,
-	);
-	let binary = "";
-	for (let byteIndex = 0; byteIndex < bytes.byteLength; byteIndex++) {
-		binary += String.fromCodePoint(bytes[byteIndex]);
-	}
-	return btoa(binary);
 }
 
 const CHUNK_SAMPLES = 1600; // 100ms at 16kHz

@@ -1,6 +1,7 @@
 import type { NormalizedData } from "../../api/normalize.js";
 import type { ClinicalNote } from "../../api/note.js";
 import type { RecipientType } from "../../api/patient-instructions.js";
+import { DOCUMENTATION_LINKS } from "../../shared/documentationLinks.js";
 
 function show(id: string): void {
 	document.getElementById(id)?.classList.remove("hidden");
@@ -33,7 +34,7 @@ export function markup(): string {
       <div class="bg-white rounded-xl border border-grey-200 p-5">
         <div class="flex items-center gap-2 mb-3">
           <h2 class="font-semibold text-grey-400">Note</h2>
-          <a href="https://docs.nabla.com/user/generate-note" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-note ↗</a>
+          <a href="${DOCUMENTATION_LINKS.generateNote}" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-note ↗</a>
         </div>
         <p class="text-xs text-grey-300 mb-2">Edit the note here — the generators on the right use the note below. In a real integration, you might want to allow users per-section edits.</p>
         <div id="note-loading" class="flex items-center gap-3 bg-grey-50 border border-grey-200 rounded-lg p-4 min-h-[200px]">
@@ -50,7 +51,7 @@ export function markup(): string {
         <div class="bg-white rounded-xl border border-grey-200 p-5">
           <div class="flex items-center gap-2 mb-1">
             <h3 class="font-semibold text-grey-400">Normalize Data</h3>
-            <a href="https://docs.nabla.com/user/generate-normalized-data" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-normalized-data ↗</a>
+            <a href="${DOCUMENTATION_LINKS.generateNormalizedData}" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-normalized-data ↗</a>
           </div>
           <p class="text-xs text-grey-300 mb-4">Extract ICD-10 / LOINC codes in FHIR format from the note.</p>
           <button id="generate-normalized-btn" disabled class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
@@ -65,7 +66,7 @@ export function markup(): string {
         <div class="bg-white rounded-xl border border-grey-200 p-5">
           <div class="flex items-center gap-2 mb-1">
             <h3 class="font-semibold text-grey-400">Patient Instructions</h3>
-            <a href="https://docs.nabla.com/user/generate-patient-instructions" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-patient-instructions ↗</a>
+            <a href="${DOCUMENTATION_LINKS.generatePatientInstructions}" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-patient-instructions ↗</a>
           </div>
           <p class="text-xs text-grey-300 mb-4">Generate plain-language post-visit instructions from the note.</p>
           <div class="grid grid-cols-2 gap-4 mb-4">
