@@ -2,32 +2,32 @@ import type { TranscriptItem } from "../../api/transcribe.js";
 import { DOCUMENTATION_LINKS } from "../../shared/documentationLinks.js";
 
 function setHidden(id: string, hidden: boolean): void {
-	document.getElementById(id)?.classList.toggle("hidden", hidden);
+  document.getElementById(id)?.classList.toggle("hidden", hidden);
 }
 
 function setDisabled(id: string, disabled: boolean): void {
-	const button = document.getElementById(id) as HTMLButtonElement | null;
-	if (button) {
-		button.disabled = disabled;
-	}
+  const button = document.getElementById(id) as HTMLButtonElement | null;
+  if (button) {
+    button.disabled = disabled;
+  }
 }
 
 function setButton(id: string, label: string, disabled: boolean): void {
-	const button = document.getElementById(id) as HTMLButtonElement | null;
-	if (!button) {
-		return;
-	}
-	button.textContent = label;
-	button.disabled = disabled;
+  const button = document.getElementById(id) as HTMLButtonElement | null;
+  if (!button) {
+    return;
+  }
+  button.textContent = label;
+  button.disabled = disabled;
 }
 
 function formatMs(milliseconds: number): string {
-	const totalSeconds = Math.floor(milliseconds / 1000);
-	return `${Math.floor(totalSeconds / 60)}:${String(totalSeconds % 60).padStart(2, "0")}`;
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  return `${Math.floor(totalSeconds / 60)}:${String(totalSeconds % 60).padStart(2, "0")}`;
 }
 
 export function markup(): string {
-	return `
+  return `
     <div id="encounter-card" class="bg-white rounded-xl border border-grey-200 p-6">
       <div class="flex items-center gap-2 mb-4">
         <h2 class="font-semibold text-grey-400">Encounter</h2>
@@ -71,80 +71,80 @@ export function markup(): string {
 // ── Capture states ─────────────────────────────────────────────────────────────────
 
 export function setReviewState(hasTranscript: boolean): void {
-	setHidden("start-btn", false);
-	setHidden("stop-btn", true);
-	setHidden("recording-dot", true);
-	setHidden("fill-mock-btn", false);
-	setHidden("finishing-msg", true);
-	setButton(
-		"start-btn",
-		hasTranscript ? "Re-record" : "Start recording",
-		false,
-	);
-	setHidden("generate-note-btn", false);
-	setDisabled("generate-note-btn", !hasTranscript);
+  setHidden("start-btn", false);
+  setHidden("stop-btn", true);
+  setHidden("recording-dot", true);
+  setHidden("fill-mock-btn", false);
+  setHidden("finishing-msg", true);
+  setButton(
+    "start-btn",
+    hasTranscript ? "Re-record" : "Start recording",
+    false,
+  );
+  setHidden("generate-note-btn", false);
+  setDisabled("generate-note-btn", !hasTranscript);
 }
 
 export function setRecordingState(): void {
-	setHidden("start-btn", true);
-	setHidden("stop-btn", false);
-	setHidden("recording-dot", false);
-	setHidden("fill-mock-btn", true);
-	setHidden("finishing-msg", true);
-	setHidden("generate-note-btn", false);
-	setDisabled("generate-note-btn", false);
+  setHidden("start-btn", true);
+  setHidden("stop-btn", false);
+  setHidden("recording-dot", false);
+  setHidden("fill-mock-btn", true);
+  setHidden("finishing-msg", true);
+  setHidden("generate-note-btn", false);
+  setDisabled("generate-note-btn", false);
 }
 
 export function setFinishingState(): void {
-	setHidden("stop-btn", true);
-	setHidden("recording-dot", true);
-	setHidden("fill-mock-btn", true);
-	setDisabled("generate-note-btn", true);
-	setHidden("finishing-msg", false);
+  setHidden("stop-btn", true);
+  setHidden("recording-dot", true);
+  setHidden("fill-mock-btn", true);
+  setDisabled("generate-note-btn", true);
+  setHidden("finishing-msg", false);
 }
 
 // ── Transcript ───────────────────────────────────────────────────────────────────
 
 export function resetTranscriptArea(): void {
-	const container = document.getElementById("transcript-items");
-	if (container) {
-		container.innerHTML =
-			'<div id="transcript-placeholder" class="text-grey-250 italic">Transcript will appear here…</div>';
-	}
+  const container = document.getElementById("transcript-items");
+  if (container) {
+    container.innerHTML =
+      '<div id="transcript-placeholder" class="text-grey-250 italic">Transcript will appear here…</div>';
+  }
 }
 
 export function renderFullTranscript(items: TranscriptItem[]): void {
-	const container = document.getElementById("transcript-items");
-	if (container) {
-		container.innerHTML = "";
-	}
-	items.forEach(renderTranscriptItem);
+  const container = document.getElementById("transcript-items");
+  if (container) {
+    container.innerHTML = "";
+  }
+  items.forEach(renderTranscriptItem);
 }
 
 export function renderTranscriptItem(item: TranscriptItem): void {
-	const container = document.getElementById("transcript-items");
-	if (!container) {
-		return;
-	}
-	document.getElementById("transcript-placeholder")?.remove();
-	let element = document.getElementById(`ti-${item.id}`);
-	if (!element) {
-		element = document.createElement("div");
-		element.id = `ti-${item.id}`;
-		container.appendChild(element);
-	}
-	element.className = item.is_final ? "text-grey-400" : "text-grey-250 italic";
-	const speaker =
-		item.speaker_type === "DOCTOR"
-			? "Doctor> "
-			: item.speaker_type === "PATIENT"
-				? "Patient> "
-				: "";
-	element.textContent = `[${formatMs(item.start_offset_ms)}..${formatMs(item.end_offset_ms)}] ${speaker}${item.text}`;
-	container.scrollTop = container.scrollHeight;
+  const container = document.getElementById("transcript-items");
+  if (!container) {
+    return;
+  }
+  document.getElementById("transcript-placeholder")?.remove();
+  let element = document.getElementById(`ti-${item.id}`);
+  if (!element) {
+    element = document.createElement("div");
+    element.id = `ti-${item.id}`;
+    container.appendChild(element);
+  }
+  element.className = item.is_final ? "text-grey-400" : "text-grey-250 italic";
+  const speaker =
+    item.speaker_type === "DOCTOR"
+      ? "Doctor> "
+      : item.speaker_type === "PATIENT"
+        ? "Patient> "
+        : "";
+  element.textContent = `[${formatMs(item.start_offset_ms)}..${formatMs(item.end_offset_ms)}] ${speaker}${item.text}`;
+  container.scrollTop = container.scrollHeight;
 }
 
 export function readPatientContext(): string {
-	return (document.getElementById("patient-context") as HTMLTextAreaElement)
-		.value;
+  return (document.getElementById("patient-context") as HTMLTextAreaElement)
+    .value;
 }

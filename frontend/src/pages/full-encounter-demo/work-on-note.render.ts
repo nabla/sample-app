@@ -2,36 +2,36 @@ import type { NoteTemplate } from "../../api/note-settings.js";
 import type { NormalizedData } from "../../api/normalize.js";
 import type { ClinicalNote } from "../../api/note.js";
 import type {
-	InstructionsLocale,
-	RecipientType,
+  InstructionsLocale,
+  RecipientType,
 } from "../../api/patient-instructions.js";
 import { DOCUMENTATION_LINKS } from "../../shared/documentationLinks.js";
 
 function show(id: string): void {
-	document.getElementById(id)?.classList.remove("hidden");
+  document.getElementById(id)?.classList.remove("hidden");
 }
 function hide(id: string): void {
-	document.getElementById(id)?.classList.add("hidden");
+  document.getElementById(id)?.classList.add("hidden");
 }
 function setDisabled(id: string, disabled: boolean): void {
-	const button = document.getElementById(id) as HTMLButtonElement | null;
-	if (button) {
-		button.disabled = disabled;
-	}
+  const button = document.getElementById(id) as HTMLButtonElement | null;
+  if (button) {
+    button.disabled = disabled;
+  }
 }
 function setButton(id: string, label: string, disabled: boolean): void {
-	const button = document.getElementById(id) as HTMLButtonElement | null;
-	if (!button) {
-		return;
-	}
-	button.textContent = label;
-	button.disabled = disabled;
+  const button = document.getElementById(id) as HTMLButtonElement | null;
+  if (!button) {
+    return;
+  }
+  button.textContent = label;
+  button.disabled = disabled;
 }
 
 // The step mounts in its loading state: the Note zone shows a loader and the
 // derivations are disabled until renderNote() arrives with the generated note.
 export function markup(): string {
-	return `
+  return `
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
       <!-- Left: the note as editable JSON -->
@@ -118,155 +118,155 @@ export function markup(): string {
 }
 
 export function renderNote(note: ClinicalNote): void {
-	const textarea = document.getElementById(
-		"note-json",
-	) as HTMLTextAreaElement | null;
-	if (textarea) {
-		textarea.value = JSON.stringify(note, null, 2);
-	}
-	hide("note-loading");
-	show("note-json");
-	setButton("note-generate-btn", "Generate note", false);
-	setDisabled("generate-normalized-btn", false);
-	setDisabled("generate-instructions-btn", false);
+  const textarea = document.getElementById(
+    "note-json",
+  ) as HTMLTextAreaElement | null;
+  if (textarea) {
+    textarea.value = JSON.stringify(note, null, 2);
+  }
+  hide("note-loading");
+  show("note-json");
+  setButton("note-generate-btn", "Generate note", false);
+  setDisabled("generate-normalized-btn", false);
+  setDisabled("generate-instructions-btn", false);
 }
 
 // Clears the loading state and re-enables the Generate button when generation
 // finishes — including on error, so the user can retry instead of staying stuck.
 export function resetNoteGenerating(): void {
-	hide("note-loading");
-	setButton("note-generate-btn", "Generate note", false);
+  hide("note-loading");
+  setButton("note-generate-btn", "Generate note", false);
 }
 
 export function renderTemplateOptions(templates: NoteTemplate[]): void {
-	const select = document.getElementById(
-		"note-template",
-	) as HTMLSelectElement | null;
-	if (!select) {
-		return;
-	}
-	// Build options as elements (not innerHTML) so API-provided titles can't break the
-	// markup or inject HTML.
-	select.replaceChildren(
-		...templates.map((template) => {
-			const option = document.createElement("option");
-			option.value = template.key;
-			option.textContent = template.title;
-			return option;
-		}),
-	);
-	// Prefer the "Multiple Sections" template when it's available, else the first.
-	const preferred = templates.find(
-		(template) => template.key === "GENERIC_MULTIPLE_SECTIONS",
-	);
-	if (preferred) {
-		select.value = preferred.key;
-	}
-	// Templates are loaded and a real key is selected — generation is now possible.
-	setDisabled("note-generate-btn", false);
+  const select = document.getElementById(
+    "note-template",
+  ) as HTMLSelectElement | null;
+  if (!select) {
+    return;
+  }
+  // Build options as elements (not innerHTML) so API-provided titles can't break the
+  // markup or inject HTML.
+  select.replaceChildren(
+    ...templates.map((template) => {
+      const option = document.createElement("option");
+      option.value = template.key;
+      option.textContent = template.title;
+      return option;
+    }),
+  );
+  // Prefer the "Multiple Sections" template when it's available, else the first.
+  const preferred = templates.find(
+    (template) => template.key === "GENERIC_MULTIPLE_SECTIONS",
+  );
+  if (preferred) {
+    select.value = preferred.key;
+  }
+  // Templates are loaded and a real key is selected — generation is now possible.
+  setDisabled("note-generate-btn", false);
 }
 
 export function readNoteTemplateKey(): string {
-	return (document.getElementById("note-template") as HTMLSelectElement).value;
+  return (document.getElementById("note-template") as HTMLSelectElement).value;
 }
 
 // Generating (or regenerating) a note: show the loader, lock the buttons, and clear
 // the derived outputs — the normalized codes and instructions belong to the old note.
 export function setNoteGenerating(): void {
-	show("note-loading");
-	hide("note-json");
-	setButton("note-generate-btn", "Generating…", true);
-	hide("normalized-output");
-	hide("instructions-output");
-	const conditions = document.getElementById("normalized-conditions");
-	if (conditions) {
-		conditions.innerHTML = "";
-	}
-	const instructions = document.getElementById("instructions-output");
-	if (instructions) {
-		instructions.textContent = "";
-	}
-	// Reset the derive buttons' labels, then disable them last — they must not run
-	// against a note that's still generating (would read an empty/hidden textarea).
-	resetNormalizeButton();
-	resetInstructionsButton();
-	setDisabled("generate-normalized-btn", true);
-	setDisabled("generate-instructions-btn", true);
+  show("note-loading");
+  hide("note-json");
+  setButton("note-generate-btn", "Generating…", true);
+  hide("normalized-output");
+  hide("instructions-output");
+  const conditions = document.getElementById("normalized-conditions");
+  if (conditions) {
+    conditions.innerHTML = "";
+  }
+  const instructions = document.getElementById("instructions-output");
+  if (instructions) {
+    instructions.textContent = "";
+  }
+  // Reset the derive buttons' labels, then disable them last — they must not run
+  // against a note that's still generating (would read an empty/hidden textarea).
+  resetNormalizeButton();
+  resetInstructionsButton();
+  setDisabled("generate-normalized-btn", true);
+  setDisabled("generate-instructions-btn", true);
 }
 
 // The note JSON is editable, so the textarea is the source of truth for the
 // downstream calls. Throws if the user has made it invalid JSON.
 export function readNoteDraft(): ClinicalNote {
-	const rawJson = (document.getElementById("note-json") as HTMLTextAreaElement)
-		.value;
-	return JSON.parse(rawJson) as ClinicalNote;
+  const rawJson = (document.getElementById("note-json") as HTMLTextAreaElement)
+    .value;
+  return JSON.parse(rawJson) as ClinicalNote;
 }
 
 export function readInstructionsLocale(): InstructionsLocale {
-	return (document.getElementById("instructions-locale") as HTMLSelectElement)
-		.value as InstructionsLocale;
+  return (document.getElementById("instructions-locale") as HTMLSelectElement)
+    .value as InstructionsLocale;
 }
 
 export function readRecipientType(): RecipientType {
-	return (document.getElementById("recipient-type") as HTMLSelectElement)
-		.value as RecipientType;
+  return (document.getElementById("recipient-type") as HTMLSelectElement)
+    .value as RecipientType;
 }
 
 export function setNormalizeLoading(): void {
-	setButton("generate-normalized-btn", "Extracting…", true);
+  setButton("generate-normalized-btn", "Extracting…", true);
 }
 export function resetNormalizeButton(): void {
-	setButton("generate-normalized-btn", "Extract normalized data", false);
+  setButton("generate-normalized-btn", "Extract normalized data", false);
 }
 export function setInstructionsLoading(): void {
-	setButton("generate-instructions-btn", "Generating…", true);
+  setButton("generate-instructions-btn", "Generating…", true);
 }
 export function resetInstructionsButton(): void {
-	setButton("generate-instructions-btn", "Generate instructions", false);
+  setButton("generate-instructions-btn", "Generate instructions", false);
 }
 
 export function renderConditions(normalizedData: NormalizedData): void {
-	const container = document.getElementById("normalized-conditions");
-	if (container) {
-		if (normalizedData.conditions.length === 0) {
-			const empty = document.createElement("p");
-			empty.className = "text-xs text-grey-250 italic";
-			empty.textContent = "No conditions extracted.";
-			container.replaceChildren(empty);
-		} else {
-			// Build rows as elements (not innerHTML) so API-provided codes/displays are
-			// treated as text and can't break the markup.
-			container.replaceChildren(
-				...normalizedData.conditions.map((condition) => {
-					const row = document.createElement("div");
-					row.className = "flex items-center gap-3 text-xs";
+  const container = document.getElementById("normalized-conditions");
+  if (container) {
+    if (normalizedData.conditions.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "text-xs text-grey-250 italic";
+      empty.textContent = "No conditions extracted.";
+      container.replaceChildren(empty);
+    } else {
+      // Build rows as elements (not innerHTML) so API-provided codes/displays are
+      // treated as text and can't break the markup.
+      container.replaceChildren(
+        ...normalizedData.conditions.map((condition) => {
+          const row = document.createElement("div");
+          row.className = "flex items-center gap-3 text-xs";
 
-					const code = document.createElement("span");
-					code.className =
-						"bg-primary-100 text-primary-700 px-2 py-0.5 rounded font-mono shrink-0";
-					code.textContent = condition.coding.code;
+          const code = document.createElement("span");
+          code.className =
+            "bg-primary-100 text-primary-700 px-2 py-0.5 rounded font-mono shrink-0";
+          code.textContent = condition.coding.code;
 
-					const display = document.createElement("span");
-					display.className = "text-grey-400";
-					display.textContent = condition.coding.display;
+          const display = document.createElement("span");
+          display.className = "text-grey-400";
+          display.textContent = condition.coding.display;
 
-					const status = document.createElement("span");
-					status.className = "ml-auto text-grey-250 shrink-0";
-					status.textContent = condition.clinical_status ?? "";
+          const status = document.createElement("span");
+          status.className = "ml-auto text-grey-250 shrink-0";
+          status.textContent = condition.clinical_status ?? "";
 
-					row.append(code, display, status);
-					return row;
-				}),
-			);
-		}
-	}
-	show("normalized-output");
+          row.append(code, display, status);
+          return row;
+        }),
+      );
+    }
+  }
+  show("normalized-output");
 }
 
 export function renderInstructions(text: string): void {
-	const output = document.getElementById("instructions-output");
-	if (output) {
-		output.textContent = text;
-	}
-	show("instructions-output");
+  const output = document.getElementById("instructions-output");
+  if (output) {
+    output.textContent = text;
+  }
+  show("instructions-output");
 }

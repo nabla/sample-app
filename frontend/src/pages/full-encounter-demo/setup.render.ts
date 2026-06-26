@@ -1,7 +1,7 @@
 import type { AudioSource } from "../../audio/audio-source.js";
 
 export function markup(): string {
-	return `
+  return `
     <div class="bg-white rounded-xl border border-grey-200 p-6 max-w-xl">
       <h2 class="font-semibold text-grey-400 mb-1">Start Encounter</h2>
       <p class="text-xs text-grey-300 mb-5">Choose how you'll capture the encounter audio.</p>
@@ -19,6 +19,6 @@ export function markup(): string {
 }
 
 export function readAudioSource(root: HTMLElement): AudioSource {
-	return (root.querySelector("#audio-source") as HTMLSelectElement)
-		.value as AudioSource;
+  return (root.querySelector("#audio-source") as HTMLSelectElement)
+    .value as AudioSource;
 }

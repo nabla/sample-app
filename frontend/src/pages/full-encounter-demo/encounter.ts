@@ -14,37 +14,37 @@ const ROOT = "#encounter-root";
 let exitStep: () => void = () => {};
 
 function main(): void {
-	initPageChrome();
-	document.getElementById("restart-link")?.addEventListener("click", goToSetup);
-	goToSetup();
+  initPageChrome();
+  document.getElementById("restart-link")?.addEventListener("click", goToSetup);
+  goToSetup();
 }
 
 main();
 
 function goToSetup(): void {
-	setRestartVisible(false); // nothing to go back to from the first step
-	exitStep();
-	// Setup step allows the user to choose the audio source (microphone or mock audio file)
-	exitStep = setup.startStep(ROOT, { onNext: goToRecord });
+  setRestartVisible(false); // nothing to go back to from the first step
+  exitStep();
+  // Setup step allows the user to choose the audio source (microphone or mock audio file)
+  exitStep = setup.startStep(ROOT, { onNext: goToRecord });
 }
 
 function goToRecord(audioSource: AudioSource): void {
-	setRestartVisible(true);
-	exitStep();
-	// Record step allows the user to record an encounter and generate a transcript
-	exitStep = record.startStep(ROOT, { audioSource, onNext: goToWorkOnNote });
+  setRestartVisible(true);
+  exitStep();
+  // Record step allows the user to record an encounter and generate a transcript
+  exitStep = record.startStep(ROOT, { audioSource, onNext: goToWorkOnNote });
 }
 
 function goToWorkOnNote(result: {
-	transcript: TranscriptItem[];
-	patientContext: string;
+  transcript: TranscriptItem[];
+  patientContext: string;
 }): void {
-	exitStep();
-	// Work on note will first generate the note from the transcript and patient context
-	// then allow the user to generate ICD-10 / LOINC Codes and patient instructions
-	exitStep = workOnNote.startStep(ROOT, result);
+  exitStep();
+  // Work on note will first generate the note from the transcript and patient context
+  // then allow the user to generate ICD-10 / LOINC Codes and patient instructions
+  exitStep = workOnNote.startStep(ROOT, result);
 }
 
 function setRestartVisible(visible: boolean): void {
-	document.getElementById("restart-link")?.classList.toggle("hidden", !visible);
+  document.getElementById("restart-link")?.classList.toggle("hidden", !visible);
 }

@@ -25,12 +25,12 @@ npm run dev
 ### 2. Explore the app
 
 If it didn't open automatically, navigate to http://localhost:5173/onboarding.html and
-follow the configuration steps. 
+follow the configuration steps.
 
-The home page links the **Full Encounter Demo** and a set of **in-depth guides** that showcase 
+The home page links the **Full Encounter Demo** and a set of **in-depth guides** that showcase
 individual endpoints with live WebSocket message inspection and annotated code.
 
-The backend stores the keypair, config, and tokens under `.cache/`. To start over, delete that 
+The backend stores the keypair, config, and tokens under `.cache/`. To start over, delete that
 folder.
 
 
@@ -44,7 +44,7 @@ The project is split into two parts:
 | `backend/` | A tiny Express server that stands in for **your** auth backend: it holds the OAuth client key, mints tokens, and provisions a user. |
 
 The backend exists so the sample is realistic: in production, token minting and user
-provisioning belong on a server you control, not in the browser. You can read it in a few 
+provisioning belong on a server you control, not in the browser. You can read it in a few
 minutes (`backend/src/auth.ts`).
 
 To explore the codebase, start with `frontend/src/pages/full-encounter-demo/encounter.ts` —
