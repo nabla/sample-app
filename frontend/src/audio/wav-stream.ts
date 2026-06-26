@@ -25,7 +25,9 @@ export function decodeWavHeader(buffer: ArrayBuffer): {
 				dataLength: chunkSize,
 			};
 		}
-		offset += 8 + chunkSize;
+		// RIFF chunks are word-aligned: an odd-sized chunk is followed by a pad byte
+		// that isn't counted in chunkSize, so skip it too.
+		offset += 8 + chunkSize + (chunkSize % 2);
 	}
 	throw new Error("No data chunk found in WAV file");
 }
