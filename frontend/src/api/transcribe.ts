@@ -12,10 +12,10 @@ export interface TranscriptItem {
 	speaker_type?: Speaker;
 }
 
-export type TranscribeServerMessage = {
-	type: string;
-	ack_id?: number;
-} & TranscriptItem;
+// What the server sends back: a transcript item, or a cumulative audio-chunk ack.
+export type TranscribeServerMessage =
+	| ({ type: "TRANSCRIPT_ITEM" } & TranscriptItem)
+	| { type: "AUDIO_CHUNK_ACK"; ack_id: number };
 
 export const TRANSCRIBE_ENCODING = "PCM_S16LE" as const;
 export const TRANSCRIBE_SAMPLE_RATE_HZ = 16000;
@@ -34,7 +34,7 @@ export function buildTranscribeConfig() {
 		streams: [
 			{
 				id: TRANSCRIBE_STREAM_ID,
-				speaker_type: "unspecified",
+				speaker_type: "UNSPECIFIED",
 			},
 		],
 		enable_audio_chunk_ack: true,

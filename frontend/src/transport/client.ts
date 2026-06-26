@@ -54,15 +54,24 @@ export async function nablaFetch(
 	options: RequestInit = {},
 ): Promise<Response> {
 	const [host, accessToken] = await Promise.all([getHost(), getAccessToken()]);
-	return fetch(httpUrl(host, path), {
+	const response = await fetch(httpUrl(host, path), {
 		...options,
 		headers: {
-			Authorization: `Bearer ${accessToken}`,
-			"X-Nabla-Api-Version": API_VERSION,
 			"Content-Type": "application/json",
 			...(options.headers as Record<string, string> | undefined),
+			// Auth and API version are managed here and always win over caller headers.
+			Authorization: `Bearer ${accessToken}`,
+			"X-Nabla-Api-Version": API_VERSION,
 		},
 	});
+	// Turn HTTP failures into thrown errors so callers never parse an error body
+	// as if it were a success. Read the body as text — an error response isn't
+	// guaranteed to be JSON.
+	if (!response.ok) {
+		const body = await response.text();
+		throw new Error(`Nabla API ${response.status} on ${path}: ${body}`);
+	}
+	return response;
 }
 
 // #region nabla-websocket

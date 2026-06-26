@@ -1,7 +1,10 @@
 import type { NoteTemplate } from "../../api/note-settings.js";
 import type { NormalizedData } from "../../api/normalize.js";
 import type { ClinicalNote } from "../../api/note.js";
-import type { RecipientType } from "../../api/patient-instructions.js";
+import type {
+	InstructionsLocale,
+	RecipientType,
+} from "../../api/patient-instructions.js";
 import { DOCUMENTATION_LINKS } from "../../shared/documentationLinks.js";
 
 function show(id: string): void {
@@ -135,9 +138,16 @@ export function renderTemplateOptions(templates: NoteTemplate[]): void {
 	if (!select) {
 		return;
 	}
-	select.innerHTML = templates
-		.map((template) => `<option value="${template.key}">${template.title}</option>`)
-		.join("");
+	// Build options as elements (not innerHTML) so API-provided titles can't break the
+	// markup or inject HTML.
+	select.replaceChildren(
+		...templates.map((template) => {
+			const option = document.createElement("option");
+			option.value = template.key;
+			option.textContent = template.title;
+			return option;
+		}),
+	);
 	// Prefer the "Multiple Sections" template when it's available, else the first.
 	const preferred = templates.find(
 		(template) => template.key === "GENERIC_MULTIPLE_SECTIONS",
@@ -181,9 +191,9 @@ export function readNoteDraft(): ClinicalNote {
 	return JSON.parse(rawJson) as ClinicalNote;
 }
 
-export function readInstructionsLocale(): string {
+export function readInstructionsLocale(): InstructionsLocale {
 	return (document.getElementById("instructions-locale") as HTMLSelectElement)
-		.value;
+		.value as InstructionsLocale;
 }
 
 export function readRecipientType(): RecipientType {
@@ -207,19 +217,37 @@ export function resetInstructionsButton(): void {
 export function renderConditions(normalizedData: NormalizedData): void {
 	const container = document.getElementById("normalized-conditions");
 	if (container) {
-		container.innerHTML =
-			normalizedData.conditions.length === 0
-				? '<p class="text-xs text-grey-250 italic">No conditions extracted.</p>'
-				: normalizedData.conditions
-						.map(
-							(condition) =>
-								`<div class="flex items-center gap-3 text-xs">
-            <span class="bg-primary-100 text-primary-700 px-2 py-0.5 rounded font-mono shrink-0">${condition.coding.code}</span>
-            <span class="text-grey-400">${condition.coding.display}</span>
-            <span class="ml-auto text-grey-250 shrink-0">${condition.clinical_status ?? ""}</span>
-          </div>`,
-						)
-						.join("");
+		if (normalizedData.conditions.length === 0) {
+			const empty = document.createElement("p");
+			empty.className = "text-xs text-grey-250 italic";
+			empty.textContent = "No conditions extracted.";
+			container.replaceChildren(empty);
+		} else {
+			// Build rows as elements (not innerHTML) so API-provided codes/displays are
+			// treated as text and can't break the markup.
+			container.replaceChildren(
+				...normalizedData.conditions.map((condition) => {
+					const row = document.createElement("div");
+					row.className = "flex items-center gap-3 text-xs";
+
+					const code = document.createElement("span");
+					code.className =
+						"bg-primary-100 text-primary-700 px-2 py-0.5 rounded font-mono shrink-0";
+					code.textContent = condition.coding.code;
+
+					const display = document.createElement("span");
+					display.className = "text-grey-400";
+					display.textContent = condition.coding.display;
+
+					const status = document.createElement("span");
+					status.className = "ml-auto text-grey-250 shrink-0";
+					status.textContent = condition.clinical_status ?? "";
+
+					row.append(code, display, status);
+					return row;
+				}),
+			);
+		}
 	}
 	show("normalized-output");
 }

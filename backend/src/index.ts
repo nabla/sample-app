@@ -1,12 +1,14 @@
 import express from 'express';
 import { authRouter } from './auth.js';
-import { loadConfig, loadKeypair } from './store.js';
+import { loadConfig } from './store.js';
 import { API_VERSION } from './version.js';
 
 const PORT = parseInt(process.env.BACKEND_PORT ?? '3001', 10);
 const HOST = process.env.BACKEND_HOST ?? 'localhost';
 
 const app = express();
+// Permissive CORS so the backend can also be hit directly (e.g. curl) during local
+// dev; the app itself calls it same-origin through the Vite /api proxy.
 app.use((request, response, next) => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
@@ -22,10 +24,8 @@ app.get('/api/status', (_request, response) => {
   const config = loadConfig();
   response.json({
     configured: config !== null,
-    hasKeypair: loadKeypair() !== null,
     host: config?.host ?? null,
     clientUuid: config?.clientUuid ?? null,
-    apiVersion: API_VERSION,
   });
 });
 

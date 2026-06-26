@@ -74,16 +74,15 @@ export async function startTranscription(
 }
 
 // The server flushes its remaining transcript items after we send END and then
-// closes the socket — that close is the signal that everything has arrived.
+// closes the socket — that close is the signal that everything has arrived. This
+// orchestrator intentionally has no reconnect (unlike the in-depth transcribe page),
+// so an abnormal mid-stream close resolves finish() with whatever was collected.
 function receiveUntilServerClose(
 	session: TranscriptionSession,
 	onItem: (item: TranscriptItem) => void,
 ): Promise<void> {
 	return new Promise<void>((resolve) => {
-		// When the server closes the socket, we resolve the promise
 		session.socket.addEventListener("close", () => resolve());
-		
-		// When we receive a message from the server, we handle it by calling the onItem callback
 		session.socket.onmessage = (event: MessageEvent<string>) => {
 			const message = JSON.parse(event.data) as TranscribeServerMessage;
 			if (message.type === "AUDIO_CHUNK_ACK" && message.ack_id !== undefined) {

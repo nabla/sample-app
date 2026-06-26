@@ -1,5 +1,6 @@
 // Decodes a WAV file and streams it as PCM-16 chunks — used to feed the mock audio
 // source to the streaming APIs.
+import { TRANSCRIBE_SAMPLE_RATE_HZ } from "../api/transcribe.js";
 
 export function decodeWavHeader(buffer: ArrayBuffer): {
 	sampleRate: number;
@@ -29,11 +30,12 @@ export function decodeWavHeader(buffer: ArrayBuffer): {
 	throw new Error("No data chunk found in WAV file");
 }
 
-const CHUNK_SAMPLES = 1600; // 100ms at 16kHz
+// Stream in 100 ms chunks, paced in real time so the server sees a live-like feed.
+const CHUNK_DURATION_MS = 100;
+const CHUNK_SAMPLES = (TRANSCRIBE_SAMPLE_RATE_HZ * CHUNK_DURATION_MS) / 1000;
 
 export async function* streamWavChunks(
 	wavBuffer: ArrayBuffer,
-	intervalMs = 100,
 ): AsyncGenerator<Int16Array> {
 	const { dataOffset, dataLength } = decodeWavHeader(wavBuffer);
 	const pcmSamples = new Int16Array(wavBuffer, dataOffset, dataLength / 2);
@@ -42,7 +44,7 @@ export async function* streamWavChunks(
 		const chunk = pcmSamples.slice(offset, offset + CHUNK_SAMPLES);
 		offset += CHUNK_SAMPLES;
 		yield chunk;
-		await new Promise<void>((resolve) => setTimeout(resolve, intervalMs));
+		await new Promise<void>((resolve) => setTimeout(resolve, CHUNK_DURATION_MS));
 	}
 }
 

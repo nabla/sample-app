@@ -55,8 +55,8 @@
           <div>
             <label class="block text-xs font-medium text-grey-300 mb-1.5">Seed / Input</label>
             <select id="seed-select" class="w-full px-3 py-1.5 text-sm border border-grey-200 rounded-lg bg-white">
-              <option value="mock">Mock audio — primary_care.wav</option>
-              <option value="mic">Live microphone</option>
+              <option value="wav-file">Mock audio — primary_care.wav</option>
+              <option value="microphone">Live microphone</option>
             </select>
           </div>
         </div>
@@ -126,14 +126,6 @@
             <div class="text-xs font-semibold text-grey-300 mb-2">Transcript</div>
             <div id="transcript-items" class="bg-grey-50 border border-grey-200 rounded-lg p-3 font-mono text-xs text-grey-300 min-h-[100px] space-y-1.5">
               <div class="text-grey-250 italic">Waiting for audio…</div>
-            </div>
-          </div>
-
-          <!-- Catch-up state -->
-          <div id="catchup-state" class="hidden mt-3 bg-primary-50 border border-primary-200 rounded-lg p-3 flex items-center justify-between gap-3">
-            <div>
-              <p class="text-xs font-semibold text-primary-800">Finishing up — catching up on buffered audio</p>
-              <p class="text-xs text-primary-600">~4s of audio remaining to process. Do not close this tab.</p>
             </div>
           </div>
         </div>

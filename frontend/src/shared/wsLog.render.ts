@@ -104,25 +104,19 @@ export function addWsMessage(
 	}
 }
 
+function setTabActive(tab: HTMLElement | null, active: boolean): void {
+	const activeClass = ["text-primary-600", "border-primary-600", "font-medium"];
+	const inactiveClass = ["text-grey-250", "border-transparent"];
+	(active ? activeClass : inactiveClass).forEach((c) => tab?.classList.add(c));
+	(active ? inactiveClass : activeClass).forEach((c) => tab?.classList.remove(c));
+}
+
 export function switchWsTab(tab: "key" | "audio"): void {
 	const isKey = tab === "key";
 	document.getElementById("ws-log-key")?.classList.toggle("hidden", !isKey);
 	document.getElementById("ws-log-audio")?.classList.toggle("hidden", isKey);
-	const activeClass = ["text-primary-600", "border-primary-600", "font-medium"];
-	const inactiveClass = ["text-grey-250", "border-transparent"];
-	const keyTab = document.getElementById("ws-tab-key");
-	const audioTab = document.getElementById("ws-tab-audio");
-	if (isKey) {
-		activeClass.forEach((className) => keyTab?.classList.add(className));
-		inactiveClass.forEach((className) => keyTab?.classList.remove(className));
-		inactiveClass.forEach((className) => audioTab?.classList.add(className));
-		activeClass.forEach((className) => audioTab?.classList.remove(className));
-	} else {
-		activeClass.forEach((className) => audioTab?.classList.add(className));
-		inactiveClass.forEach((className) => audioTab?.classList.remove(className));
-		inactiveClass.forEach((className) => keyTab?.classList.add(className));
-		activeClass.forEach((className) => keyTab?.classList.remove(className));
-	}
+	setTabActive(document.getElementById("ws-tab-key"), isKey);
+	setTabActive(document.getElementById("ws-tab-audio"), !isKey);
 }
 
 export function updateWsStatus(

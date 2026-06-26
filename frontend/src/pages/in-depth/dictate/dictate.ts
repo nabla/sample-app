@@ -92,13 +92,16 @@ function armServerClosed(): void {
 // once too many are outstanding and drain the backlog as ACKs arrive. (This is the
 // lightweight version — the transcribe page shows full buffering + reconnect.)
 const MAX_UNACKED_CHUNKS = 90; // ~9s at 100ms per chunk, just under the server's 10s limit
-let nextSeqId = 1;
-let lastAckId = 0;
+let nextSeqId = 0;
+// "Highest seq id acked" — starts one below the first seq id so the in-flight
+// count `nextSeqId - 1 - lastAckId` is 0 before any ACK. -1 is a safe sentinel
+// since the server never acks a negative id.
+let lastAckId = -1;
 const pendingChunks: Int16Array[] = [];
 
 function resetPacing(): void {
-	nextSeqId = 1;
-	lastAckId = 0;
+	nextSeqId = 0;
+	lastAckId = -1;
 	pendingChunks.length = 0;
 }
 

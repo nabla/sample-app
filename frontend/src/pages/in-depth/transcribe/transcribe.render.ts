@@ -1,3 +1,4 @@
+import type { AudioSource } from "../../../audio/audio-source.js";
 import type { TranscriptItem } from "../../../api/transcribe.js";
 
 export { renderCodeSnippets } from "../../../shared/codeSnippets.render.js";
@@ -125,10 +126,9 @@ export function stopBufferVisualization(): void {
 	}
 }
 
-export function readAudioSourceSelection(): "mic" | "mock" {
-	return (document.getElementById("seed-select") as HTMLSelectElement).value as
-		| "mic"
-		| "mock";
+export function readAudioSourceSelection(): AudioSource {
+	return (document.getElementById("seed-select") as HTMLSelectElement)
+		.value as AudioSource;
 }
 
 export function setLoadingState(): void {

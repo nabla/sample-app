@@ -8,10 +8,7 @@ import {
 } from "../../../api/transcribe.js";
 import transcribeApiSource from "../../../api/transcribe.ts?raw";
 import bufferedStreamSource from "../../../audio/buffered-stream.ts?raw";
-import {
-	type AudioSource,
-	openAudioStream,
-} from "../../../audio/audio-source.js";
+import { openAudioStream } from "../../../audio/audio-source.js";
 import micStreamSource from "../../../audio/mic-stream.ts?raw";
 import rawPcm16ProcessorSource from "../../../audio/rawPcm16Processor.js?raw";
 import { extractRegion } from "../../../shared/codeExtract.js";
@@ -134,7 +131,7 @@ main();
 export async function startTranscribing(): Promise<void> {
 	setLoadingState();
 	try {
-		const audioSource = getAudioSource();
+		const audioSource = readAudioSourceSelection();
 		prepareNewSession();
 		await openTranscribeSession(audioSource === "wav-file");
 		startBufferVisualization(() => activeSession?.bufferedAudioStream.getStats());
@@ -333,9 +330,4 @@ async function finalize(session: TranscriptionSession): Promise<void> {
 		saveTranscriptItems(transcriptItems);
 	}
 	finalizing = false;
-}
-
-function getAudioSource(): AudioSource {
-	const rawSelection = readAudioSourceSelection();
-	return rawSelection === "mic" ? "microphone" : "wav-file";
 }

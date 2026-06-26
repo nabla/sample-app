@@ -51,7 +51,8 @@ export class BufferedAudioStream {
 	}
 
 	// On reconnect nothing is confirmed on the wire, so replay the whole un-acked
-	// buffer from the front (the server dedupes by seq id).
+	// buffer from the front (the server dedupes by seq id). Call reconnect(newSocket)
+	// first: pump() sends on the current socket, so this no-ops until it's the live one.
 	replayAll(): void {
 		this.sentCount = 0;
 		this.pump();

@@ -3,7 +3,9 @@
 // This is the "each step owns its DOM" model, encoded once so every step is identical.
 
 export interface StepContext {
-	// The container the step rendered into. Query within it for the step's elements.
+	// The container the step renders into; controllers query within it to wire listeners.
+	// (Render helpers look elements up globally by id — safe because only one step is
+	// mounted at a time, so ids stay unique.)
 	root: HTMLElement;
 	// Wire every listener with { signal }: leaving the step aborts it, so they all detach.
 	signal: AbortSignal;
