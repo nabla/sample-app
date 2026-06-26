@@ -174,8 +174,6 @@ export function setNoteGenerating(): void {
 	show("note-loading");
 	hide("note-json");
 	setButton("note-generate-btn", "Generating…", true);
-	setDisabled("generate-normalized-btn", true);
-	setDisabled("generate-instructions-btn", true);
 	hide("normalized-output");
 	hide("instructions-output");
 	const conditions = document.getElementById("normalized-conditions");
@@ -186,8 +184,12 @@ export function setNoteGenerating(): void {
 	if (instructions) {
 		instructions.textContent = "";
 	}
+	// Reset the derive buttons' labels, then disable them last — they must not run
+	// against a note that's still generating (would read an empty/hidden textarea).
 	resetNormalizeButton();
 	resetInstructionsButton();
+	setDisabled("generate-normalized-btn", true);
+	setDisabled("generate-instructions-btn", true);
 }
 
 // The note JSON is editable, so the textarea is the source of truth for the

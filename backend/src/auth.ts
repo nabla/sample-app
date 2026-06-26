@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { importPKCS8, SignJWT, generateKeyPair, exportPKCS8, exportSPKI } from 'jose';
-import { loadConfig, saveConfig, loadTokens, saveTokens, loadKeypair, saveKeypair, apiBaseUrl, type Config } from './store.js';
+import { loadConfig, saveConfig, loadTokens, saveTokens, clearTokens, loadKeypair, saveKeypair, apiBaseUrl, type Config } from './store.js';
 import { API_VERSION } from './version.js';
 
 export const authRouter = Router();
@@ -86,6 +86,9 @@ authRouter.post('/configure', (request, response) => {
     return;
   }
   saveConfig({ clientUuid, host });
+  // Config changed (possibly a new host/client): drop the cached server token so the
+  // next call re-mints it against the new config instead of reusing a stale one.
+  clearTokens();
   response.json({ ok: true });
 });
 

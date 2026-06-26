@@ -60,6 +60,10 @@ export function saveTokens(tokens: Tokens): void {
   fs.writeFileSync(TOKENS_FILE, JSON.stringify(tokens, null, 2));
 }
 
+export function clearTokens(): void {
+  saveTokens({ serverToken: null, serverTokenExpiresAt: 0 });
+}
+
 export function loadKeypair(): Keypair | null {
   try {
     return JSON.parse(fs.readFileSync(KEYPAIR_FILE, 'utf-8')) as Keypair;
