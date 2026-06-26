@@ -1,10 +1,8 @@
 import { TRANSCRIBE_SAMPLE_RATE_HZ } from "../api/transcribe.js";
-
-// The AudioWorklet must be loaded as a JS module by URL. `new URL(..., import.meta.url)`
-// lets Vite emit it as a hashed asset and resolve the URL, so it can live next to
-// this file instead of in `public/`.
-const rawPcm16ProcessorUrl = new URL("./rawPcm16Processor.js", import.meta.url)
-	.href;
+// The AudioWorklet must be loaded as a JS module by URL. `?no-inline` tells Vite to
+// emit it as a hashed asset and give us its URL, never an inlined `data:` URL (which
+// `addModule` rejects) — so it can live next to this file instead of `public/`.
+import rawPcm16ProcessorUrl from "./rawPcm16Processor.js?url&no-inline";
 
 // #region microphone-stream
 export async function startMicrophoneStream(
@@ -13,6 +11,8 @@ export async function startMicrophoneStream(
 	stop: () => void;
 	audioCtx: AudioContext;
 }> {
+	// In case multiple microphones are available, you should allow the user to select
+	// which one to use.
 	const stream = await navigator.mediaDevices.getUserMedia({
 		audio: {
 			sampleRate: TRANSCRIBE_SAMPLE_RATE_HZ,
@@ -31,20 +31,28 @@ export async function startMicrophoneStream(
 	const worklet = new AudioWorkletNode(audioCtx, "rawPcm16Processor");
 
 	const CHUNK_SAMPLES = TRANSCRIBE_SAMPLE_RATE_HZ / 10; // 100 ms of audio
-	let pendingSamples = new Int16Array(0);
+	let chunkBuffer = new Int16Array(CHUNK_SAMPLES);
+	let chunkBufferCurrentLength = 0;
 
 	worklet.port.onmessage = ({
 		data: incomingSamples,
 	}: MessageEvent<Int16Array>) => {
-		const combinedSamples = new Int16Array(
-			pendingSamples.length + incomingSamples.length,
-		);
-		combinedSamples.set(pendingSamples);
-		combinedSamples.set(incomingSamples, pendingSamples.length);
-		pendingSamples = combinedSamples;
-		while (pendingSamples.length >= CHUNK_SAMPLES) {
-			onChunk(pendingSamples.slice(0, CHUNK_SAMPLES));
-			pendingSamples = pendingSamples.slice(CHUNK_SAMPLES);
+		let alreadyAdded = 0;
+		while (alreadyAdded < incomingSamples.length) {
+			const samplesToTake = Math.min(
+				CHUNK_SAMPLES - chunkBufferCurrentLength, // The remaining space in the buffer
+				incomingSamples.length - alreadyAdded, // The remaining samples in the incoming array
+			);
+			for (let i = 0; i < samplesToTake; i++) {
+				chunkBuffer[chunkBufferCurrentLength + i] = incomingSamples[alreadyAdded + i];
+			}
+			chunkBufferCurrentLength += samplesToTake;
+			alreadyAdded += samplesToTake;
+			if (chunkBufferCurrentLength === CHUNK_SAMPLES) {
+				onChunk(chunkBuffer);
+				chunkBuffer = new Int16Array(CHUNK_SAMPLES);
+				chunkBufferCurrentLength = 0;
+			}
 		}
 	};
 

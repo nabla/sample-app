@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { importPKCS8, SignJWT, generateKeyPair, exportPKCS8, exportSPKI } from 'jose';
-import { loadConfig, saveConfig, loadTokens, saveTokens, clearTokens, loadKeypair, saveKeypair, apiBaseUrl, type Config } from './store.js';
-import { API_VERSION } from './version.js';
+import { loadConfig, saveConfig, loadTokens, saveTokens, clearTokens, loadKeypair, saveKeypair, apiBaseUrl, expiresSoon, type Config } from './store.ts';
+import { API_VERSION } from './version.ts';
 
 export const authRouter = Router();
 
 // Obtain a valid server token (client_credentials), using the cache when fresh.
 // SECURITY: the value this returns is the server token and must NEVER be sent in
 // an HTTP response to the frontend.
-async function ensureServerToken(): Promise<string> {
+async function getServerToken(): Promise<string> {
   const config = loadConfig();
   if (!config) {
     throw new Error('Not configured — POST /api/configure first');
@@ -20,7 +20,7 @@ async function ensureServerToken(): Promise<string> {
   }
 
   const cached = loadTokens();
-  if (cached.serverToken && Date.now() < cached.serverTokenExpiresAt) {
+  if (cached.serverToken && !expiresSoon(cached.serverTokenExpiresAt)) {
     return cached.serverToken;
   }
 
@@ -53,7 +53,7 @@ async function ensureServerToken(): Promise<string> {
   }
 
   const tokenResponse = await response.json() as { access_token: string; expires_in: number };
-  const serverTokenExpiresAt = Date.now() + (tokenResponse.expires_in - 60) * 1000;
+  const serverTokenExpiresAt = nowSeconds + tokenResponse.expires_in;
   saveTokens({ serverToken: tokenResponse.access_token, serverTokenExpiresAt });
   return tokenResponse.access_token;
 }
@@ -104,7 +104,7 @@ authRouter.post('/server-token', async (_request, response) => {
   }
 
   try {
-    await ensureServerToken();
+    await getServerToken();
     // Read back the (possibly cached) expiry — the token itself is NEVER returned.
     const { serverTokenExpiresAt } = loadTokens();
     response.json({ ok: true, expiresAt: serverTokenExpiresAt });
@@ -122,7 +122,7 @@ authRouter.post('/provision-user', async (_request, response) => {
 
   let serverToken: string;
   try {
-    serverToken = await ensureServerToken();
+    serverToken = await getServerToken();
   } catch (error) {
     response.status(500).json({ error: String(error) });
     return;

@@ -30,6 +30,15 @@ export interface Tokens {
   serverTokenExpiresAt: number;
 }
 
+// Renew this many seconds before the real expiry, so a token never lapses mid-request.
+const SERVER_TOKEN_RENEW_MARGIN_SECONDS = 30;
+
+// True when the given expiry (epoch seconds) is within the renew margin.
+export function expiresSoon(serverTokenExpiresAt: number): boolean {
+  const nowSeconds = Date.now() / 1000;
+  return nowSeconds >= serverTokenExpiresAt - SERVER_TOKEN_RENEW_MARGIN_SECONDS;
+}
+
 function ensureCacheDir(): void {
   if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 }

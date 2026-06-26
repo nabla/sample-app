@@ -1,16 +1,15 @@
 import type { TranscriptItem } from "../../api/transcribe.js";
 import {
-	type LiveTranscription,
-	startTranscription,
-} from "../../audio/transcription.js";
+	type AudioSource,
+	type AudioStream,
+	openAudioStream,
+} from "../../audio/audio-source.js";
 import { saveTranscriptItems } from "../../shared/storage.js";
-import type { AudioSource } from "../../audio/audio-source.js";
+import { TranscriptionSession } from "../../transcribe/transcription-session.js";
 import {
 	markup,
 	readPatientContext,
 	renderFullTranscript,
-	renderTranscriptItem,
-	resetTranscriptArea,
 	setFinishingState,
 	setRecordingState,
 	setReviewState,
@@ -25,108 +24,94 @@ interface RecordOptions {
 	}) => void;
 }
 
-// Record step allows the user to record an encounter and generate a transcript
+// Record step: capture an encounter and produce a transcript, then hand it to the note step.
 export function startStep(
 	rootSelector: string,
 	{ audioSource, onNext }: RecordOptions,
 ): StepTeardown {
 	return mountStep(rootSelector, markup(), ({ root, signal }) => {
-		// Per-mount state — re-entering the step (via restart) gets a fresh closure.
-		let transcript: TranscriptItem[] = [];
-		let live: LiveTranscription | null = null;
-		let recordingAbort: AbortController | null = null;
+		// One session for the whole step; each take is a start()/stop() on it. `audio`
+		// being non-null means a take is in progress. Per-mount closure, so re-entering
+		// the step (via restart) starts fresh.
+		const transcriptionSession = new TranscriptionSession();
+		let audio: AudioStream | null = null;
+
+		// Re-render the live transcript from the session as items arrive (wired once).
+		transcriptionSession.onTranscriptItem(() =>
+			renderFullTranscript(transcriptionSession.items()),
+		);
 
 		async function startRecording(): Promise<void> {
-			try {
-				resetTranscriptArea();
-				recordingAbort = new AbortController();
-				
-				// Start the transcription session
-				// This will call us back with each transcript item as it arrives
-				// The callback will render the transcript items in the UI
-				const session = await startTranscription(
-					audioSource,
-					renderTranscriptItem,
-					recordingAbort.signal,
-				);
-				live = session;
-				setRecordingState();
-				
-				void session.audioComplete.then(() => {
-					if (live === session) {
-						void finishTake(false);
-					}
-				});
-			} catch (error) {
-				showError(error);
-			}
+			setRecordingState();
+			// "Record" continues the same transcript — the session keeps prior items
+			// across start()/stop(), so a new take appends rather than replacing.
+			await transcriptionSession.start();
+			// The page bridges audio → session; neither side knows about the other.
+			audio = await openAudioStream(audioSource, (pcm) =>
+				transcriptionSession.sendAudio(pcm),
+			);
 		}
 
-		// Ends the active recording and either proceeds to the note or returns to review.
-		async function finishTake(proceed: boolean): Promise<void> {
-			const session = live;
-			if (!session) {
-				return;
-			}
-			live = null;
-			recordingAbort = null;
+		// Stop button: end the take and return to the review state.
+		async function stopRecording(): Promise<void> {
+			await stopRecordingAndWaitForItems();
+			setReviewState(transcriptionSession.items().length > 0);
+		}
+
+		// Generate ends any active take first, then hands the accumulated transcript
+		// (live, mock, or both) to the note step.
+		async function generate(): Promise<void> {
+			await stopRecordingAndWaitForItems();
+			proceedToNote();
+		}
+
+		// Stop the take and wait for the server's remaining transcript items.
+		async function stopRecordingAndWaitForItems(): Promise<void> {
+			audio?.stop();
+			audio = null;
 			setFinishingState();
-			try {
-				// We need to wait to get all the transcript items from the server
-				transcript = await session.finish();
-				if (proceed) {
-					proceedToNote();
-				} else {
-					setReviewState(transcript.length > 0);
-				}
-			} catch (error) {
-				showError(error);
-			}
-		}
-
-		async function fillMock(): Promise<void> {
-			try {
-				transcript = await loadMockTranscript();
-				renderFullTranscript(transcript);
-				setReviewState(true);
-			} catch (error) {
-				showError(error);
-			}
-		}
-
-		// While recording, Generate ends the take then moves on; otherwise we already
-		// have a transcript (a finished take or mock) and go straight to the note.
-		function generate(): void {
-			if (live) {
-				void finishTake(true);
-			} else if (transcript.length > 0) {
-				proceedToNote();
-			}
+			await transcriptionSession.stop();
 		}
 
 		function proceedToNote(): void {
+			const transcript = transcriptionSession.items();
 			saveTranscriptItems(transcript);
-			// When we have a transcript, we can proceed to note generation
 			onNext({ transcript, patientContext: readPatientContext() });
+		}
+
+		async function fillMock(): Promise<void> {
+			transcriptionSession.clear();
+			transcriptionSession.addItems(await loadMockTranscript());
+			renderFullTranscript(transcriptionSession.items());
+			setReviewState(true);
 		}
 
 		root
 			.querySelector("#start-btn")
-			?.addEventListener("click", () => void startRecording(), { signal });
+			?.addEventListener("click", handle(startRecording), { signal });
 		root
 			.querySelector("#stop-btn")
-			?.addEventListener("click", () => void finishTake(false), { signal });
+			?.addEventListener("click", handle(stopRecording), { signal });
 		root
 			.querySelector("#fill-mock-btn")
-			?.addEventListener("click", () => void fillMock(), { signal });
+			?.addEventListener("click", handle(fillMock), { signal });
 		root
 			.querySelector("#generate-note-btn")
-			?.addEventListener("click", generate, { signal });
+			?.addEventListener("click", handle(generate), { signal });
 		setReviewState(false);
-		// Leaving the step mid-recording abandons the live session's socket/mic.
-		signal.addEventListener("abort", () => recordingAbort?.abort());
+		// Leaving the step mid-recording abandons the connection + mic.
+		signal.addEventListener("abort", () => {
+			audio?.stop();
+			transcriptionSession.disconnect();
+		});
 	});
 }
+
+// Run an async click handler, surfacing failures via showError
+const handle = (action: () => Promise<void>) =>
+	(): void => {
+		void action().catch(showError);
+	};
 
 async function loadMockTranscript(): Promise<TranscriptItem[]> {
 	const response = await fetch("/transcript_items.json");

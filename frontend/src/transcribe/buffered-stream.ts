@@ -1,3 +1,5 @@
+import type { WebSocketInterface } from "../transport/transcribe-socket.js";
+
 interface SequencedMessage {
 	seq_id: number;
 	[key: string]: unknown;
@@ -13,7 +15,7 @@ const MAX_UNACKED = 50;
 // So even in cases of network issues (disconnects or high latency), we keep the audio and 
 // we transcribe once the network is back.
 export class BufferedAudioStream {
-	private ws: WebSocket;
+	private ws: WebSocketInterface;
 	// Every chunk past the latest cumulative ACK, in send order. The first
 	// `sentCount` are on the wire awaiting an ACK; the rest are waiting for a free
 	// slot in the window. Acked chunks are dropped off the front; un-acked ones stay
@@ -21,17 +23,24 @@ export class BufferedAudioStream {
 	private unacked: SequencedMessage[] = [];
 	private sentCount = 0;
 	private totalAcked = 0;
+	private nextSeqId = 0;
 
-	constructor(socket: WebSocket) {
+	constructor(socket: WebSocketInterface) {
 		this.ws = socket;
 	}
 
-	reconnect(socket: WebSocket): void {
+	// Point at the new socket and replay the whole un-acked buffer from the front —
+	// nothing was confirmed on the dropped wire, and the server dedupes by seq id.
+	reconnect(socket: WebSocketInterface): void {
 		this.ws = socket;
+		this.sentCount = 0;
+		this.pump();
 	}
 
-	sendAndBuffer(message: SequencedMessage): void {
-		this.unacked.push(message);
+	// The caller builds the wire message from the seq id we assign — sequencing is the
+	// buffer's concern (ACKs reference it, replay relies on its order).
+	send(buildMessage: (seqId: number) => SequencedMessage): void {
+		this.unacked.push(buildMessage(this.nextSeqId++));
 		this.pump();
 	}
 
@@ -47,14 +56,6 @@ export class BufferedAudioStream {
 		this.unacked.splice(0, acked);
 		this.sentCount = Math.max(0, this.sentCount - acked);
 		this.totalAcked += acked;
-		this.pump();
-	}
-
-	// On reconnect nothing is confirmed on the wire, so replay the whole un-acked
-	// buffer from the front (the server dedupes by seq id). Call reconnect(newSocket)
-	// first: pump() sends on the current socket, so this no-ops until it's the live one.
-	replayAll(): void {
-		this.sentCount = 0;
 		this.pump();
 	}
 

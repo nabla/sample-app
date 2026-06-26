@@ -5,12 +5,11 @@ import { loadWavFile, streamWavChunks } from "./wav-stream.js";
 // registry below — everything downstream consumes the uniform AudioStream.
 export type AudioSource = "microphone" | "wav-file";
 
-// A running audio source, pushing PCM-16 chunks to the callback it was opened with.
-// `completed` resolves when no more audio will come — for a WAV when the file is
-// exhausted, for the microphone when stop() is called (the mic never ends on its own).
+// A running audio source, pushing PCM-16 chunks to the callback it was opened with,
+// until stop() is called. A WAV file would otherwise end on its own, but we don't
+// auto-stop on it — recording always ends when the user stops it.
 export interface AudioStream {
 	stop(): void;
-	completed: Promise<void>;
 }
 
 type AudioStreamFactory = (
@@ -18,24 +17,16 @@ type AudioStreamFactory = (
 ) => Promise<AudioStream>;
 
 const openMicrophoneStream: AudioStreamFactory = async (onChunk) => {
-	let resolveCompleted = () => {};
-	const completed = new Promise<void>((resolve) => {
-		resolveCompleted = resolve;
-	});
 	const microphone = await startMicrophoneStream(onChunk);
 	return {
-		stop: () => {
-			microphone.stop();
-			resolveCompleted();
-		},
-		completed,
+		stop: () => microphone.stop(),
 	};
 };
 
 const openWavFileStream: AudioStreamFactory = async (onChunk) => {
 	const wavFile = await loadWavFile();
 	let stopped = false;
-	const completed = (async () => {
+	void (async () => {
 		for await (const chunk of streamWavChunks(wavFile)) {
 			if (stopped) {
 				break;
@@ -47,7 +38,6 @@ const openWavFileStream: AudioStreamFactory = async (onChunk) => {
 		stop: () => {
 			stopped = true;
 		},
-		completed,
 	};
 };
 

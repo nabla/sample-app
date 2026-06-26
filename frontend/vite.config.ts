@@ -43,9 +43,6 @@ export default defineConfig({
     },
   },
   build: {
-    // The AudioWorklet must be a real served .js file — `addModule` doesn't reliably
-    // accept the inlined `data:` URL Vite would otherwise produce for a small asset.
-    assetsInlineLimit: (filePath) => (filePath.endsWith('rawPcm16Processor.js') ? false : undefined),
     rollupOptions: {
       input: {
         index: resolve(__dirname, 'src/pages/index.html'),

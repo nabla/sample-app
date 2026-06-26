@@ -10,7 +10,7 @@ clinical note, then derive normalized FHIR data and patient instructions from it
 
 ### 0. Prerequisites
 
-- Node.js v22+
+- Node.js v24+
 - A Nabla Core API account ([contact us](mailto:api@nabla.com) to create one)
 
 ### 1. Clone, install, and run the Sample App
