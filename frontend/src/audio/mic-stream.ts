@@ -9,7 +9,6 @@ export async function startMicrophoneStream(
   onChunk: (chunk: Int16Array) => void,
 ): Promise<{
   stop: () => void;
-  audioCtx: AudioContext;
 }> {
   // In case multiple microphones are available, you should allow the user to select
   // which one to use.
@@ -59,7 +58,6 @@ export async function startMicrophoneStream(
   mediaStreamSource.connect(worklet);
 
   return {
-    audioCtx,
     stop: () => {
       mediaStreamSource.disconnect();
       worklet.disconnect();

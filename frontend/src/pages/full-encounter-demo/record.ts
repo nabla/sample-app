@@ -43,8 +43,6 @@ export function startStep(
 
     async function startRecording(): Promise<void> {
       setRecordingState();
-      // "Record" continues the same transcript — the session keeps prior items
-      // across start()/stop(), so a new take appends rather than replacing.
       await transcriptionSession.start();
       // The page bridges audio → session; neither side knows about the other.
       audio = await openAudioStream(audioSource, (pcm) =>

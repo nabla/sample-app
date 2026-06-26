@@ -8,7 +8,7 @@ import {
 } from "../api/transcribe.js";
 import { BufferedAudioStream } from "./buffered-stream.js";
 import { Transcript } from "./transcript.js";
-import type { WebSocketInterface } from "../transport/transcribe-socket.js";
+import type { WebSocketInterface } from "../transport/websocket-interface.js";
 
 export interface BufferStats {
   queued: number;
@@ -18,7 +18,7 @@ export interface BufferStats {
 
 // A live transcription session. It owns the accumulated transcript and the current
 // connection; push PCM in with sendAudio(), get items out via onTranscriptItem(). A
-// session can span several streams — pause() ends the current one keeping the
+// session can span several streams — stop() ends the current one, keeping the
 // transcript, start() opens a fresh one and keeps accumulating.
 export class TranscriptionSession {
   private transcript = new Transcript();
@@ -28,9 +28,7 @@ export class TranscriptionSession {
 
   private itemListener: (item: TranscriptItem) => void = () => {};
 
-  // The socket factory is injected so a caller can supply an instrumented socket
-  // (e.g. the in-depth page's observed socket, which reports status + frames); the
-  // default opens a plain one.
+  // The socket factory is injected so a caller can supply a custom socket wrapper.
   constructor(
     private readonly socketFactory: () => Promise<WebSocketInterface> = connectTranscribeWebSocket,
   ) {}
@@ -62,7 +60,7 @@ export class TranscriptionSession {
     this.bufferedAudioStream.reconnect(socket);
   }
 
-  // Graceful end of the current stream; the session is done.
+  // Graceful end: send END and wait for the server to flush the transcript & close.
   async stop(): Promise<void> {
     if (!this.socket) {
       return;
@@ -99,8 +97,8 @@ export class TranscriptionSession {
   private listen(socket: WebSocketInterface): void {
     this.serverClosed = new Promise<void>((resolve) => {
       socket.addEventListener("close", () => {
-        // Note: you should implement proper close error code handling
-        // (see API documentation on socket error codes)
+        // Note: you should implement proper close code handling
+        // See API documentation on socket success/error codes
         resolve();
       });
     });

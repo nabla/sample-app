@@ -1,7 +1,10 @@
 import transcribeApiSource from "../../../api/transcribe.ts?raw";
 import bufferedStreamSource from "../../../transcribe/buffered-stream.ts?raw";
 import { connectTranscribeWebSocket } from "../../../api/transcribe.js";
-import { openObservedSocket } from "../../../transport/logged-socket.js";
+import {
+  InstrumentedWebSocket,
+  type ConnectionStatus,
+} from "../../../transport/instrumented-websocket.js";
 import { type AudioStream, openAudioStream } from "../../../audio/audio-source.js";
 import micStreamSource from "../../../audio/mic-stream.ts?raw";
 import rawPcm16ProcessorSource from "../../../audio/rawPcm16Processor.js?raw";
@@ -71,7 +74,7 @@ const CODE_SNIPPETS = [
   },
 ];
 
-const SIMULATED_ACK_LATENCY_MS = 10000;
+const SIMULATED_ACK_LATENCY_MS = 10_000;
 
 let session: TranscriptionSession | null = null;
 let audio: AudioStream | null = null;
@@ -111,21 +114,16 @@ export async function startTranscribing(): Promise<void> {
     const audioSource = readAudioSourceSelection();
     prepareNewSession();
 
-    const transcriptionSession = new TranscriptionSession(
-      openObservedSocket(
+    const transcriptionSession = new TranscriptionSession(async () => {
+      const socket = new InstrumentedWebSocket(
         connectTranscribeWebSocket,
         addWsMessage,
-        (status) => {
-          updateWsStatus(status);
-          if (status === "connected") {
-            addWsMessage("system", "WebSocket connected");
-          } else if (status === "closed") {
-            addWsMessage("system", "WebSocket closed");
-          }
-        },
+        reportWsStatus,
         () => receiveLatencyMs,
-      ),
-    );
+      );
+      await socket.open();
+	  return socket;
+    });
     wireSession(transcriptionSession);
     await transcriptionSession.start();
     session = transcriptionSession;
@@ -146,6 +144,17 @@ function wireSession(transcriptionSession: TranscriptionSession): void {
     renderTranscript(transcriptionSession.items());
     updateTranscriptStats(transcriptionSession.items());
   });
+}
+
+// Maps a connection status to the WS-log + status-pill UI. Passed to the socket, which
+// calls it as it moves through connecting → connected → closed.
+function reportWsStatus(status: ConnectionStatus): void {
+  updateWsStatus(status);
+  if (status === "connected") {
+    addWsMessage("system", "WebSocket connected");
+  } else if (status === "closed") {
+    addWsMessage("system", "WebSocket closed");
+  }
 }
 
 export async function stopTranscribing(): Promise<void> {

@@ -1,4 +1,4 @@
-import type { WebSocketInterface } from "../transport/transcribe-socket.js";
+import type { WebSocketInterface } from "../transport/websocket-interface.js";
 
 interface SequencedMessage {
   seq_id: number;
@@ -6,10 +6,10 @@ interface SequencedMessage {
 }
 
 // #region buffered-audio-stream
-// We limit the number of in-flight audio chunks to 50 to avoid overwhelming the server.
+// We limit the number of in-flight audio chunks to 90 to avoid overwhelming the server.
 // Because the server doesn't accept more than 10 seconds of audio in-flight.
-// Here, we limit it to 50 chunks so it's 5 seconds of audio.
-const MAX_UNACKED = 50;
+// Here, we limit it to 90 chunks so it's 9 seconds of audio.
+const MAX_UNACKED = 90;
 
 // The BufferedAudioStream is used to buffer audio chunks and replay them if the socket drops.
 // So even in cases of network issues (disconnects or high latency), we keep the audio and
@@ -29,8 +29,7 @@ export class BufferedAudioStream {
     this.ws = socket;
   }
 
-  // Point at the new socket and replay the whole un-acked buffer from the front —
-  // nothing was confirmed on the dropped wire, and the server dedupes by seq id.
+  // Point at the new socket and replay the un-acked buffer
   reconnect(socket: WebSocketInterface): void {
     this.ws = socket;
     this.sentCount = 0;

@@ -9,9 +9,7 @@ export interface BackendStatus {
   configured: boolean;
 }
 
-// The backend's status/config — the single place anything reads `/api/status`.
-// Fetched once per page and cached; the cache is cleared on a failed fetch so a
-// transient backend hiccup can be retried.
+// Make sure we only fetch the status once.
 let statusPromise: Promise<BackendStatus> | null = null;
 
 export function fetchBackendStatus(): Promise<BackendStatus> {
@@ -59,14 +57,11 @@ export async function nablaFetch(
     headers: {
       "Content-Type": "application/json",
       ...(options.headers as Record<string, string> | undefined),
-      // Auth and API version are managed here and always win over caller headers.
       Authorization: `Bearer ${accessToken}`,
       "X-Nabla-Api-Version": API_VERSION,
     },
   });
-  // Turn HTTP failures into thrown errors so callers never parse an error body
-  // as if it were a success. Read the body as text — an error response isn't
-  // guaranteed to be JSON.
+  
   if (!response.ok) {
     const body = await response.text();
     throw new Error(`Nabla API ${response.status} on ${path}: ${body}`);
@@ -84,10 +79,10 @@ export async function nablaWebSocket(
     webSocketUrl(host, `${path}?nabla-api-version=${API_VERSION}`),
     [protocol, `jwt-${accessToken}`],
   );
-  await new Promise<void>((resolve, reject) => {
-    webSocket.onopen = () => resolve();
-    webSocket.onerror = () => reject(new Error("WebSocket failed to connect"));
-  });
+  const { promise, resolve, reject } = Promise.withResolvers<void>();
+  webSocket.onopen = () => resolve();
+  webSocket.onerror = () => reject(new Error("WebSocket failed to connect"));
+  await promise;
   return webSocket;
 }
 // #endregion nabla-websocket
