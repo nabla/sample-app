@@ -1,17 +1,19 @@
 version: 2
 updates:
+  # Single root install (npm workspaces, one package-lock.json) covers both
+  # frontend and backend dependencies.
   - package-ecosystem: npm
-    directory: /frontend
+    directory: /
     schedule:
       interval: weekly
     groups:
       all-deps:
         patterns: ["*"]
 
-  - package-ecosystem: npm
-    directory: /backend
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
       interval: weekly
     groups:
-      all-deps:
+      all-actions:
         patterns: ["*"]
