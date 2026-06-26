@@ -48,7 +48,7 @@ export function markup(): string {
               <option>Loading templates…</option>
             </select>
           </div>
-          <button id="note-generate-btn" class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+          <button id="note-generate-btn" disabled class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
             Generate note
           </button>
         </div>
@@ -162,6 +162,8 @@ export function renderTemplateOptions(templates: NoteTemplate[]): void {
 	if (preferred) {
 		select.value = preferred.key;
 	}
+	// Templates are loaded and a real key is selected — generation is now possible.
+	setDisabled("note-generate-btn", false);
 }
 
 export function readNoteTemplateKey(): string {
