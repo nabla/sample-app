@@ -131,6 +131,13 @@ export function renderNote(note: ClinicalNote): void {
 	setDisabled("generate-instructions-btn", false);
 }
 
+// Clears the loading state and re-enables the Generate button when generation
+// finishes — including on error, so the user can retry instead of staying stuck.
+export function resetNoteGenerating(): void {
+	hide("note-loading");
+	setButton("note-generate-btn", "Generate note", false);
+}
+
 export function renderTemplateOptions(templates: NoteTemplate[]): void {
 	const select = document.getElementById(
 		"note-template",

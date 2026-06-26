@@ -19,6 +19,7 @@ import {
 	renderNote,
 	renderTemplateOptions,
 	resetInstructionsButton,
+	resetNoteGenerating,
 	resetNormalizeButton,
 	setInstructionsLoading,
 	setNoteGenerating,
@@ -66,6 +67,8 @@ export function startStep(
 				);
 			} catch (error) {
 				showError(error);
+			} finally {
+				resetNoteGenerating();
 			}
 		}
 
