@@ -152,8 +152,6 @@ function exposePageHandlers(): void {
 
 main();
 
-// Start (also the way to resume after a pause): opens a fresh socket and sends the
-// current note as text_field_context, so dictation continues appending to it.
 export async function startDictation(): Promise<void> {
   setLoadingState();
   try {

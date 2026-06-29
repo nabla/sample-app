@@ -26,6 +26,11 @@ export class TranscriptionSession {
   private bufferedAudioStream: BufferedAudioStream | null = null;
   private serverClosed: Promise<void> = Promise.resolve();
 
+  // Items are shifted onto a session-wide timeline by timelineBaseMs. Each new socket —
+  // a new take or a reconnect — snapshots it to where the transcript currently ends, so
+  // the socket's 0-based offsets continue past existing items instead of restarting.
+  private timelineBaseMs = 0;
+
   private itemListener: (item: TranscriptItem) => void = () => {};
 
   // The socket factory is injected so a caller can supply a custom socket wrapper.
@@ -42,6 +47,7 @@ export class TranscriptionSession {
   }
   clear(): void {
     this.transcript.clear();
+    this.timelineBaseMs = 0;
   }
 
   // Open a fresh stream (new socket + buffer, CONFIG sent).
@@ -79,6 +85,10 @@ export class TranscriptionSession {
 
   // Start a new socket and wire it up
   private async startNewSocket(): Promise<WebSocketInterface> {
+    // Continue from where the transcript currently ends, so a new take or a reconnect's
+    // replayed items land after the existing ones instead of restarting at zero.
+    this.timelineBaseMs = this.maxEndOffsetMs();
+
     const socket = await this.socketFactory();
     this.socket = socket;
     this.listen(socket);
@@ -107,12 +117,30 @@ export class TranscriptionSession {
       if (message.type === "AUDIO_CHUNK_ACK") {
         this.bufferedAudioStream?.handlePacketAck({ ack_id: message.ack_id });
       } else if (message.type === "TRANSCRIPT_ITEM") {
-        this.transcript.add(message);
-        this.itemListener(message);
+        const item = this.shiftToSessionTimeline(message);
+        this.transcript.add(item);
+        this.itemListener(item);
       }
     };
   }
   // #endregion receive-transcript
+
+  // Re-express a socket-local item on the session timeline — offsets shifted by the base
+  // snapshotted when the socket opened — so takes and reconnects don't restart at zero.
+  private shiftToSessionTimeline(item: TranscriptItem): TranscriptItem {
+    return {
+      ...item,
+      start_offset_ms: item.start_offset_ms + this.timelineBaseMs,
+      end_offset_ms: item.end_offset_ms + this.timelineBaseMs,
+    };
+  }
+
+  // The furthest point the transcript currently reaches — the base for the next socket.
+  private maxEndOffsetMs(): number {
+    return this.transcript
+      .items()
+      .reduce((max, item) => Math.max(max, item.end_offset_ms), 0);
+  }
 
   //----------------------------------------------------
   // Demonstration / in-depth purpose only

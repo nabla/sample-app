@@ -19,8 +19,6 @@ import {
   readAudioSourceSelection,
   renderCodeSnippets,
   renderTranscript,
-  resetLog,
-  resetTranscriptArea,
   setDisconnectedState,
   setLatencyState,
   setLoadingState,
@@ -108,25 +106,39 @@ function exposePageHandlers(): void {
 
 main();
 
+// One session for the whole page: Start/Stop continue the same transcription — the
+// timeline and accumulated transcript carry over. Reload the page to start fresh.
+function getSession(): TranscriptionSession {
+  if (session) {
+    return session;
+  }
+  const created = new TranscriptionSession(async () => {
+    const socket = new InstrumentedWebSocket(
+      connectTranscribeWebSocket,
+      addWsMessage,
+      reportWsStatus,
+      () => receiveLatencyMs,
+    );
+    await socket.open();
+    return socket;
+  });
+  // Drive the UI from session events — the page never touches the socket directly.
+  created.onTranscriptItem(() => {
+    renderTranscript(created.items());
+    updateTranscriptStats(created.items());
+  });
+  session = created;
+  return created;
+}
+
 export async function startTranscribing(): Promise<void> {
   setLoadingState();
   try {
     const audioSource = readAudioSourceSelection();
-    prepareNewSession();
-
-    const transcriptionSession = new TranscriptionSession(async () => {
-      const socket = new InstrumentedWebSocket(
-        connectTranscribeWebSocket,
-        addWsMessage,
-        reportWsStatus,
-        () => receiveLatencyMs,
-      );
-      await socket.open();
-	  return socket;
-    });
-    wireSession(transcriptionSession);
+    switchWsTab("key");
+    resetLatencySpike();
+    const transcriptionSession = getSession();
     await transcriptionSession.start();
-    session = transcriptionSession;
     setRecordingState(audioSource === "wav-file");
     startBufferVisualization(() => transcriptionSession.getBufferStatistics());
     audio = await openAudioStream(audioSource, (pcm) =>
@@ -136,14 +148,6 @@ export async function startTranscribing(): Promise<void> {
     alert(error instanceof Error ? error.message : String(error));
     setStartState();
   }
-}
-
-// Drive the UI from session events — the page never touches the socket directly.
-function wireSession(transcriptionSession: TranscriptionSession): void {
-  transcriptionSession.onTranscriptItem(() => {
-    renderTranscript(transcriptionSession.items());
-    updateTranscriptStats(transcriptionSession.items());
-  });
 }
 
 // Maps a connection status to the WS-log + status-pill UI. Passed to the socket, which
@@ -171,7 +175,6 @@ async function finalize(): Promise<void> {
   }
   finalizing = true;
   const audioStream = audio;
-  session = null;
   audio = null;
   audioStream?.stop();
   await transcriptionSession.stop();
@@ -182,10 +185,11 @@ async function finalize(): Promise<void> {
   }
   finalizing = false;
   setStartState();
+  // The session is kept (not nulled) so the next Start continues the same transcript.
 }
 
 export function simulateDisconnect(): void {
-  if (!session) {
+  if (!session || !audio) {
     return;
   }
   setDisconnectedState();
@@ -194,7 +198,7 @@ export function simulateDisconnect(): void {
 }
 
 export async function simulateReconnect(): Promise<void> {
-  if (!session) {
+  if (!session || !audio) {
     return;
   }
   setReconnectedState();
@@ -206,7 +210,7 @@ export async function simulateReconnect(): Promise<void> {
 // A one-shot latency spike: hold incoming frames for a few seconds so ACKs back up
 // and the in-flight window fills, then auto-recover so the backlog drains.
 export function simulateHighLatency(): void {
-  if (!session || latencyActive) {
+  if (!audio || latencyActive) {
     return;
   }
   latencyActive = true;
@@ -219,12 +223,8 @@ export function simulateHighLatency(): void {
   }, SIMULATED_ACK_LATENCY_MS);
 }
 
-function prepareNewSession(): void {
-  resetLog();
-  switchWsTab("key");
-  resetTranscriptArea();
-  updateTranscriptStats([]);
-  session = null;
+// Clears any in-flight latency spike between takes.
+function resetLatencySpike(): void {
   latencyActive = false;
   receiveLatencyMs = 0;
   setLatencyState(false);
