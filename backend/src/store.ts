@@ -53,7 +53,10 @@ export function loadConfig(): Config | null {
 
 export function saveConfig(config: Config): void {
   ensureCacheDir();
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
+  // 0o600 = owner-only. The keypair and server token are real OAuth credentials;
+  // this is a local-dev convenience — production should use a secrets manager/KMS.
+  // (POSIX-only; a no-op on Windows. Applied on file creation.)
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), { mode: 0o600 });
 }
 
 export function loadTokens(): Tokens {
@@ -66,7 +69,7 @@ export function loadTokens(): Tokens {
 
 export function saveTokens(tokens: Tokens): void {
   ensureCacheDir();
-  fs.writeFileSync(TOKENS_FILE, JSON.stringify(tokens, null, 2));
+  fs.writeFileSync(TOKENS_FILE, JSON.stringify(tokens, null, 2), { mode: 0o600 });
 }
 
 export function clearTokens(): void {
@@ -83,5 +86,5 @@ export function loadKeypair(): Keypair | null {
 
 export function saveKeypair(keypair: Keypair): void {
   ensureCacheDir();
-  fs.writeFileSync(KEYPAIR_FILE, JSON.stringify(keypair, null, 2));
+  fs.writeFileSync(KEYPAIR_FILE, JSON.stringify(keypair, null, 2), { mode: 0o600 });
 }

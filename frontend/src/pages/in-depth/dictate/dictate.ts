@@ -111,7 +111,7 @@ function drainPendingChunks(): void {
   while (
     socket?.readyState === WebSocket.OPEN &&
     pendingChunks.length > 0 &&
-    nextSeqId - 1 - lastAckId < MAX_UNACKED_CHUNKS
+    nextSeqId - lastAckId < MAX_UNACKED_CHUNKS
   ) {
     const message = buildDictateAudioChunk(
       nextSeqId++,
