@@ -112,7 +112,7 @@ function getSession(): TranscriptionSession {
   if (session) {
     return session;
   }
-  const created = new TranscriptionSession(async () => {
+  const transcriptionSession = new TranscriptionSession(async () => {
     const socket = new InstrumentedWebSocket(
       connectTranscribeWebSocket,
       addWsMessage,
@@ -123,12 +123,12 @@ function getSession(): TranscriptionSession {
     return socket;
   });
   // Drive the UI from session events — the page never touches the socket directly.
-  created.onTranscriptItem(() => {
-    renderTranscript(created.items());
-    updateTranscriptStats(created.items());
+  transcriptionSession.onTranscriptItem(() => {
+    renderTranscript(transcriptionSession.items());
+    updateTranscriptStats(transcriptionSession.items());
   });
-  session = created;
-  return created;
+  session = transcriptionSession;
+  return transcriptionSession;
 }
 
 export async function startTranscribing(): Promise<void> {
@@ -174,9 +174,8 @@ async function finalize(): Promise<void> {
     return;
   }
   finalizing = true;
-  const audioStream = audio;
+  audio?.stop();
   audio = null;
-  audioStream?.stop();
   await transcriptionSession.stop();
   stopBufferVisualization();
   const items = transcriptionSession.items();
