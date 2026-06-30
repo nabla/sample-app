@@ -59,7 +59,7 @@ async function getServerToken(): Promise<string> {
 }
 
 authRouter.post('/generate-keypair', async (_request, response) => {
-  const { privateKey, publicKey } = await generateKeyPair('RS256', { modulusLength: 2048 });
+  const { privateKey, publicKey } = await generateKeyPair('RS256', { modulusLength: 2048, extractable: true });
   const privateKeyPem = await exportPKCS8(privateKey);
   const publicKeyPem = await exportSPKI(publicKey);
   saveKeypair({ privateKeyPem, publicKeyPem });
