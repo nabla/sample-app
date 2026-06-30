@@ -35,7 +35,13 @@ export class BufferedAudioStream {
     this.ws = socket;
   }
 
-  // Point at the new socket and replay the un-acked buffer
+  // Point at the new socket and replay the un-acked buffer.
+  //
+  // Limitation: this recovers only audio that was still un-acked when the socket dropped.
+  // Audio the server already acked but hadn't yet turned into FINAL transcript items is
+  // gone from the buffer (we drop chunks on ACK), so those finals aren't recovered on an
+  // unexpected close. A production app would make sure to keep the audio chunks until the
+  // final transcript item corresponding to that audio chunk is received.
   reconnect(socket: WebSocketInterface): void {
     this.ws = socket;
     this.sentCount = 0;

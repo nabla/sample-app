@@ -56,6 +56,7 @@ export class TranscriptionSession {
   }
 
   // New socket, same buffer → replay the un-acked audio to recover a dropped stream.
+  // Recovers un-acked audio only — see BufferedAudioStream.reconnect for the limitation.
   async reconnect(): Promise<void> {
     if (!this.bufferedAudioStream) {
       throw new Error("No buffered audio stream to reconnect, call start() first");
