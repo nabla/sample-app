@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'path';
 
 const backendHost = process.env.BACKEND_HOST ?? 'localhost';
-const backendPort = process.env.BACKEND_PORT ?? '3001';
+const backendPort = process.env.BACKEND_PORT ?? '3002';
 
 // Each page's HTML lives next to its source under src/pages/, but we keep clean,
 // stable URLs. This maps the public URL → the co-located file (used by both the dev
@@ -43,7 +43,7 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       input: {
         index: resolve(__dirname, 'src/pages/index.html'),
         onboarding: resolve(__dirname, 'src/pages/onboarding/onboarding.html'),

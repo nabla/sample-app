@@ -3,7 +3,7 @@ import { authRouter } from './auth.ts';
 import { loadConfig } from './store.ts';
 import { API_VERSION } from './version.ts';
 
-const PORT = parseInt(process.env.BACKEND_PORT ?? '3001', 10);
+const PORT = parseInt(process.env.BACKEND_PORT ?? '3002', 10);
 const HOST = process.env.BACKEND_HOST ?? 'localhost';
 
 const app = express();
