@@ -5,6 +5,12 @@ interface SequencedMessage {
   [key: string]: unknown;
 }
 
+export interface BufferStats {
+  queued: number;
+  inflight: number;
+  totalAcked: number;
+}
+
 // #region buffered-audio-stream
 // We limit the number of in-flight audio chunks to 90 to avoid overwhelming the server.
 // Because the server doesn't accept more than 10 seconds of audio in-flight.
@@ -58,11 +64,7 @@ export class BufferedAudioStream {
     this.pump();
   }
 
-  getStats(): {
-    queued: number;
-    inflight: number;
-    totalAcked: number;
-  } {
+  getStats(): BufferStats {
     return {
       queued: this.unacked.length - this.sentCount,
       inflight: this.sentCount,

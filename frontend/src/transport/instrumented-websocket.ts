@@ -10,39 +10,25 @@ const noopHandler = (): void => {};
 export class InstrumentedWebSocket implements WebSocketInterface {
   private socket: WebSocket | null = null;
   private messageHandler: (event: MessageEvent<string>) => void = noopHandler;
+  private readonly pendingFrameTimers = new Set<ReturnType<typeof setTimeout>>();
 
   constructor(
     private readonly openSocket: () => Promise<WebSocket>,
     private readonly onFrame: (direction: "send" | "recv", raw: string) => void,
     private readonly onStatus: (status: ConnectionStatus) => void,
     private readonly getReceiveLatencyMs: () => number = () => 0,
-  ) {
-  }
+  ) {}
 
   async open(): Promise<void> {
     this.onStatus("connecting");
     const socket = await this.openSocket();
     this.onStatus("connected");
     this.socket = socket;
-    socket.addEventListener("close", () => this.onStatus("closed"));
-    socket.onmessage = (event) => this.handleIncomingFrame(event);
-  }
-
-  private handleIncomingFrame(event: MessageEvent<string>): void {
-    const handler = this.messageHandler;
-    this.afterReceiveLatency(() => {
-      this.onFrame("recv", event.data);
-      handler(event);
+    socket.addEventListener("close", () => {
+      this.cancelPendingFrames();
+      this.onStatus("closed");
     });
-  }
-
-  private afterReceiveLatency(action: () => void): void {
-    const latency = this.getReceiveLatencyMs();
-    if (latency > 0) {
-      setTimeout(action, latency);
-    } else {
-      action();
-    }
+    socket.onmessage = (event) => this.handleIncomingFrame(event);
   }
 
   // --- WebSocketInterface ---
@@ -67,7 +53,35 @@ export class InstrumentedWebSocket implements WebSocketInterface {
     this.messageHandler = handler ?? noopHandler;
   }
 
-  addEventListener(type: "close", listener: () => void): void {
-    this.socket?.addEventListener(type, () => this.afterReceiveLatency(listener));
+  addEventListener(type: "close", listener: (event: CloseEvent) => void): void {
+    this.socket?.addEventListener(type, listener);
+  }
+
+  private handleIncomingFrame(event: MessageEvent<string>): void {
+    const handler = this.messageHandler;
+    this.afterReceiveLatency(() => {
+      this.onFrame("recv", event.data);
+      handler(event);
+    });
+  }
+
+  private afterReceiveLatency(action: () => void): void {
+    const latency = this.getReceiveLatencyMs();
+    if (latency <= 0) {
+      action();
+      return;
+    }
+    const timer = setTimeout(() => {
+      this.pendingFrameTimers.delete(timer);
+      action();
+    }, latency);
+    this.pendingFrameTimers.add(timer);
+  }
+
+  private cancelPendingFrames(): void {
+    for (const timer of this.pendingFrameTimers) {
+      clearTimeout(timer);
+    }
+    this.pendingFrameTimers.clear();
   }
 }

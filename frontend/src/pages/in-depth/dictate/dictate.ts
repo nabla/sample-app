@@ -160,19 +160,23 @@ export async function startDictation(): Promise<void> {
     resetLog();
     switchWsTab("key");
     resetPacing();
+    microphone = await startMicrophoneStream((chunk) => queueAudioChunk(chunk));
     updateWsStatus("connecting");
     socket = await connectDictateWebSocket();
     updateWsStatus("connected");
     addWsMessage("system", "WebSocket connected");
     armServerClosed();
     attachSocketHandlers();
+    // send the config before sending any audio
     sendConfig(locale, noteText);
-    microphone = await startMicrophoneStream((chunk) =>
-      queueAudioChunk(chunk),
-    );
+    drainPendingChunks();
     setRecordingState();
   } catch (error) {
-    alert(error instanceof Error ? error.message : String(error));
+    alert(error instanceof Error ? error.message : String(error))
+    microphone?.stop();
+    microphone = null;
+    socket?.close();
+    socket = null;
     setIdleState();
   }
 }

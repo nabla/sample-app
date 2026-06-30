@@ -78,8 +78,9 @@ let session: TranscriptionSession | null = null;
 let audio: AudioStream | null = null;
 let finalizing = false;
 let latencyActive = false;
-// Read per-frame by the observed socket; raising it holds incoming frames back.
 let receiveLatencyMs = 0;
+let latencySpikeTimer: ReturnType<typeof setTimeout> | null = null;
+let simulatedDisconnect = false;
 
 function main(): void {
   initPageChrome();
@@ -122,11 +123,11 @@ function getSession(): TranscriptionSession {
     await socket.open();
     return socket;
   });
-  // Drive the UI from session events — the page never touches the socket directly.
   transcriptionSession.onTranscriptItem(() => {
     renderTranscript(transcriptionSession.items());
     updateTranscriptStats(transcriptionSession.items());
   });
+  transcriptionSession.onClose(handleSocketClosed);
   session = transcriptionSession;
   return transcriptionSession;
 }
@@ -137,6 +138,7 @@ export async function startTranscribing(): Promise<void> {
     const audioSource = readAudioSourceSelection();
     switchWsTab("key");
     resetLatencySpike();
+    simulatedDisconnect = false;
     const transcriptionSession = getSession();
     await transcriptionSession.start();
     setRecordingState(audioSource === "wav-file");
@@ -150,15 +152,27 @@ export async function startTranscribing(): Promise<void> {
   }
 }
 
-// Maps a connection status to the WS-log + status-pill UI. Passed to the socket, which
-// calls it as it moves through connecting → connected → closed.
 function reportWsStatus(status: ConnectionStatus): void {
   updateWsStatus(status);
   if (status === "connected") {
     addWsMessage("system", "WebSocket connected");
-  } else if (status === "closed") {
-    addWsMessage("system", "WebSocket closed");
   }
+}
+
+// Note: a real integration should inspect the close code (see the API docs).
+function handleSocketClosed(code: number, reason: string): void {
+  addWsMessage(
+    "system",
+    `WebSocket closed (code ${code}${reason ? `: ${reason}` : ""})`,
+  );
+  if (!audio || simulatedDisconnect) {
+    return;
+  }
+  audio.stop();
+  audio = null;
+  stopBufferVisualization();
+  resetLatencySpike();
+  setStartState();
 }
 
 export async function stopTranscribing(): Promise<void> {
@@ -174,6 +188,7 @@ async function finalize(): Promise<void> {
     return;
   }
   finalizing = true;
+  resetLatencySpike();
   audio?.stop();
   audio = null;
   await transcriptionSession.stop();
@@ -184,13 +199,14 @@ async function finalize(): Promise<void> {
   }
   finalizing = false;
   setStartState();
-  // The session is kept (not nulled) so the next Start continues the same transcript.
+  // The session is kept so the next Start continues the same transcript.
 }
 
 export function simulateDisconnect(): void {
   if (!session || !audio) {
     return;
   }
+  simulatedDisconnect = true;
   setDisconnectedState();
   addWsMessage("system", "Connection lost — buffering audio locally");
   session.disconnect();
@@ -204,6 +220,7 @@ export async function simulateReconnect(): Promise<void> {
   const { queued, inflight } = session.getBufferStatistics();
   addWsMessage("system", `Replaying ${queued + inflight} buffered packets`);
   await session.reconnect();
+  simulatedDisconnect = false;
 }
 
 // A one-shot latency spike: hold incoming frames for a few seconds so ACKs back up
@@ -215,15 +232,19 @@ export function simulateHighLatency(): void {
   latencyActive = true;
   receiveLatencyMs = SIMULATED_ACK_LATENCY_MS;
   setLatencyState(true);
-  setTimeout(() => {
+  latencySpikeTimer = setTimeout(() => {
+    latencySpikeTimer = null;
     receiveLatencyMs = 0;
     setLatencyState(false);
     latencyActive = false;
   }, SIMULATED_ACK_LATENCY_MS);
 }
 
-// Clears any in-flight latency spike between takes.
 function resetLatencySpike(): void {
+  if (latencySpikeTimer !== null) {
+    clearTimeout(latencySpikeTimer);
+    latencySpikeTimer = null;
+  }
   latencyActive = false;
   receiveLatencyMs = 0;
   setLatencyState(false);

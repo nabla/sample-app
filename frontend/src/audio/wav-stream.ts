@@ -39,7 +39,13 @@ const CHUNK_SAMPLES = (TRANSCRIBE_SAMPLE_RATE_HZ * CHUNK_DURATION_MS) / 1000;
 export async function* streamWavChunks(
   wavBuffer: ArrayBuffer,
 ): AsyncGenerator<Int16Array> {
-  const { dataOffset, dataLength } = decodeWavHeader(wavBuffer);
+  const { sampleRate, dataOffset, dataLength } = decodeWavHeader(wavBuffer);
+  if (sampleRate !== TRANSCRIBE_SAMPLE_RATE_HZ) {
+    throw new Error(
+      `WAV is ${sampleRate} Hz but the stream is configured for ${TRANSCRIBE_SAMPLE_RATE_HZ} Hz — ` +
+        "chunk pacing and the CONFIG message assume that rate.",
+    );
+  }
   const pcmSamples = new Int16Array(wavBuffer, dataOffset, dataLength / 2);
   let offset = 0;
   while (offset < pcmSamples.length) {

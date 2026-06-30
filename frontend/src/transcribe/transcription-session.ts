@@ -6,15 +6,9 @@ import {
   type TranscribeServerMessage,
   type TranscriptItem,
 } from "../api/transcribe.js";
-import { BufferedAudioStream } from "./buffered-stream.js";
+import { BufferedAudioStream, type BufferStats } from "./buffered-stream.js";
 import { Transcript } from "./transcript.js";
 import type { WebSocketInterface } from "../transport/websocket-interface.js";
-
-export interface BufferStats {
-  queued: number;
-  inflight: number;
-  totalAcked: number;
-}
 
 // A live transcription session. It owns the accumulated transcript and the current
 // connection; push PCM in with sendAudio(), get items out via onTranscriptItem(). A
@@ -32,6 +26,7 @@ export class TranscriptionSession {
   private timelineBaseMs = 0;
 
   private itemListener: (item: TranscriptItem) => void = () => {};
+  private closeListener: (code: number, reason: string) => void = () => {};
 
   // The socket factory is injected so a caller can supply a custom socket wrapper.
   constructor(
@@ -40,6 +35,10 @@ export class TranscriptionSession {
 
   onTranscriptItem(listener: (item: TranscriptItem) => void): void {
     this.itemListener = listener;
+  }
+
+  onClose(listener: (code: number, reason: string) => void): void {
+    this.closeListener = listener;
   }
 
   items(): TranscriptItem[] {
@@ -103,12 +102,11 @@ export class TranscriptionSession {
   // #region receive-transcript
   // Wire up the socket: accumulate TRANSCRIPT_ITEMs, feed ACKs to the send buffer, and
   // resolve `serverClosed` when the server closes — that close is how we know the
-  // server has flushedx everything after END.
+  // server has flushed everything after END.
   private listen(socket: WebSocketInterface): void {
     this.serverClosed = new Promise<void>((resolve) => {
-      socket.addEventListener("close", () => {
-        // Note: you should implement proper close code handling
-        // See API documentation on socket success/error codes
+      socket.addEventListener("close", (event) => {
+        this.closeListener(event.code, event.reason);
         resolve();
       });
     });

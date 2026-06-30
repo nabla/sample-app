@@ -5,5 +5,5 @@ export interface WebSocketInterface {
   send(data: string): void;
   close(): void;
   onmessage: ((event: MessageEvent<string>) => void) | null;
-  addEventListener(type: "close", listener: () => void): void;
+  addEventListener(type: "close", listener: (event: CloseEvent) => void): void;
 }

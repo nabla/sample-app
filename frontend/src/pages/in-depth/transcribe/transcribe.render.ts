@@ -78,10 +78,6 @@ export function renderTranscript(items: TranscriptItem[]): void {
   container.scrollTop = container.scrollHeight;
 }
 
-export function resetTranscriptArea(): void {
-  renderTranscript([]);
-}
-
 export function showBufferVisualization(): void {
   document.getElementById("buffer-viz")?.classList.remove("hidden");
 }

@@ -9,24 +9,27 @@ function shortenUuids(text: string): string {
   );
 }
 
-function formatMessage(
-  direction: "send" | "recv" | "system",
-  raw: string,
-): string {
-  if (direction === "system") {
-    return raw;
-  }
+interface ParsedFrame {
+  type: string;
+  fields: Record<string, unknown>;
+}
+
+function parseFrame(raw: string): ParsedFrame | null {
   try {
-    const { type, ...rest } = JSON.parse(raw) as Record<string, unknown>;
-    const pairs = Object.entries(rest).map(([key, value]) => {
-      const valueText =
-        typeof value === "string" ? value : JSON.stringify(value);
-      return `${key}=${shortenUuids(valueText)}`;
-    });
-    return `${String(type)}${pairs.length ? `  ${pairs.join("  ")}` : ""}`;
+    const { type, ...fields } = JSON.parse(raw) as Record<string, unknown>;
+    return { type: String(type), fields };
   } catch {
-    return shortenUuids(raw);
+    return null;
   }
+}
+
+function formatFrame(frame: ParsedFrame): string {
+  const pairs = Object.entries(frame.fields).map(([key, value]) => {
+    const valueText =
+      typeof value === "string" ? value : JSON.stringify(value);
+    return `${key}=${shortenUuids(valueText)}`;
+  });
+  return `${frame.type}${pairs.length ? `  ${pairs.join("  ")}` : ""}`;
 }
 
 let wsCountKey = 0;
@@ -59,9 +62,9 @@ export function addWsMessage(
   direction: "send" | "recv" | "system",
   message: string,
 ): void {
+  const frame = parseFrame(message);
   const isAudioChunk =
-    (direction === "send" && message.includes('"AUDIO_CHUNK"')) ||
-    (direction === "recv" && message.includes('"AUDIO_CHUNK_ACK"'));
+    frame?.type === "AUDIO_CHUNK" || frame?.type === "AUDIO_CHUNK_ACK";
   const logId = isAudioChunk ? "ws-log-audio" : "ws-log-key";
   const logElement = document.getElementById(logId);
   if (!logElement) {
@@ -83,7 +86,7 @@ export function addWsMessage(
   arrowSpan.textContent = arrow;
   const textSpan = document.createElement("span");
   textSpan.className = "text-grey-250";
-  textSpan.textContent = formatMessage(direction, message);
+  textSpan.textContent = frame ? formatFrame(frame) : shortenUuids(message);
   row.appendChild(arrowSpan);
   row.appendChild(textSpan);
   logElement.appendChild(row);

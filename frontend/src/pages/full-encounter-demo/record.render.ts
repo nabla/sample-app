@@ -105,14 +105,6 @@ export function setFinishingState(): void {
 
 // ── Transcript ───────────────────────────────────────────────────────────────────
 
-export function resetTranscriptArea(): void {
-  const container = document.getElementById("transcript-items");
-  if (container) {
-    container.innerHTML =
-      '<div id="transcript-placeholder" class="text-grey-250 italic">Transcript will appear here…</div>';
-  }
-}
-
 export function renderFullTranscript(items: TranscriptItem[]): void {
   const container = document.getElementById("transcript-items");
   if (container) {
@@ -127,12 +119,8 @@ export function renderTranscriptItem(item: TranscriptItem): void {
     return;
   }
   document.getElementById("transcript-placeholder")?.remove();
-  let element = document.getElementById(`ti-${item.id}`);
-  if (!element) {
-    element = document.createElement("div");
-    element.id = `ti-${item.id}`;
-    container.appendChild(element);
-  }
+  const element = document.createElement("div");
+  element.id = `ti-${item.id}`;
   element.className = item.is_final ? "text-grey-400" : "text-grey-250 italic";
   const speaker =
     item.speaker_type === "DOCTOR"
@@ -141,6 +129,7 @@ export function renderTranscriptItem(item: TranscriptItem): void {
         ? "Patient> "
         : "";
   element.textContent = `[${formatMs(item.start_offset_ms)}..${formatMs(item.end_offset_ms)}] ${speaker}${item.text}`;
+  container.appendChild(element);
   container.scrollTop = container.scrollHeight;
 }
 
