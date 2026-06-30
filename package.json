@@ -15,7 +15,7 @@
     "url": "git+https://github.com/nabla/sample-app.git"
   },
   "devDependencies": {
-    "concurrently": "^9.0.0"
+    "concurrently": "^10.0.3"
   },
   "engines": {
     "node": ">=24"
