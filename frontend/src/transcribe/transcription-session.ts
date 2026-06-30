@@ -18,7 +18,6 @@ export class TranscriptionSession {
   private transcript = new Transcript();
   private socket: WebSocketInterface | null = null;
   private bufferedAudioStream: BufferedAudioStream | null = null;
-  private serverClosed: Promise<void> = Promise.resolve();
 
   // Items are shifted onto a session-wide timeline by timelineBaseMs. Each new socket —
   // a new take or a reconnect — snapshots it to where the transcript currently ends, so
@@ -67,15 +66,21 @@ export class TranscriptionSession {
 
   // Graceful end: send END and wait for the server to flush the transcript & close.
   async stop(): Promise<void> {
-    if (!this.socket) {
+    const socket = this.socket;
+    if (!socket) {
       return;
     }
-    if (this.socket.readyState === WebSocket.OPEN) {
+    if (socket.readyState === WebSocket.OPEN) {
       this.send(TRANSCRIBE_END_MESSAGE);
     }
     this.socket = null;
     this.bufferedAudioStream = null;
-    await this.serverClosed;
+
+    if (socket.readyState !== WebSocket.CLOSED) {
+      const { promise, resolve } = Promise.withResolvers<void>();
+      socket.addEventListener("close", () => resolve());
+      await promise;
+    }
   }
 
   sendAudio(pcm: Int16Array): void {
@@ -101,15 +106,8 @@ export class TranscriptionSession {
 
   // #region receive-transcript
   // Wire up the socket: accumulate TRANSCRIPT_ITEMs, feed ACKs to the send buffer, and
-  // resolve `serverClosed` when the server closes — that close is how we know the
-  // server has flushed everything after END.
+  // notify the close listener when the socket closes.
   private listen(socket: WebSocketInterface): void {
-    this.serverClosed = new Promise<void>((resolve) => {
-      socket.addEventListener("close", (event) => {
-        this.closeListener(event.code, event.reason);
-        resolve();
-      });
-    });
     socket.onmessage = (event: MessageEvent<string>) => {
       const message = JSON.parse(event.data) as TranscribeServerMessage;
       if (message.type === "AUDIO_CHUNK_ACK") {
@@ -120,6 +118,9 @@ export class TranscriptionSession {
         this.itemListener(item);
       }
     };
+    socket.addEventListener("close", (event) => {
+      this.closeListener(event.code, event.reason);
+    });
   }
   // #endregion receive-transcript
 
