@@ -1,0 +1,30 @@
+name: CI
+
+# Gate for PRs (incl. Dependabot) and pushes to main. There's no test suite, so the
+# meaningful checks for this repo are: it typechecks and it builds.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Typecheck & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 24
+          cache: npm
+      # One root install covers both workspaces (single package-lock.json).
+      - run: npm ci
+      - name: Typecheck frontend
+        run: npx tsc --noEmit -p frontend/tsconfig.json
+      - name: Typecheck backend
+        run: npx tsc --noEmit -p backend/tsconfig.json
+      # The frontend has no `build` npm script (dev-only repo); build via Vite directly
+      # as a bundle sanity check (catches ?raw imports, the worklet asset config, etc.).
+      - name: Build frontend
+        working-directory: frontend
+        run: npx vite build

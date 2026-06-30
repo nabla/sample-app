@@ -1,0 +1,1292 @@
+[
+  {
+      "id": "3dd008d3-46d9-4b73-87e8-8f971237400f",
+      "text": "Hey Sir, how are you?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 190,
+      "end_offset_ms": 1904,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-dcff-639d4f23a948",
+      "text": "Good.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 1904,
+      "end_offset_ms": 2247,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-5897-3f78f4081130",
+      "text": "Sorry to keep you so long. Jenna is helping out. She's starting here. She's going to be seeing her own patients in what, 2-2 weeks or so?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 2247,
+      "end_offset_ms": 11503,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-aab7-6b601729da65",
+      "text": "Yeah.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 11503,
+      "end_offset_ms": 11846,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-c809-bd95fcf33f0b",
+      "text": "Good to see you. Thanks for coming in. We're talking about cholesterol, correct?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 11846,
+      "end_offset_ms": 16303,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-c2f4-0f70d3281629",
+      "text": "Yes, Sir.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 16303,
+      "end_offset_ms": 16988,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-40af-0b541bb404e0",
+      "text": "Anything else you want to talk about today?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 16988,
+      "end_offset_ms": 19731,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-48e2-9c0081b957a2",
+      "text": "My hearing is not the best, but it's not really not in not in your wheel, right? But",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 19731,
+      "end_offset_ms": 25902,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-3766-dcfa48f9a738",
+      "text": "OK, we'll take a look in your ears though.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 25902,
+      "end_offset_ms": 28988,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-729b-513d9211725b",
+      "text": "Okay.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 28988,
+      "end_offset_ms": 29330,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-7408-c0ccdaa4a835",
+      "text": "Anything else besides cholesterol and hearing?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 29330,
+      "end_offset_ms": 31387,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-47c6-bb7d2f5fea28",
+      "text": "No.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 31387,
+      "end_offset_ms": 31730,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-86b8-46d6f784c8ad",
+      "text": "Nothing? Okay. Let me get your chart pulled up. You're doing two cholesterol pills, right? You're doing atorvastatin. It's 40, but you take 80, right? Two forties?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 31730,
+      "end_offset_ms": 40987,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-1cc9-355bd541eff6",
+      "text": "Yeah.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 40987,
+      "end_offset_ms": 41330,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-b905-d7a8515090cd",
+      "text": "And then you're taking ezetimibe, Zetia, we call it sometimes, 10 mg, right?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 41330,
+      "end_offset_ms": 45786,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-4757-9c25c0c5f93f",
+      "text": "That little baby pill, right?",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 45786,
+      "end_offset_ms": 47501,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-6688-04aaf22659bd",
+      "text": "Yeah, baby pill. Yeah. And are you having any trouble with either one of them?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 47501,
+      "end_offset_ms": 52643,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-68db-ddcffbcea5e7",
+      "text": "No. I don't believe so.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 52643,
+      "end_offset_ms": 54357,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-e5f7-54f71ce675aa",
+      "text": "No? Good. I'm going to go look at our Last visit and then kind of work my way forward. Okay, so October 10th you had, you know, over the last couple months, I think you went from atorvastatin 40 up to 60 mg up to 80 mg. And then in December, that's when we added that ezetimibe, right?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 54357,
+      "end_offset_ms": 74242,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-9843-6b1ab43f980b",
+      "text": "Yeah, that sounds correct.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 74242,
+      "end_offset_ms": 75613,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-ca8d-73638c649df3",
+      "text": "Okay, when I saw you that day, you had a cough that had been going on for a month.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 75613,
+      "end_offset_ms": 82127,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-ea97-73f7d2a489ef",
+      "text": "Yeah, I finally got rid of that.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 82127,
+      "end_offset_ms": 84527,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "3dd008d3-46d9-4b73-97a8-8b91ddb125f5",
+      "text": "Good.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 84527,
+      "end_offset_ms": 84869,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-b2de-0f239249d225",
+      "text": "Right, then you saw your dermatologist in November. Okay. Turn out okay?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 85640,
+      "end_offset_ms": 89651,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-c052-37d5d33c1146",
+      "text": "I think so.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 89651,
+      "end_offset_ms": 90654,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-0be6-2e5f6f25bb88",
+      "text": "Then you saw Dr. Adams here for a cough. He gave you an antibiotic for about 5 days, right?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 90654,
+      "end_offset_ms": 97006,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-1a8b-59fce3cdc319",
+      "text": "Yes.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 97006,
+      "end_offset_ms": 97340,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-5380-c97e4023f0f7",
+      "text": "Okay.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 97340,
+      "end_offset_ms": 97674,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-a7fa-5ab98d24fe99",
+      "text": "That's okay.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 97674,
+      "end_offset_ms": 98343,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-7ff5-40cf9591a656",
+      "text": "Then you saw cardiology, Dr. Chen, January 5th, just for a routine follow-up, I think, right?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 98343,
+      "end_offset_ms": 103692,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-eaec-1a5914cfeb4f",
+      "text": "Yes, yes. Do an annual visit.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 103692,
+      "end_offset_ms": 105698,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-2a68-ae4d4fd22f3c",
+      "text": "Yeah. And he said just come back in 1 year, correct?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 105698,
+      "end_offset_ms": 109375,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-9bbe-a10c22a33467",
+      "text": "Yes.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 109375,
+      "end_offset_ms": 109709,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-de14-4ea9aed22a26",
+      "text": "And then actually it was January 21st when Dr. Peterson did maybe another procedure that",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 109709,
+      "end_offset_ms": 114724,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-c66b-bddf1a49bff5",
+      "text": "That was the back.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 114724,
+      "end_offset_ms": 116061,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-b374-70b5b1351629",
+      "text": "Okay, and then you just had a set of labs. Did you get a chance to see them yet?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 116061,
+      "end_offset_ms": 122413,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-2f35-98ef9ce5bd95",
+      "text": "No, I'm not good at going on that computer. I'm not good at it.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 122413,
+      "end_offset_ms": 127093,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-971b-04bf6134ddb4",
+      "text": "Well, they look great. So this one that I put the little check mark next to, LDL, that's the bad cholesterol.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 127093,
+      "end_offset_ms": 134113,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-b0f9-c2c2af192a39",
+      "text": "Right.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 134113,
+      "end_offset_ms": 134447,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "2c24f495-199b-4e1d-e232-3f1b5df98a37",
+      "text": "That's the one that we're focused on. It looks really good at 56. So as I look back, it had been like 98 in August, then 85 in December. Now it came down all the way down to 56. And that's really where you want to be.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 134447,
+      "end_offset_ms": 150160,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-8920-c006d1c11bc9",
+      "text": "So because of your heart stuff keeping you around 55 or so, which 56 is pretty close.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 150390,
+      "end_offset_ms": 156538,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-d508-a83b5557229d",
+      "text": "Okay,",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 156538,
+      "end_offset_ms": 156900,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-c04a-e601b8c81f0a",
+      "text": "Looks good, so I'm super happy with that.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 156900,
+      "end_offset_ms": 159793,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-92a1-e1ffb411a1e8",
+      "text": "Good.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 159793,
+      "end_offset_ms": 160155,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-80a0-50dcb8ef41e8",
+      "text": "Mr. Davis, your atorvastatin in November, I refilled it for a year. Actually, Dr. Adams did in November. He gave you a year of your atorvastatin. Looks like he stole my pills for me. He prescribed that one in November as well. So both of your heart, your cholesterol pills have his name on it now, which it doesn't matter as long as somebody's Pulling it every year.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 160155,
+      "end_offset_ms": 184750,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-3103-bdbb8cc4b070",
+      "text": "Okay,",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 184750,
+      "end_offset_ms": 185111,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-6430-ba4614fc0fe3",
+      "text": "So big picture for hyperlipidemia or dyslipidemia and your coronary artery calcifications, we're going to keep you on those two pills. No changes. Sound good?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 185111,
+      "end_offset_ms": 194154,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-f6bb-e618587eaac8",
+      "text": "Yeah.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 194154,
+      "end_offset_ms": 194515,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-9ebf-4069b7438d8d",
+      "text": "All right, then. You said your hearing's not great. How long has that been?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 194515,
+      "end_offset_ms": 199579,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-13f4-d473e4b44a31",
+      "text": "My Susan would probably tell you a couple years.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 199579,
+      "end_offset_ms": 202834,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-9f14-b1335a0507dc",
+      "text": "A couple years. Okay. Any like ear pain?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 202834,
+      "end_offset_ms": 205728,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-2dec-7980bfc63648",
+      "text": "No. No.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 205728,
+      "end_offset_ms": 206451,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-bd4f-9aa55ba62487",
+      "text": "Okay. Or sound like it's distorted or muffled at all?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 206451,
+      "end_offset_ms": 210068,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "d6e6eda8-fa8e-4ff5-5296-4e023b4c493e",
+      "text": "No.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 210068,
+      "end_offset_ms": 210430,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-af19-dc293adc32d4",
+      "text": "OK And have you had any hearing tests?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 210590,
+      "end_offset_ms": 213214,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-1fc8-b9e050d7934a",
+      "text": "No.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 213214,
+      "end_offset_ms": 213542,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-07fe-df41eac44260",
+      "text": "And do you have a lot of noise exposure?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 213542,
+      "end_offset_ms": 216495,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-3fad-1b97e369c122",
+      "text": "Oh, to the farm? Some. Yeah, not so much. I used to maybe, but",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 216495,
+      "end_offset_ms": 221088,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-89d7-3f637ab6a6dc",
+      "text": "Yeah. OK. No trauma like car accidents. Loud. No, no. OK, I'll take a look. And then he had this lung nodule. But that's fine. You don't need to worry about that anymore. Correct. I think that's what we came up with. Yeah, I believe that's. Perfect. All right, let's have you hop up there. We'll take a look in your ears. Anything else today that you want to talk about?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 221088,
+      "end_offset_ms": 244383,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-1701-642f20e65c73",
+      "text": "Both ears about the same, far as I know.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 244383,
+      "end_offset_ms": 247335,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-c191-f948e1532fce",
+      "text": "Yeah, a lot of those do, like a little.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 247335,
+      "end_offset_ms": 250288,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-1c37-3912dddc998c",
+      "text": "I got a bunion in my toe, but that's not yours.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 250288,
+      "end_offset_ms": 253897,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-36fd-6defbe26cff4",
+      "text": "You were going to say a bunion in your ears. I was going to be really confused. OK, listen to this. You hear that?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 253897,
+      "end_offset_ms": 261771,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-af27-16fa9aeba547",
+      "text": "No,",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 261771,
+      "end_offset_ms": 262099,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-5cfa-e8b5cb64b52d",
+      "text": "Just a little noise like this. How about I'm going to do it like this. OK,",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 262099,
+      "end_offset_ms": 267349,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-6f52-3000a2a59eef",
+      "text": "That I can hear.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 267349,
+      "end_offset_ms": 268661,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "176888be-57d2-4237-1c60-0945b287f0a6",
+      "text": "Yeah, I'll do a little quieter.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 268661,
+      "end_offset_ms": 270630,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-a36e-a48d4dbf2ae4",
+      "text": "Nothing? Okay, I'm gonna look real quick.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 270910,
+      "end_offset_ms": 273083,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-4cd0-8ec94ca99dd4",
+      "text": "Wow, maybe. Hey Jenna,",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 273083,
+      "end_offset_ms": 274326,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-d338-b9daf629df14",
+      "text": "This one looks super clear. No dirt in there. See down to the eardrum? Yep. This one has a little bit of wax, but I can still see down to the eardrum. Do you see a ear doctor?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 274326,
+      "end_offset_ms": 286127,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-35c3-3a6799fbf0d3",
+      "text": "I haven't so far, no.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 286127,
+      "end_offset_ms": 287680,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-28e6-2895d54f9d94",
+      "text": "No. I think there's a couple of options. You go to WellCare.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 287680,
+      "end_offset_ms": 291406,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-4958-709b9fc65eb8",
+      "text": "My Susan does. And that's what they they always come well-recommended.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 291406,
+      "end_offset_ms": 294822,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-6d1c-36b0f353ed9f",
+      "text": "Yeah, I would go there. I think you have to call in an And then they'll get you set up for a hearing test in the back. That's free, I think, for WellCare members. And then if they decide that you do need hearing aids, a lot of people get them right through WellCare and they're a lot cheaper than everyone else's. Same thing. So",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 294822,
+      "end_offset_ms": 315008,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-3a6e-fbc531272267",
+      "text": "My Emily come home a couple weeks ago. She lives in Phoenix and she brought me a pair of them Audien.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 315008,
+      "end_offset_ms": 321530,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-d12c-bf46b41bd9e2",
+      "text": "Okay,",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 321530,
+      "end_offset_ms": 321841,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-ba67-0f0b3b0bee97",
+      "text": "I can't stand but at first I can't get them in my ears. Now you really can't buy somebody else's hearing aids anyhow, but I couldn't physically get them in. And they just man they were loud but but the the little rubber suction cup thing was like too big large for my ear. But anyhow the moral of the story I don't think you should buy used hearing aids.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 321841,
+      "end_offset_ms": 343580,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-d415-503beaf66bbd",
+      "text": "Normally that's something you get yourself.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 343580,
+      "end_offset_ms": 345443,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-ae37-ac35b25a4620",
+      "text": "Yeah, she meant well.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 345443,
+      "end_offset_ms": 346685,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "80faa667-4aac-4ee5-146e-619887aedf70",
+      "text": "Well, I'm gonna do a quick exam of your heart and then I'll have you take two big breaths. Let's do it. There's another one. Well, yeah, I think WellCare does a really good job testing and then getting people equipped with hearing aids.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 346685,
+      "end_offset_ms": 360350,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-b61a-ee49abb411ea",
+      "text": "So I'd start there.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 360470,
+      "end_offset_ms": 361660,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-d3e3-a4bb2e338309",
+      "text": "OK. I shall.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 361660,
+      "end_offset_ms": 362553,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-1667-3a4d4681f121",
+      "text": "Yeah. Do it. Don't wait too long,",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 362553,
+      "end_offset_ms": 364636,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-a277-3e44e3a46128",
+      "text": "OK.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 364636,
+      "end_offset_ms": 364934,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-4119-261a53239cb8",
+      "text": "I see too many people that wait, and then finally they're like, oh, yeah, I should have done that like, five years ago. So at least check them out.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 364934,
+      "end_offset_ms": 373565,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-8f4a-50824e25b61d",
+      "text": "OK. All right.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 373565,
+      "end_offset_ms": 374457,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-0eaa-e2ab096bbf0f",
+      "text": "Last year I saw you in August. Should we just meet back in August?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 374457,
+      "end_offset_ms": 378624,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-b544-a77ce60c9b1e",
+      "text": "Yeah, I have a point. I have an appointment for that, my annual physical. And I should have an appointment.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 378624,
+      "end_offset_ms": 384576,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-eb09-0d900016a8f5",
+      "text": "Perfect. Yeah. As long as you're already set up. Yeah, you do. August 19th, you come see me and then we're going to do blood work. Ahead of that. So so then to see like does he have anything I'd go I do it order review views all labs for release which he doesn't have anything. Let's see these HCC. You don't have PMR do you polymyalgia rheumatica?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 384576,
+      "end_offset_ms": 404814,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-6c94-1a40ad218c80",
+      "text": "I hope not.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 404814,
+      "end_offset_ms": 405707,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-711a-1423cf53a295",
+      "text": "Did you used to?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 405707,
+      "end_offset_ms": 406898,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-e4f0-d35fb2a6ec8d",
+      "text": "I'm not sure what that even is.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 406898,
+      "end_offset_ms": 408981,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-5b6e-99aab77ddbb6",
+      "text": "It's like where you can't lift your arms up because they're super stiff in your shoulders. You never had that before?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 408981,
+      "end_offset_ms": 415231,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-3a10-b533348fbb81",
+      "text": "No, I don't think so.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 415231,
+      "end_offset_ms": 416719,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-0686-bb85ea85f19d",
+      "text": "I'm going to leave that. So there's this like HCC Which we're all supposed to be doing it like helps the institution. Like have you heard about these at all?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 416719,
+      "end_offset_ms": 425647,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-5e07-9cf64c1b8682",
+      "text": "I've I just saw.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 425647,
+      "end_offset_ms": 426838,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "ad0b3d93-8845-4eeb-ec3a-9f46cea25929",
+      "text": "Yeah. So it's like, let's say a patient has like a lot of like chronic medical issues that we put in the diagnosis list every year. Then Medicare is like, oh, that's a more complicated patient. So the university gets paid more to manage their care, right? But if we forget it one year, we just like completely forget somebody's diabetes or whatever, then it's like, oh, they look like an easier patient than the institution like does worse.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 426838,
+      "end_offset_ms": 450349,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "9e748f33-23c5-464c-a3d7-79e4681a2222",
+      "text": "So we're supposed to be doing it, but a lot of times it seems to to put things in there that aren't accurate. So we had to be careful. OK, so what",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 450750,
+      "end_offset_ms": 460169,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "9e748f33-23c5-464c-a833-f77b9f6f72e1",
+      "text": "Do you want for labs for",
+      "speaker_type": "UNSPECIFIED",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 460169,
+      "end_offset_ms": 461935,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "9e748f33-23c5-464c-c374-bff752e0ae33",
+      "text": "Him? Yeah. So see what it's or do you need to do it again? I think I would do another. He should get an annual lipid. He just had one last week, but I think the lipids would be good just to kind of keep an eye on it and then probably have it be in August every year thing. Like this year we're a little off because we were adjusting things. But lipids I would do and CMP I would do. So let's see, what else is he taking? He's just taken cholesterol pill. I kind of like CMP and lipids. He has impaired fasting glucose, so we usually get an A1c for him now. PSA we got in August. You have prostate cancer in the family?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 461935,
+      "end_offset_ms": 499611,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "9e748f33-23c5-464c-d240-498e25dee041",
+      "text": "No.",
+      "speaker_type": "UNSPECIFIED",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 499611,
+      "end_offset_ms": 499906,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "9e748f33-23c5-464c-6596-e26c0768ca05",
+      "text": "You want to keep checking your prostate blood test.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 499906,
+      "end_offset_ms": 502555,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "9e748f33-23c5-464c-e37e-c174b535eab9",
+      "text": "Yeah, probably a good idea.",
+      "speaker_type": "UNSPECIFIED",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 502555,
+      "end_offset_ms": 504026,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "9e748f33-23c5-464c-380b-0e01c1d7442e",
+      "text": "Got it. CBC. He did have a little anemia. I don't know that he needs it, but. And probably get that one all right. So CMP.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 504026,
+      "end_offset_ms": 511680,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-928d-3b6aef0960da",
+      "text": "I'm going to order lipids last because it gets goofy. A1c, there's like 1000 ways to do this. PSA and lipids. I do lipids last because it like pulls this up and makes me click fasting. So he's doing his lipids for those two things, his PSA. So then you can click like diagnosis association and if there's a problem list that's in there, that's a good one to use. For PSA, we do like screening for malignancy of the prostate gland. A1c would be good for there. And this one could be for there. So then once those are all checked, we're good. And then they all say today. So I don't like today. So I have like a six month, which is going to be August, which is a little early. You can do that and that. And then if it's seven months from now, you could do like M + 7, say that it's approximate hit accept. So it should do all of them. OK, sound good? All right, so we're going to do some labs in August, then you'll see me in August,",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 512550,
+      "end_offset_ms": 569896,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-60a9-8a02f8aa1017",
+      "text": "OK.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 569896,
+      "end_offset_ms": 570203,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-1d27-b4560b73e114",
+      "text": "Go from there.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 570203,
+      "end_offset_ms": 571123,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-a13a-ff4aaeed988e",
+      "text": "OK.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 571123,
+      "end_offset_ms": 571430,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-0e44-9f96a5d74d57",
+      "text": "If you need anything before that, let me know. Otherwise, go to WellCare. Get your ears looked at.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 571430,
+      "end_offset_ms": 576950,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-944f-d14475959c37",
+      "text": "OK, one more thing. While I'm here, we want to look at my back and see that spot that she took off.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 576950,
+      "end_offset_ms": 583696,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-f35e-d508fb82269a",
+      "text": "Oh, sure. Yeah.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 583696,
+      "end_offset_ms": 584616,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-265b-5dacdafe7359",
+      "text": "I don't see her until May, May 15th. I guess I get my shirt pulled up, but I've. I've never seen it. So",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 584616,
+      "end_offset_ms": 591670,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-745c-495b33a5f9cc",
+      "text": "Where was it? Down here?",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 591670,
+      "end_offset_ms": 593203,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-6ef6-592adf68048a",
+      "text": "Yeah. Maybe it's all healed up and gone then.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 593203,
+      "end_offset_ms": 595963,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "6051eb7e-76f0-4c50-4219-95870c0b651e",
+      "text": "The spot down here looks pretty healed up, if that's what they did.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 595963,
+      "end_offset_ms": 599950,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-9369-7e6db6566c43",
+      "text": "Yeah, I don't see anything else.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 600620,
+      "end_offset_ms": 602775,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-f44d-e9c9dfcf90d8",
+      "text": "It was kind of lower there, but",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 602775,
+      "end_offset_ms": 605289,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-0fff-531428334d02",
+      "text": "Yeah, looks pretty good. Good, good, good. What they tell you it turned out to be anything.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 605289,
+      "end_offset_ms": 611395,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-a5ed-7ccb0c2595b0",
+      "text": "No, I don't think so. No cautious. So,",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 611395,
+      "end_offset_ms": 614269,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-2f75-b0925f2276d6",
+      "text": "OK, dermatologists",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 614269,
+      "end_offset_ms": 614987,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-ae21-201f6a0c3f3d",
+      "text": "Gotta pay their bills,",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 614987,
+      "end_offset_ms": 616424,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-44b8-ed1b044627f1",
+      "text": "Right? So that's right. That's right.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 616424,
+      "end_offset_ms": 618579,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-4c3e-6922f386e5a9",
+      "text": "Get a new boat or something.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 618579,
+      "end_offset_ms": 620734,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-35d3-398377fe4d0f",
+      "text": "There you go.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 620734,
+      "end_offset_ms": 621812,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-19fb-4e71bb4c3f24",
+      "text": "OK, OK, so stay with the stay with the arvastatin and the small pill. Just like",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 621812,
+      "end_offset_ms": 627559,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-00e1-92192af28cab",
+      "text": "Yeah, as long as you're tolerating. Their working super well. Your numbers are perfect.",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 627559,
+      "end_offset_ms": 632588,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-b400-ebd771049dd6",
+      "text": "OK",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 632588,
+      "end_offset_ms": 632947,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-e420-83d9d786d3b3",
+      "text": "Sound good",
+      "speaker_type": "DOCTOR",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 632947,
+      "end_offset_ms": 633665,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  },
+  {
+      "id": "fcc3a0e4-2f22-4b74-3014-263138df30f7",
+      "text": "I like take a lot of pills.",
+      "speaker_type": "PATIENT",
+      "locale": "ENGLISH_US",
+      "start_offset_ms": 633665,
+      "end_offset_ms": 636179,
+      "is_final": true,
+      "type": "TRANSCRIPT_ITEM"
+  }
+]
