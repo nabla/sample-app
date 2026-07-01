@@ -4,9 +4,7 @@ import { nablaWebSocket } from "../transport/client.js";
 export type DictationLocale =
   | "ENGLISH_US"
   | "ENGLISH_UK"
-  | "FRENCH_FR"
-  | "SPANISH_ES"
-  | "SPANISH_MX";
+  | "FRENCH_FR";
 
 export interface DictatedText {
   type: "DICTATED_TEXT";
@@ -32,8 +30,6 @@ export const DICTATE_LOCALES: { value: DictationLocale; label: string }[] = [
   { value: "ENGLISH_US", label: "English (US)" },
   { value: "ENGLISH_UK", label: "English (UK)" },
   { value: "FRENCH_FR", label: "French (FR)" },
-  { value: "SPANISH_ES", label: "Spanish (ES)" },
-  { value: "SPANISH_MX", label: "Spanish (MX)" },
 ];
 
 // #region dictate-messages
