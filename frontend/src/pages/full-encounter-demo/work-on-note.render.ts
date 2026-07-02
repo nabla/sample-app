@@ -90,13 +90,9 @@ export function markup(): string {
               <select id="instructions-locale" class="w-full px-3 py-1.5 text-sm border border-grey-200 rounded-lg bg-white">
                 <option value="ENGLISH_US">English (US)</option>
                 <option value="ENGLISH_UK">English (UK)</option>
+                <option value="FRENCH_FR">French (FR)</option>
                 <option value="SPANISH_ES">Spanish (ES)</option>
                 <option value="SPANISH_MX">Spanish (MX)</option>
-                <option value="FRENCH_FR">French (FR)</option>
-                <option value="ARABIC_EG">Arabic (EG)</option>
-                <option value="MANDARIN_CN">Mandarin</option>
-                <option value="PORTUGUESE_PT">Portuguese</option>
-                <option value="RUSSIAN_RU">Russian</option>
               </select>
             </div>
             <div>

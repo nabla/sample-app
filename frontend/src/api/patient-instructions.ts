@@ -6,13 +6,9 @@ export type RecipientType = "PATIENT" | "PARENT";
 export type InstructionsLocale =
   | "ENGLISH_US"
   | "ENGLISH_UK"
-  | "SPANISH_ES"
-  | "SPANISH_MX"
   | "FRENCH_FR"
-  | "ARABIC_EG"
-  | "MANDARIN_CN"
-  | "PORTUGUESE_PT"
-  | "RUSSIAN_RU";
+  | "SPANISH_ES"
+  | "SPANISH_MX";
 
 interface PatientInstructionsResponse {
   instructions: string;
