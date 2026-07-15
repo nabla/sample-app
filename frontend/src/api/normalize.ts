@@ -1,3 +1,4 @@
+import { type AsyncJob, pollUntilSucceeded } from "./async-job.js";
 import { nablaFetch } from "../transport/client.js";
 import type { ClinicalNote } from "./note.js";
 
@@ -18,11 +19,18 @@ export interface NormalizedData {
 export async function generateNormalizedData(
   note: ClinicalNote,
 ): Promise<NormalizedData> {
-  const response = await nablaFetch("/v1/core/user/generate-normalized-data", {
-    method: "POST",
-    body: JSON.stringify({
-      note,
-    }),
-  });
-  return response.json() as Promise<NormalizedData>;
+  const submitResponse = await nablaFetch(
+    "/v1/core/user/generate-normalized-data-async",
+    {
+      method: "POST",
+      body: JSON.stringify({ note }),
+    },
+  );
+  const { id } = (await submitResponse.json()) as AsyncJob;
+
+  return pollUntilSucceeded<NormalizedData>(() =>
+    nablaFetch(`/v1/core/user/generate-normalized-data-async/${id}`).then(
+      (response) => response.json() as Promise<AsyncJob<NormalizedData>>,
+    ),
+  );
 }
