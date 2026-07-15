@@ -1,4 +1,5 @@
 import {
+  type AsyncCorrection,
   type AudioChunkAck,
   buildDictateAudioChunk,
   buildDictateConfig,
@@ -17,6 +18,7 @@ import clientSource from "../../../transport/client.ts?raw";
 import {
   addWsMessage,
   appendDictatedText,
+  applyDictationCorrection,
   clearNote,
   getNoteText,
   readLocaleSelection,
@@ -58,7 +60,7 @@ const CODE_SNIPPETS = [
     region: "dictate-messages",
   },
   {
-    title: "5. Receive DICTATED_TEXT & append verbatim",
+    title: "5. Receive DICTATED_TEXT & apply async corrections",
     file: "pages/in-depth/dictate/dictate.ts",
     source: dictatePageSource,
     region: "dictate-receive",
@@ -224,6 +226,9 @@ function attachSocketHandlers(): void {
     addWsMessage("recv", event.data);
     if (message.type === "DICTATED_TEXT") {
       appendDictatedText((message as DictatedText).text);
+    } else if (message.type === "ASYNC_CORRECTION") {
+      const { suffix, replacement } = message as AsyncCorrection;
+      applyDictationCorrection(suffix, replacement);
     } else if (message.type === "AUDIO_CHUNK_ACK") {
       handleAck((message as AudioChunkAck).ack_id);
     }
