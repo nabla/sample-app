@@ -16,9 +16,16 @@ export interface AudioChunkAck {
   ack_id: number;
 }
 
+export interface AsyncCorrection {
+  type: "ASYNC_CORRECTION";
+  suffix: string;
+  replacement: string;
+}
+
 export type DictateServerMessage =
   | DictatedText
   | AudioChunkAck
+  | AsyncCorrection
   | { type: string };
 
 export const DICTATE_ENCODING = "PCM_S16LE" as const;
@@ -51,6 +58,8 @@ export function buildDictateConfig(locale: DictationLocale, noteText: string) {
       selection_start: noteText.length,
       selection_length: 0,
     },
+    // Opts into server-side refinements of already-streamed text via ASYNC_CORRECTION.
+    enable_async_corrections: true,
   };
 }
 

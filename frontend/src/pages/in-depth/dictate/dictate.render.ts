@@ -33,11 +33,23 @@ export function getNoteText(): string {
 }
 
 // dictate-ws emits DICTATED_TEXT segments that must be appended verbatim — no extra
-// spaces, punctuation, or formatting (the server already handles those).
+// spaces, punctuation, or formatting (the server already handles those). The server
+// may later refine trailing text via ASYNC_CORRECTION (see applyDictationCorrection).
 export function appendDictatedText(text: string): void {
   const note = document.getElementById("dictation-note") as HTMLTextAreaElement;
   note.value += text;
   note.scrollTop = note.scrollHeight;
+}
+
+export function applyDictationCorrection(
+  suffix: string,
+  replacement: string,
+): void {
+  const note = document.getElementById("dictation-note") as HTMLTextAreaElement;
+  if (note.value.endsWith(suffix)) {
+    note.value = note.value.slice(0, -suffix.length) + replacement;
+    note.scrollTop = note.scrollHeight;
+  }
 }
 
 export function clearNote(): void {
