@@ -3,6 +3,7 @@
 export const DOCUMENTATION_LINKS = {
   transcribeWs: "https://docs.nabla.com/user/transcribe-ws",
   generateNote: "https://docs.nabla.com/user/generate-note",
-  generateNormalizedData: "https://docs.nabla.com/user/generate-normalized-data",
+  generateNormalizedData:
+    "https://docs.nabla.com/user/generate-normalized-data-async",
   generatePatientInstructions: "https://docs.nabla.com/user/generate-patient-instructions",
 } as const;

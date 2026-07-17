@@ -66,7 +66,7 @@ export function markup(): string {
         <div class="bg-white rounded-xl border border-grey-200 p-5">
           <div class="flex items-center gap-2 mb-1">
             <h3 class="font-semibold text-grey-400">Normalize Data</h3>
-            <a href="${DOCUMENTATION_LINKS.generateNormalizedData}" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-normalized-data ↗</a>
+            <a href="${DOCUMENTATION_LINKS.generateNormalizedData}" target="_blank" rel="noopener" class="text-xs font-mono text-grey-250 hover:text-primary-600 bg-grey-100 hover:bg-primary-50 px-2 py-0.5 rounded transition-colors">POST /generate-normalized-data-async ↗</a>
           </div>
           <p class="text-xs text-grey-300 mb-4">Extract ICD-10 / LOINC codes in FHIR format from the note.</p>
           <button id="generate-normalized-btn" disabled class="bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
