@@ -36,13 +36,13 @@ import dictatePageSource from "./dictate.ts?raw";
 // The "Code" tab is rendered from these real source regions — see #region markers.
 const CODE_SNIPPETS = [
   {
-    title: "1. Capture mic audio in 100 ms PCM chunks",
+    title: "1. Wire up the microphone stream",
     file: "audio/mic-stream.ts",
     source: micStreamSource,
     region: "microphone-stream",
   },
   {
-    title: "2. Convert mic audio to PCM-16 (AudioWorklet)",
+    title: "2. Convert and chunk mic audio in the AudioWorklet",
     file: "audio/rawPcm16Processor.js",
     source: rawPcm16ProcessorSource,
     region: "pcm16-worklet",
