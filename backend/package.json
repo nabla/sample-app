@@ -7,11 +7,11 @@
   },
   "dependencies": {
     "express": "^5.2.1",
-    "jose": "^6.2.4"
+    "jose": "^6.2.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "typescript": "^7.0.2"
   }
 }
